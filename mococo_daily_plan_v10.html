@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>모코코의 주간 계획표 - Prototype v10</title>
+    <style>
+        :root {
+            --bg-color: #0d1a12;
+            --panel-bg: rgba(22, 38, 28, 0.95);
+            --panel-border: #2e593a;
+            --accent-green: #42e382;
+            --accent-lime: #b0f566;
+            --accent-gold: #ffd24d;
+            --text-color: #e8f5ec;
+            --text-muted: #8eb398;
+            --danger-red: #ff5e5e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(circle at 50% 10%, #1a3824 0%, #0d1a12 80%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1050px;
+            background: var(--panel-bg);
+            border: 2px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 12px 36px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+        }
+
+        /* Editable highlight styling */
+        [contenteditable="true"] {
+            outline: 1px dashed rgba(66, 227, 130, 0.4);
+            border-radius: 4px;
+            padding: 2px 6px;
+            transition: all 0.2s ease;
+        }
+
+        [contenteditable="true"]:hover {
+            outline: 1px dashed var(--accent-green);
+            background: rgba(66, 227, 130, 0.1);
+        }
+
+        [contenteditable="true"]:focus {
+            outline: 2px solid var(--accent-gold);
+            background: rgba(255, 210, 77, 0.15);
+            color: #fff;
+        }
+
+        /* Top Admin & Control Bar */
+        .control-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--panel-border);
+            border-radius: 10px;
+            padding: 10px 16px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .control-info {
+            color: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .control-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px dashed var(--panel-border);
+            padding-bottom: 16px;
+        }
+
+        header h1 {
+            color: var(--accent-lime);
+            font-size: 28px;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* 1. 주간 목표 카드 (3종 중 택1) */
+        .plan-selection {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .plan-card {
+            background: rgba(0, 0, 0, 0.25);
+            border: 2px solid var(--panel-border);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .plan-card:hover {
+            border-color: var(--accent-green);
+            transform: translateY(-2px);
+        }
+
+        .plan-card.selected {
+            border-color: var(--accent-green);
+            background: rgba(66, 227, 130, 0.08);
+            box-shadow: 0 0 16px rgba(66, 227, 130, 0.2);
+        }
+
+        .plan-card h3 {
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .plan-card .badge {
+            font-size: 11px;
+            background: var(--accent-green);
+            color: #0b1a10;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+
+        .plan-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .plan-reward-box {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .reward-tag {
+            font-size: 12px;
+            color: var(--accent-gold);
+            background: rgba(255, 210, 77, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-block;
+            border: 1px solid rgba(255, 210, 77, 0.2);
+        }
+
+        /* 2. 주간 발도장 스탬프 판 (4일 노드) */
+        .stamp-board-section {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .board-title {
+            font-size: 15px;
+            margin-bottom: 18px;
+            color: var(--accent-lime);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stamps-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: relative;
+            padding: 10px 0;
+        }
+
+        .stamps-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50px;
+            right: 50px;
+            height: 4px;
+            background: var(--panel-border);
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+
+        .stamp-progress-line {
+            position: absolute;
+            top: 50%;
+            left: 50px;
+            height: 4px;
+            background: var(--accent-green);
+            z-index: 1;
+            transform: translateY(-50%);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .stamp-slot {
+            width: 68px;
+            height: 68px;
+            border-radius: 16px;
+            background: #122116;
+            border: 2px dashed var(--panel-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            color: var(--text-muted);
+        }
+
+        .stamp-slot.completed {
+            background: rgba(66, 227, 130, 0.15);
+            border: 2px solid var(--accent-green);
+            color: #fff;
+        }
+
+        .stamp-icon {
+            font-size: 22px;
+            margin-bottom: 2px;
+            display: none;
+        }
+
+        .stamp-slot.completed .stamp-icon {
+            display: block;
+        }
+
+        .stamp-slot.active {
+            border: 2px solid var(--accent-gold);
+            background: #1c3323;
+            color: #fff;
+            box-shadow: 0 0 12px rgba(255, 210, 77, 0.3);
+        }
+
+        .stamp-slot.focused {
+            outline: 3px solid var(--accent-lime);
+            outline-offset: 4px;
+        }
+
+        .stamp-label {
+            position: absolute;
+            top: 74px;
+            font-size: 12px;
+            white-space: nowrap;
+            color: var(--text-muted);
+        }
+
+        /* 3. 일일 숙제 패널 */
+        .bottom-section {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 24px;
+        }
+
+        .panel-title {
+            font-size: 14px;
+            color: var(--accent-green);
+            margin-bottom: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* N일차 전용 통합 보상 배너 */
+        .day-reward-banner {
+            background: rgba(255, 210, 77, 0.08);
+            border: 1px solid var(--accent-gold);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .day-reward-title {
+            color: var(--accent-gold);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .homework-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 14px;
+            background: rgba(0,0,0,0.25);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.03);
+            font-size: 13px;
+            margin-bottom: 8px;
+            gap: 12px;
+        }
+
+        .homework-item.completed {
+            border-color: rgba(66, 227, 130, 0.3);
+            background: rgba(66, 227, 130, 0.05);
+        }
+
+        .homework-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .homework-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        .homework-text {
+            font-weight: 500;
+        }
+
+        .sub-mission-badge {
+            font-size: 11px;
+            color: var(--accent-lime);
+            background: rgba(176, 245, 102, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(176, 245, 102, 0.2);
+            white-space: nowrap;
+        }
+
+        /* 4. 최하단 컴팩트 주간 플랜 완료 보너스 패널 */
+        .plan-cumulative-panel-compact {
+            background: rgba(255, 210, 77, 0.05);
+            border: 1px dashed rgba(255, 210, 77, 0.4);
+            border-radius: 10px;
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .cumulative-info-compact {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .cumulative-info-compact h5 {
+            font-size: 13px;
+            color: var(--accent-gold);
+            white-space: nowrap;
+        }
+
+        .cumulative-info-compact p {
+            color: var(--text-muted);
+        }
+
+        .cumulative-badge-compact {
+            background: var(--accent-gold);
+            color: #000;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .btn {
+            background: var(--accent-green);
+            color: #0b1a10;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
+        .btn:disabled {
+            background: #233b2a;
+            color: #5d7a65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-edit {
+            background: var(--accent-gold);
+            color: #000;
+        }
+
+        .btn-add {
+            background: rgba(66, 227, 130, 0.15);
+            color: var(--accent-green);
+            border: 1px dashed var(--accent-green);
+            font-size: 12px;
+            padding: 4px 10px;
+        }
+
+        .btn-add:hover {
+            background: var(--accent-green);
+            color: #000;
+        }
+
+        .btn-del {
+            background: transparent;
+            border: 1px solid rgba(255, 94, 94, 0.4);
+            color: var(--danger-red);
+            padding: 2px 6px;
+            font-size: 11px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 6px;
+        }
+
+        .btn-del:hover {
+            background: rgba(255, 94, 94, 0.2);
+        }
+
+        .btn-reset {
+            background: transparent;
+            border: 1px solid var(--danger-red);
+            color: var(--danger-red);
+        }
+
+        .btn-reset:hover {
+            background: rgba(255, 94, 94, 0.15);
+        }
+
+        .btn-save {
+            background: var(--accent-green);
+            color: #000;
+        }
+
+        /* Modal Overlay for Bulk Plan Management */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #14241a;
+            border: 2px solid var(--panel-border);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--panel-border);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .modal-header h2 {
+            font-size: 18px;
+            color: var(--accent-lime);
+        }
+
+        .modal-plan-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .modal-tab {
+            padding: 8px 16px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .modal-tab.active {
+            background: rgba(66, 227, 130, 0.15);
+            border-color: var(--accent-green);
+            color: var(--accent-lime);
+            font-weight: bold;
+        }
+
+        .modal-day-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .modal-day-box {
+            background: rgba(0,0,0,0.25);
+            border: 1px solid var(--panel-border);
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .modal-day-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--accent-gold);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .edit-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .edit-input {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--panel-border);
+            border-radius: 4px;
+            color: #fff;
+            padding: 6px 8px;
+            font-size: 12px;
+            width: 100%;
+        }
+
+        .edit-input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Admin Bar -->
+    <div class="control-bar">
+        <div class="control-info">
+            ⚙️ <strong>기획자 관리 센터:</strong> 플랜별 1~4일차 일일 보상과 하위 미션을 일괄 수정해보세요.
+        </div>
+        <div class="control-btns">
+            <button class="btn btn-edit" onclick="openModal()">전체 플랜 일괄 편집 📝</button>
+            <button class="btn btn-save" onclick="saveAllData()">전체 저장 💾</button>
+            <button class="btn btn-reset" onclick="resetAllData()">진행 초기화 🔄</button>
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <header>
+        <h1 contenteditable="true" id="txt-header-title">🌱 모코코의 주간 계획표</h1>
+        <p contenteditable="true" id="txt-header-sub">원하는 주간 플랜을 고르고, 4일간 일일 숙제를 완료하여 보상과 스탬프를 챙겨가세요!</p>
+    </header>
+
+    <!-- 1. 주간 목표 카드 (3종 중 택1) -->
+    <div class="plan-selection">
+        <div class="plan-card selected" id="pcard-0" onclick="selectPlan(0)">
+            <div>
+                <h3>
+                    <span contenteditable="true" id="txt-plan1-title">쑥쑥 재련 플랜</span> 
+                    <span class="badge" contenteditable="true" id="txt-plan1-badge">인기</span>
+                </h3>
+                <p contenteditable="true" id="txt-plan1-desc">카던 / 가디언 토벌 위주의 착한 일일 숙제 플랜</p>
+            </div>
+            <div class="plan-reward-box">
+                <span style="font-size: 11px; color: var(--text-muted);">플랜 완주 보상:</span>
+                <div class="reward-tag" contenteditable="true" id="txt-plan1-reward">🎁 파괴석/수호석/돌파석 상자</div>
+            </div>
+        </div>
+
+        <div class="plan-card" id="pcard-1" onclick="selectPlan(1)">
+            <div>
+                <h3>
+                    <span contenteditable="true" id="txt-plan2-title">도전 성장 플랜</span>
+                    <span class="badge" contenteditable="true" id="txt-plan2-badge">추천</span>
+                </h3>
+                <p contenteditable="true" id="txt-plan2-desc">카던 + 레이드 맛보기로 알찬 성장 플랜</p>
+            </div>
+            <div class="plan-reward-box">
+                <span style="font-size: 11px; color: var(--text-muted);">플랜 완주 보상:</span>
+                <div class="reward-tag" contenteditable="true" id="txt-plan2-reward">🎁 아크 그리드 / 보조 재료</div>
+            </div>
+        </div>
+
+        <div class="plan-card" id="pcard-2" onclick="selectPlan(2)">
+            <div>
+                <h3>
+                    <span contenteditable="true" id="txt-plan3-title">알뜰 골드 플랜</span>
+                    <span class="badge" contenteditable="true" id="txt-plan3-badge">꿀팁</span>
+                </h3>
+                <p contenteditable="true" id="txt-plan3-desc">큐브 / 모험섬 / 카게 중심의 알뜰 수급 플랜</p>
+            </div>
+            <div class="plan-reward-box">
+                <span style="font-size: 11px; color: var(--text-muted);">플랜 완주 보상:</span>
+                <div class="reward-tag" contenteditable="true" id="txt-plan3-reward">🎁 실링 / 귀속 골드 상자</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 주간 발도장 스탬프 판 (4일 노드) -->
+    <div class="stamp-board-section">
+        <div class="board-title">
+            <span>🐾 [<span id="active-plan-name-display" style="color:var(--accent-lime);">쑥쑥 재련 플랜</span>] 4일 진행 현황</span>
+            <span id="progress-text" style="color: var(--accent-gold); font-weight: bold;">0 / 4일 완료</span>
+        </div>
+        <div class="stamps-container">
+            <div class="stamp-progress-line" id="progress-line"></div>
+            
+            <div class="stamp-slot" id="stamp-1" onclick="selectDayToView(1)">
+                <span class="stamp-icon">🌱</span>
+                <span style="font-size: 13px; font-weight: bold;">1일차</span>
+                <span class="stamp-label" contenteditable="true" id="txt-stamp1-label">1일차 도장</span>
+            </div>
+
+            <div class="stamp-slot" id="stamp-2" onclick="selectDayToView(2)">
+                <span class="stamp-icon">🌱</span>
+                <span style="font-size: 13px; font-weight: bold;">2일차</span>
+                <span class="stamp-label" contenteditable="true" id="txt-stamp2-label">2일차 도장</span>
+            </div>
+
+            <div class="stamp-slot" id="stamp-3" onclick="selectDayToView(3)">
+                <span class="stamp-icon">🌱</span>
+                <span style="font-size: 13px; font-weight: bold;">3일차</span>
+                <span class="stamp-label" contenteditable="true" id="txt-stamp3-label">3일차 도장</span>
+            </div>
+
+            <div class="stamp-slot" id="stamp-4" onclick="selectDayToView(4)">
+                <span class="stamp-icon">⭐</span>
+                <span style="font-size: 13px; font-weight: bold;">4일차</span>
+                <span class="stamp-label" contenteditable="true" id="txt-stamp4-label">플랜 완주</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 일일 숙제 패널 (N일차 보상 + 하위 미션 완료 시스템) -->
+    <div class="bottom-section">
+        <div class="panel-title">
+            <span>📋 <strong id="current-view-day-text" style="color: var(--accent-gold);">1일차</strong> 하위 미션 및 보상</span>
+            <button class="btn btn-add" onclick="addHomeworkToActivePlan()">+ 하위 미션 추가</button>
+        </div>
+
+        <!-- N일차 대표 통합 보상 배너 -->
+        <div class="day-reward-banner">
+            <div class="day-reward-title">
+                <span>🎁 <span id="day-reward-label-day">1일차</span> 완주 보상:</span>
+                <span id="day-reward-text-display" contenteditable="true" onblur="updateDayRewardText(this.innerText)">🎁 파괴석/수호석 1,000개 상자</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted);" id="day-reward-status-sub">
+                (하위 미션 모두 클리어 시 지급)
+            </div>
+        </div>
+
+        <div id="homework-list-container">
+            <!-- Dynamic Homework Items Rendered Here -->
+        </div>
+    </div>
+
+    <!-- 4. 최하단 컴팩트 주간 플랜 완료 보너스 패널 -->
+    <div class="plan-cumulative-panel-compact">
+        <div class="cumulative-info-compact">
+            <h5>🎖️ 주간 플랜 완료 보너스:</h5>
+            <p contenteditable="true" id="txt-plan-bonus-desc">이벤트 기간 중 주간 플랜 N개 완료 달성 시 특별 칭호 [일숙의 대가] 지급!</p>
+        </div>
+        <div>
+            <span class="cumulative-badge-compact" id="completed-plan-count-text">0 / N개 달성</span>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Overlay for Bulk Plan Management -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>📝 3개 주간 플랜별 N일차 보상 & 하위 미션 일괄 편집창</h2>
+            <button class="btn-del" style="font-size:14px; padding:4px 8px;" onclick="closeModal()">닫기 ✖</button>
+        </div>
+
+        <!-- Plan Select Tabs inside Modal -->
+        <div class="modal-plan-tabs">
+            <div class="modal-tab active" id="mtab-0" onclick="switchModalTab(0)">1. 쑥쑥 재련 플랜</div>
+            <div class="modal-tab" id="mtab-1" onclick="switchModalTab(1)">2. 도전 성장 플랜</div>
+            <div class="modal-tab" id="mtab-2" onclick="switchModalTab(2)">3. 알뜰 골드 플랜</div>
+        </div>
+
+        <!-- Grid for 1st to 4th day -->
+        <div class="modal-day-grid" id="modal-grid-container">
+            <!-- Dynamic Day Boxes Rendered Here -->
+        </div>
+
+        <div style="text-align: right; margin-top: 16px;">
+            <button class="btn btn-save" style="padding: 8px 20px;" onclick="saveModalChanges()">저장 및 적용 💾</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // System State
+    let state = {
+        selectedPlanIdx: 0,
+        completedPlanCount: 0,
+        targetPlanBonusCount: 3,
+
+        planProgress: {
+            0: { completedNodes: 0, activeViewDay: 1 },
+            1: { completedNodes: 0, activeViewDay: 1 },
+            2: { completedNodes: 0, activeViewDay: 1 }
+        },
+
+        // N일차 통합 보상 (dayRewards) 및 하위 미션 (missions) 구조
+        planData: {
+            0: { // 쑥쑥 재련 플랜
+                dayRewards: { 1: "🎁 파괴석/수호석 1,000개 상자", 2: "🎁 명예의 돌파석 50개 상자", 3: "🎁 명예의 파편 30,000 주머니", 4: "🎁 상급 재련 재료 패키지" },
+                missions: {
+                    1: [ { id: 101, text: "카오스 던전 / 쿠르잔 전선 1회 클리어", completed: false }, { id: 102, text: "가디언 토벌 1회 영혼 수확", completed: false } ],
+                    2: [ { id: 103, text: "카오스 던전 1회 클리어", completed: false }, { id: 104, text: "가디언 토벌 1회 영혼 수확", completed: false } ],
+                    3: [ { id: 105, text: "쿠르잔 전선 특별 지원 1회", completed: false } ], // 1개 단일 미션 예시
+                    4: [ { id: 107, text: "재련 플랜 주간 최종 점검 완료", completed: false } ]
+                }
+            },
+            1: { // 도전 성장 플랜
+                dayRewards: { 1: "🎁 아크 그리드 파편 10개", 2: "🎁 카르마 코어 5개 상자", 3: "🎁 상급 아크 그리드 재료", 4: "🎁 최종 성장 보너스 상자" },
+                missions: {
+                    1: [ { id: 201, text: "카오스 던전 1회 클리어", completed: false }, { id: 202, text: "에브니 큐브 1회 클리어", completed: false } ],
+                    2: [ { id: 203, text: "군단장 레이드 1관문 클리어", completed: false } ],
+                    3: [ { id: 205, text: "그림자 레이드 1회 정복", completed: false }, { id: 206, text: "필드 보스 1회 처치", completed: false } ],
+                    4: [ { 207: 207, text: "성장 플랜 최종 모험 완료", completed: false } ]
+                }
+            },
+            2: { // 알뜰 골드 플랜
+                dayRewards: { 1: "🎁 100,000 실링 상자", 2: "🎁 귀속 골드 주머니 (500골)", 3: "🎁 카오스게이트 각인서 상자", 4: "🎁 알뜰 재화 보너스 팩" },
+                missions: {
+                    1: [ { id: 301, text: "에브니 큐브 1회 클리어", completed: false }, { id: 302, text: "오늘의 모험섬 1회 참가", completed: false } ],
+                    2: [ { id: 303, text: "카오스게이트 1회 참가", completed: false }, { id: 304, text: "영지 파견 / 제작 1회", completed: false } ],
+                    3: [ { id: 305, text: "필드 보스 1회 수확", completed: false } ],
+                    4: [ { id: 307, text: "골드 수급 정산 및 최종 완료", completed: false } ]
+                }
+            }
+        }
+    };
+
+    let activeModalTab = 0;
+
+    const EDITABLE_IDS = [
+        'txt-header-title', 'txt-header-sub', 'txt-plan-bonus-desc',
+        'txt-plan1-title', 'txt-plan1-badge', 'txt-plan1-desc', 'txt-plan1-reward',
+        'txt-plan2-title', 'txt-plan2-badge', 'txt-plan2-desc', 'txt-plan2-reward',
+        'txt-plan3-title', 'txt-plan3-badge', 'txt-plan3-desc', 'txt-plan3-reward',
+        'txt-stamp1-label', 'txt-stamp2-label', 'txt-stamp3-label', 'txt-stamp4-label'
+    ];
+
+    window.onload = function() {
+        loadSavedTexts();
+        loadState();
+        renderUI();
+    };
+
+    function renderUI() {
+        const currentPlanIdx = state.selectedPlanIdx;
+        const curProgress = state.planProgress[currentPlanIdx];
+
+        // 1. Plan Card Selection
+        for (let i = 0; i < 3; i++) {
+            const card = document.getElementById(`pcard-${i}`);
+            if (i === currentPlanIdx) card.classList.add('selected');
+            else card.classList.remove('selected');
+        }
+
+        // Active Plan Title
+        const planTitles = [
+            document.getElementById('txt-plan1-title').innerText,
+            document.getElementById('txt-plan2-title').innerText,
+            document.getElementById('txt-plan3-title').innerText
+        ];
+        document.getElementById('active-plan-name-display').innerText = planTitles[currentPlanIdx];
+
+        // Cumulative Bonus Badge
+        document.getElementById('completed-plan-count-text').innerText = `${state.completedPlanCount} / ${state.targetPlanBonusCount}개 달성`;
+
+        // Stamp Board Slots
+        for (let i = 1; i <= 4; i++) {
+            const slot = document.getElementById(`stamp-${i}`);
+            slot.classList.remove('completed', 'active', 'focused');
+
+            if (i <= curProgress.completedNodes) {
+                slot.classList.add('completed');
+            } else if (i === curProgress.completedNodes + 1) {
+                slot.classList.add('active');
+            }
+
+            if (i === curProgress.activeViewDay) {
+                slot.classList.add('focused');
+            }
+        }
+
+        // Stamp Progress Line
+        const progressLine = document.getElementById('progress-line');
+        if (curProgress.completedNodes === 0) progressLine.style.width = '0%';
+        else if (curProgress.completedNodes === 1) progressLine.style.width = '30%';
+        else if (curProgress.completedNodes === 2) progressLine.style.width = '60%';
+        else if (curProgress.completedNodes === 3) progressLine.style.width = '85%';
+        else progressLine.style.width = 'calc(100% - 100px)';
+
+        document.getElementById('progress-text').innerText = `${curProgress.completedNodes} / 4일 완료`;
+        document.getElementById('current-view-day-text').innerText = `${curProgress.activeViewDay}일차`;
+
+        // Render Day Reward Banner & Sub Missions
+        renderDayRewardAndMissions();
+    }
+
+    function renderDayRewardAndMissions() {
+        const currentPlanIdx = state.selectedPlanIdx;
+        const curProgress = state.planProgress[currentPlanIdx];
+        const day = curProgress.activeViewDay;
+
+        const pData = state.planData[currentPlanIdx];
+        const dayRewardText = (pData && pData.dayRewards && pData.dayRewards[day]) ? pData.dayRewards[day] : "🎁 N일차 클리어 보상";
+        const subMissions = (pData && pData.missions && pData.missions[day]) ? pData.missions[day] : [];
+
+        // Set Day Reward Display
+        document.getElementById('day-reward-label-day').innerText = `${day}일차`;
+        document.getElementById('day-reward-text-display').innerText = dayRewardText;
+
+        const isDayCompleted = day <= curProgress.completedNodes;
+        const statusSub = document.getElementById('day-reward-status-sub');
+
+        if (isDayCompleted) {
+            statusSub.innerText = "✅ [보상 수령 완료]";
+            statusSub.style.color = "var(--accent-green)";
+            statusSub.style.fontWeight = "bold";
+        } else {
+            statusSub.innerText = `(하위 미션 ${subMissions.filter(m=>m.completed).length}/${subMissions.length} 완료 시 자동 수령)`;
+            statusSub.style.color = "var(--text-muted)";
+            statusSub.style.fontWeight = "normal";
+        }
+
+        // Render Sub-Missions List
+        const container = document.getElementById('homework-list-container');
+        container.innerHTML = '';
+
+        if (subMissions.length === 0) {
+            container.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-muted); font-size:12px;">${day}일차에 등록된 하위 미션이 없습니다. 상단 [+ 하위 미션 추가] 버튼을 눌러보세요!</div>`;
+            return;
+        }
+
+        const isDayLocked = day > curProgress.completedNodes + 1;
+
+        subMissions.forEach((m, idx) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = `homework-item ${m.completed ? 'completed' : ''}`;
+
+            let btnDisabled = m.completed || isDayLocked;
+            let btnText = m.completed ? '미션 완료됨 ✅' : (isDayLocked ? '이전 일차 미완료' : '미션 완료');
+
+            itemDiv.innerHTML = `
+                <div class="homework-info">
+                    <span class="sub-mission-badge">하위 미션 ${idx + 1}</span>
+                    <span class="homework-text" contenteditable="true" onblur="updateMissionText(${currentPlanIdx}, ${day}, ${m.id}, this.innerText)">${m.text}</span>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <button class="btn" ${btnDisabled ? 'disabled' : ''} onclick="toggleSubMission(${day}, ${m.id})">
+                        ${btnText}
+                    </button>
+                    <button class="btn-del" title="삭제" onclick="deleteSubMission(${day}, ${m.id})">❌</button>
+                </div>
+            `;
+            container.appendChild(itemDiv);
+        });
+    }
+
+    // Toggle Sub Mission & Check Day Completion
+    function toggleSubMission(day, missionId) {
+        const planIdx = state.selectedPlanIdx;
+        const curProgress = state.planProgress[planIdx];
+
+        if (day !== curProgress.completedNodes + 1) {
+            alert(`⚠️ ${curProgress.completedNodes + 1}일차를 먼저 달성해야 진행 가능합니다.`);
+            return;
+        }
+
+        const subMissions = state.planData[planIdx].missions[day];
+        const target = subMissions.find(m => m.id === missionId);
+
+        if (target && !target.completed) {
+            target.completed = true;
+
+            // Check if ALL sub-missions of this day are completed!
+            const allDone = subMissions.every(m => m.completed);
+
+            if (allDone) {
+                curProgress.completedNodes = day;
+
+                if (curProgress.completedNodes === 4) {
+                    state.completedPlanCount += 1;
+                    alert(`🎉 ${day}일차 모든 하위 미션 클리어!
+🎁 ${day}일차 완주 보상을 획득했습니다!
+
+🏆 주간 플랜 4일 완주 달성! (누적 완료: ${state.completedPlanCount}개)`);
+                } else {
+                    alert(`🎉 ${day}일차 모든 하위 미션을 클리어하여 ${day}일차 보상을 수령했습니다!
+다음 ${day + 1}일차로 넘어갑니다.`);
+                    curProgress.activeViewDay += 1;
+                }
+            }
+
+            saveState();
+            renderUI();
+        }
+    }
+
+    function updateDayRewardText(val) {
+        const planIdx = state.selectedPlanIdx;
+        const day = state.planProgress[planIdx].activeViewDay;
+        state.planData[planIdx].dayRewards[day] = val;
+        saveState();
+    }
+
+    function updateMissionText(planIdx, day, id, text) {
+        const target = state.planData[planIdx].missions[day].find(m => m.id === id);
+        if (target) {
+            target.text = text;
+            saveState();
+        }
+    }
+
+    function selectPlan(planIdx) {
+        state.selectedPlanIdx = planIdx;
+        saveState();
+        renderUI();
+    }
+
+    function selectDayToView(day) {
+        state.planProgress[state.selectedPlanIdx].activeViewDay = day;
+        renderUI();
+    }
+
+    function addHomeworkToActivePlan() {
+        const planIdx = state.selectedPlanIdx;
+        const day = state.planProgress[planIdx].activeViewDay;
+
+        if (!state.planData[planIdx].missions[day]) state.planData[planIdx].missions[day] = [];
+
+        state.planData[planIdx].missions[day].push({
+            id: Date.now(),
+            text: `[${day}일차 하위 미션] 클릭하여 수정`,
+            completed: false
+        });
+
+        saveState();
+        renderUI();
+    }
+
+    function deleteSubMission(day, id) {
+        const planIdx = state.selectedPlanIdx;
+        state.planData[planIdx].missions[day] = state.planData[planIdx].missions[day].filter(m => m.id !== id);
+        saveState();
+        renderUI();
+    }
+
+    // Modal Bulk Edit Logic
+    function openModal() {
+        activeModalTab = state.selectedPlanIdx;
+        renderModalContent();
+        document.getElementById('editModal').classList.add('open');
+    }
+
+    function closeModal() {
+        document.getElementById('editModal').classList.remove('open');
+    }
+
+    function switchModalTab(planIdx) {
+        activeModalTab = planIdx;
+        for (let i = 0; i < 3; i++) {
+            const tab = document.getElementById(`mtab-${i}`);
+            if (i === planIdx) tab.classList.add('active');
+            else tab.classList.remove('active');
+        }
+        renderModalContent();
+    }
+
+    function renderModalContent() {
+        const container = document.getElementById('modal-grid-container');
+        container.innerHTML = '';
+
+        const planIdx = activeModalTab;
+        const pData = state.planData[planIdx];
+
+        for (let day = 1; day <= 4; day++) {
+            const dayBox = document.createElement('div');
+            dayBox.className = 'modal-day-box';
+
+            const dayReward = pData.dayRewards[day] || "";
+            const missions = pData.missions[day] || [];
+            let rowsHtml = '';
+
+            missions.forEach((m, idx) => {
+                rowsHtml += `
+                    <div class="edit-row">
+                        <span style="font-size:11px; color:var(--accent-lime);">하위 미션 ${idx+1}</span>
+                        <input class="edit-input" type="text" value="${m.text}" onchange="updateModalMissionText(${planIdx}, ${day}, ${m.id}, this.value)" placeholder="미션 내용">
+                    </div>
+                `;
+            });
+
+            dayBox.innerHTML = `
+                <div class="modal-day-title">
+                    <span>${day}일차 보상 및 미션</span>
+                    <button class="btn btn-add" style="padding:2px 6px; font-size:11px;" onclick="addModalMission(${planIdx}, ${day})">+ 미션 추가</button>
+                </div>
+                <div style="margin-bottom:8px;">
+                    <label style="font-size:11px; color:var(--accent-gold);">🎁 ${day}일차 대표 완주 보상:</label>
+                    <input class="edit-input" style="color:var(--accent-gold); font-weight:bold; margin-top:2px;" type="text" value="${dayReward}" onchange="updateModalDayReward(${planIdx}, ${day}, this.value)">
+                </div>
+                <div>${rowsHtml.length > 0 ? rowsHtml : '<div style="font-size:11px; color:#666; text-align:center; padding:10px;">등록된 하위 미션 없음</div>'}</div>
+            `;
+
+            container.appendChild(dayBox);
+        }
+    }
+
+    function addModalMission(planIdx, day) {
+        if (!state.planData[planIdx].missions[day]) state.planData[planIdx].missions[day] = [];
+        state.planData[planIdx].missions[day].push({
+            id: Date.now(),
+            text: `[${day}일차 신규 미션] 클릭하여 수정`,
+            completed: false
+        });
+        renderModalContent();
+    }
+
+    function updateModalDayReward(planIdx, day, val) {
+        state.planData[planIdx].dayRewards[day] = val;
+    }
+
+    function updateModalMissionText(planIdx, day, id, val) {
+        const target = state.planData[planIdx].missions[day].find(m => m.id === id);
+        if (target) {
+            target.text = val;
+        }
+    }
+
+    function saveModalChanges() {
+        saveState();
+        renderUI();
+        closeModal();
+        alert("💾 3개 주간 플랜의 N일차 보상 및 하위 미션 설정이 일괄 적용되었습니다!");
+    }
+
+    // Storage Management
+    function saveState() {
+        localStorage.setItem('mococo_v10_state', JSON.stringify(state));
+    }
+
+    function loadState() {
+        const saved = localStorage.getItem('mococo_v10_state');
+        if (saved) {
+            try { state = JSON.parse(saved); } catch(e) {}
+        }
+    }
+
+    function saveAllData() {
+        const textData = {};
+        EDITABLE_IDS.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) textData[id] = el.innerText;
+        });
+        localStorage.setItem('mococo_v10_texts', JSON.stringify(textData));
+        saveState();
+        alert('💾 타이틀, 보상 문구 및 플랜 설정이 브라우저에 저장되었습니다!');
+    }
+
+    function loadSavedTexts() {
+        const savedTexts = localStorage.getItem('mococo_v10_texts');
+        if (savedTexts) {
+            try {
+                const data = JSON.parse(savedTexts);
+                Object.keys(data).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerText = data[id];
+                });
+            } catch(e) {}
+        }
+    }
+
+    function resetAllData() {
+        if (confirm("모든 플랜 진행 상태 및 완료 카운트를 초기화하시겠습니까?")) {
+            state.completedPlanCount = 0;
+            state.planProgress = {
+                0: { completedNodes: 0, activeViewDay: 1 },
+                1: { completedNodes: 0, activeViewDay: 1 },
+                2: { completedNodes: 0, activeViewDay: 1 }
+            };
+            Object.keys(state.planData).forEach(pIdx => {
+                Object.keys(state.planData[pIdx].missions).forEach(day => {
+                    state.planData[pIdx].missions[day].forEach(m => m.completed = false);
+                });
+            });
+            saveState();
+            renderUI();
+        }
+    }
+</script>
+</body>
+</html>
