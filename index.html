@@ -657,15 +657,15 @@
     </div>
 
     <header>
-        <h1 contenteditable="true" id="txt-header-title">🌱 모코코의 주간 계획표</h1>
-        <p contenteditable="true" id="txt-header-sub">원하는 주간 플랜을 고르고, 4일간 일일 숙제를 완료하여 보상과 스탬프를 챙겨가세요!</p>
+        <h1 contenteditable="true" id="txt-header-title">🌱 모코코 위클리 플랜</h1>
+        <p contenteditable="true" id="txt-header-sub">원하는 주간 플랜을 고르고, 4일간 일일 숙제를 완료해 특화 보상을 획득하세요!</p>
     </header>
 
     <div class="plan-selection">
-        <div class="plan-card" id="pcard-0" onclick="selectPlan(0)">
+        <div class="plan-card selected" id="pcard-0" onclick="selectPlan(0)">
             <div>
                 <h3>
-                    <span contenteditable="true" id="txt-plan1-title">대장 모코코 플랜</span> 
+                    <span contenteditable="true" id="txt-plan1-title">대장 모코코 플랜(본캐 집중 육성)</span> 
                     <span class="status-badge">진행중</span>
                 </h3>
                 <span class="limit-badge" id="limit-badge-0">진행 횟수: 0 / 4회</span>
@@ -680,7 +680,7 @@
         <div class="plan-card" id="pcard-1" onclick="selectPlan(1)">
             <div>
                 <h3>
-                    <span contenteditable="true" id="txt-plan2-title">정예 모코코 플랜</span>
+                    <span contenteditable="true" id="txt-plan2-title">정예 모코코 플랜(부캐 집중 육성)</span>
                     <span class="status-badge">진행중</span>
                 </h3>
                 <span class="limit-badge" id="limit-badge-1">진행 횟수: 0 / 3회</span>
@@ -692,10 +692,10 @@
             </div>
         </div>
 
-        <div class="plan-card selected" id="pcard-2" onclick="selectPlan(2)">
+        <div class="plan-card" id="pcard-2" onclick="selectPlan(2)">
             <div>
                 <h3>
-                    <span contenteditable="true" id="txt-plan3-title">보급 모코코 플랜</span>
+                    <span contenteditable="true" id="txt-plan3-title">보급 모코코 플랜(원정대 성장)</span>
                     <span class="status-badge">진행중</span>
                 </h3>
                 <span class="limit-badge" id="limit-badge-2">진행 횟수: 0 / 3회</span>
@@ -710,13 +710,13 @@
 
     <div class="stamp-board-section">
         <div class="board-title">
-            <span>🐾 [<span id="active-plan-name-display" style="color:var(--accent-lime);">보급 모코코 플랜</span>] 4일 진행 현황</span>
+            <span>🐾 [<span id="active-plan-name-display" style="color:var(--accent-lime);">대장 모코코 플랜(본캐 집중 육성)</span>] 4일 진행 현황</span>
             <span id="progress-text" style="color: var(--accent-gold); font-weight: bold;">0 / 4일 완료</span>
         </div>
         <div class="stamps-container">
             <div class="stamp-progress-line" id="progress-line" style="width: 0%;"></div>
             
-            <div class="stamp-slot active" id="stamp-1" onclick="selectDayToView(1)">
+            <div class="stamp-slot active focused" id="stamp-1" onclick="selectDayToView(1)">
                 <span class="stamp-icon">🌱</span>
                 <span style="font-size: 13px; font-weight: bold;">1일차</span>
                 <span class="stamp-label" contenteditable="true" id="txt-stamp1-label">1일차 도장</span>
@@ -728,7 +728,7 @@
                 <span class="stamp-label" contenteditable="true" id="txt-stamp2-label">2일차 도장</span>
             </div>
 
-            <div class="stamp-slot focused" id="stamp-3" onclick="selectDayToView(3)">
+            <div class="stamp-slot" id="stamp-3" onclick="selectDayToView(3)">
                 <span class="stamp-icon">🌱</span>
                 <span style="font-size: 13px; font-weight: bold;">3일차</span>
                 <span class="stamp-label" contenteditable="true" id="txt-stamp3-label">3일차 도장</span>
@@ -744,28 +744,39 @@
 
     <div class="bottom-section">
         <div class="panel-title">
-            <span>📋 <strong id="current-view-day-text" style="color: var(--accent-gold);">3일차</strong> 하위 미션 및 보상</span>
+            <span>📋 <strong id="current-view-day-text" style="color: var(--accent-gold);">1일차</strong> 하위 미션 및 보상</span>
             <button class="btn btn-add admin-only-btn" onclick="addHomeworkToActivePlan()">+ 하위 미션 추가</button>
         </div>
 
         <div class="day-reward-banner">
             <div class="day-reward-title">
-                <span>🎁 <span id="day-reward-label-day">3일차</span> 완주 보상:</span>
-                <span id="day-reward-text-display" contenteditable="true" onblur="updateDayRewardText(this.innerText)">🎁 카오스게이트 각인서 상자</span>
+                <span>🎁 <span id="day-reward-label-day">1일차</span> 완주 보상:</span>
+                <span id="day-reward-text-display" contenteditable="true" onblur="updateDayRewardText(this.innerText)">1일차 완료 보상 상자(재련 재료)</span>
             </div>
-            <div style="font-size: 12px; color: var(--text-muted); font-weight: normal;" id="day-reward-status-sub">(하위 미션 0/1 완료 시 자동 수령)</div>
+            <div style="font-size: 12px; color: var(--text-muted); font-weight: normal;" id="day-reward-status-sub">(하위 미션 0/2 완료 시 자동 수령)</div>
         </div>
 
         <div id="homework-list-container"><div class="homework-item ">
                 <div class="homework-info">
                     <span class="sub-mission-badge">하위 미션 1</span>
-                    <span class="homework-text" contenteditable="true" onblur="updateMissionText(2, 3, 305, this.innerText)">필드 보스 1회 수확</span>
+                    <span class="homework-text" contenteditable="true" onblur="updateMissionText(0, 1, 101, this.innerText)">카오스 던전 / 쿠르잔 전선/혼돈의 균열 -&nbsp; 1회 클리어</span>
                 </div>
                 <div style="display:flex; align-items:center;">
-                    <button class="btn" disabled="" onclick="toggleSubMission(3, 305)">
-                        이전 일차 미완료
+                    <button class="btn" onclick="toggleSubMission(1, 101)">
+                        미션 완료
                     </button>
-                    <button class="btn-del admin-only-btn" title="삭제" onclick="deleteSubMission(3, 305)">❌</button>
+                    <button class="btn-del admin-only-btn" title="삭제" onclick="deleteSubMission(1, 101)">❌</button>
+                </div>
+            </div><div class="homework-item ">
+                <div class="homework-info">
+                    <span class="sub-mission-badge">하위 미션 2</span>
+                    <span class="homework-text" contenteditable="true" onblur="updateMissionText(0, 1, 102, this.innerText)">가디언 토벌 1회 영혼 수확</span>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <button class="btn" onclick="toggleSubMission(1, 102)">
+                        미션 완료
+                    </button>
+                    <button class="btn-del admin-only-btn" title="삭제" onclick="deleteSubMission(1, 102)">❌</button>
                 </div>
             </div></div>
     </div>
@@ -773,7 +784,7 @@
     <div class="plan-cumulative-panel-compact">
         <div class="cumulative-info-compact">
             <h5>🎖️ 주간 플랜 완료 보너스:</h5>
-            <p contenteditable="true" id="txt-plan-bonus-desc">이벤트 기간 중 주간 플랜 N개 완료 달성 시 특별 칭호 [일숙의 대가] 지급!</p>
+            <p contenteditable="true" id="txt-plan-bonus-desc">이벤트 기간 중 주간 플랜 누적 6회 완료 달성 시 특별 칭호 [일숙의 대가] 지급!</p>
         </div>
         <div>
             <span class="cumulative-badge-compact" id="completed-plan-count-text">0 / 3개 달성</span>
