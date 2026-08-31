@@ -1,1446 +1,1011 @@
 <html lang="ko"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>모코코의 주간 계획표 - 웹 이벤트 Prototype v17</title>
+    <title>모코코 탐험대의 보물 인양 계획표 - 웹 이벤트 Prototype v37</title>
     <style>
         :root {
-            --bg-color: #0d1a12;
-            --panel-bg: rgba(22, 38, 28, 0.95);
-            --panel-border: #2e593a;
+            --bg-color: #08131d;
+            --panel-bg: rgba(14, 30, 45, 0.95);
+            --panel-border: #1e4a6d;
             --accent-green: #42e382;
             --accent-lime: #b0f566;
             --accent-gold: #ffd24d;
-            --text-color: #e8f5ec;
-            --text-muted: #8eb398;
+            --text-color: #e8f3f8;
+            --text-muted: #8eb3c7;
             --danger-red: #ff5e5e;
             --accent-blue: #4db8ff;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, sans-serif; }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            padding: 20px;
-            background-image: radial-gradient(circle at 50% 10%, #1a3824 0%, #0d1a12 80%);
+            background-color: var(--bg-color); color: var(--text-color);
+            display: flex; justify-content: center; align-items: flex-start;
+            min-height: 100vh; padding: 20px;
+            background-image: radial-gradient(circle at 50% 10%, #153854 0%, #08131d 80%);
         }
 
         .container {
-            width: 100%;
-            max-width: 1050px;
-            background: var(--panel-bg);
-            border: 2px solid var(--panel-border);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 12px 36px rgba(0,0,0,0.5);
-            backdrop-filter: blur(10px);
-            margin-bottom: 30px;
+            width: 100%; max-width: 1050px; background: var(--panel-bg);
+            border: 2px solid var(--panel-border); border-radius: 16px;
+            padding: 24px; box-shadow: 0 12px 36px rgba(0,0,0,0.6); margin-bottom: 30px;
         }
 
-        body.edit-mode [contenteditable="true"] {
-            outline: 1px dashed rgba(66, 227, 130, 0.4);
-            border-radius: 4px;
-            padding: 2px 6px;
-            transition: all 0.2s ease;
-        }
+        header { text-align: center; margin-bottom: 20px; border-bottom: 1px dashed var(--panel-border); padding-bottom: 16px; }
+        header h1 { color: var(--accent-blue); font-size: 28px; margin-bottom: 8px; text-shadow: 0 0 10px rgba(77, 184, 255, 0.3); }
+        header p { color: var(--text-muted); font-size: 14px; }
 
-        body.edit-mode [contenteditable="true"]:hover {
-            outline: 1px dashed var(--accent-green);
-            background: rgba(66, 227, 130, 0.1);
-        }
+        /* Admin Controls */
+        .admin-bar { background: rgba(0,0,0,0.5); padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; border: 1px dashed #356388; display: flex; flex-direction: column; gap: 12px; }
+        .admin-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .admin-section-box { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+        .admin-input-row { display: flex; gap: 8px; margin-top: 8px; }
+        .admin-input-row input[type="text"] { flex-grow: 1; background: #000; border: 1px solid var(--panel-border); color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 13px; }
+        .admin-input-row input[type="number"] { width: 90px; background: #000; border: 1px solid var(--panel-border); color: var(--accent-gold); font-weight: bold; padding: 6px; border-radius: 6px; font-size: 13px; text-align: center; }
+        .admin-tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        .admin-tag { background: rgba(77, 184, 255, 0.15); border: 1px solid var(--accent-blue); color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+        .admin-tag span { cursor: pointer; color: var(--danger-red); font-weight: bold; }
 
-        body.edit-mode [contenteditable="true"]:focus {
-            outline: 2px solid var(--accent-gold);
-            background: rgba(255, 210, 77, 0.15);
-            color: #fff;
-        }
+        .admin-tab-group { display: flex; gap: 6px; margin-top: 8px; }
+        .admin-tab-btn { background: rgba(0,0,0,0.4); border: 1px solid var(--panel-border); color: var(--text-muted); padding: 5px 12px; font-size: 11px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .admin-tab-btn.active { background: var(--accent-gold); color: #000; border-color: var(--accent-gold); }
+        .admin-tab-btn.active-pool { background: var(--accent-blue); color: #000; border-color: var(--accent-blue); }
 
-        body.published-mode [contenteditable="true"] {
-            outline: none !important;
-            background: transparent !important;
-            padding: 0 !important;
-        }
+        .admin-mission-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+        .admin-mission-item { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 6px; font-size: 12px; border: 1px solid rgba(255,255,255,0.05); }
 
-        .control-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.35);
-            border: 1px solid var(--panel-border);
-            border-radius: 10px;
-            padding: 10px 16px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+        .btn { background: var(--accent-blue); color: #08131d; border: none; padding: 6px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; }
+        .btn:hover { opacity: 0.9; transform: scale(1.02); }
+        .btn:disabled { background: #1c3344; color: #507188; cursor: not-allowed; transform: none; }
+        .btn-del { background: transparent; border: 1px solid var(--danger-red); color: var(--danger-red); padding: 4px 8px; font-size: 11px; border-radius: 4px; cursor: pointer; }
+        .btn-publish { background: var(--accent-lime); color: #0d1a12; font-weight: 800; }
+        .btn-save { background: var(--accent-gold); color: #000; }
 
-        .mode-badge {
-            font-size: 11px;
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-weight: bold;
-            margin-left: 6px;
-        }
-
-        .mode-badge.edit {
-            background: var(--accent-gold);
-            color: #000;
-        }
-
-        .mode-badge.published {
-            background: var(--accent-green);
-            color: #000;
-        }
-
-        .control-btns {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 1px dashed var(--panel-border);
-            padding-bottom: 16px;
-        }
-
-        header h1 {
-            color: var(--accent-lime);
-            font-size: 28px;
-            letter-spacing: -0.5px;
-            margin-bottom: 8px;
-            display: inline-block;
-        }
-
-        header p {
-            color: var(--text-muted);
-            font-size: 14px;
-        }
-
-        .plan-selection {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
+        .plan-selection { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
         .plan-card {
-            background: rgba(0, 0, 0, 0.25);
-            border: 2px solid var(--panel-border);
-            border-radius: 12px;
-            padding: 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.3); border: 2px solid var(--panel-border);
+            border-radius: 12px; padding: 16px; cursor: pointer; transition: all 0.2s ease;
+            display: flex; flex-direction: column; justify-content: space-between;
         }
-
-        .plan-card:hover {
-            border-color: var(--accent-green);
-            transform: translateY(-2px);
-        }
-
-        .plan-card.selected {
-            background: rgba(255, 255, 255, 0.05);
-            box-shadow: 0 0 16px rgba(255, 255, 255, 0.1);
-        }
-
-        .plan-card.active-plan {
-            border-color: var(--accent-lime) !important;
-            background: rgba(66, 227, 130, 0.08);
-            box-shadow: 0 0 16px rgba(66, 227, 130, 0.2);
-        }
-
-        .plan-card.disabled-plan {
-            opacity: 0.6;
-            filter: grayscale(0.4);
-        }
-
-        .plan-card h3 {
-            font-size: 16px;
-            color: #fff;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .status-badge {
-            font-size: 11px;
-            background: var(--accent-lime);
-            color: #0b1a10;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-weight: bold;
-            display: none;
-            box-shadow: 0 0 8px rgba(176, 245, 102, 0.4);
-        }
-
-        .plan-card.active-plan .status-badge {
-            display: inline-block;
-        }
+        .plan-card:hover:not(.locked-card) { border-color: var(--accent-blue); transform: translateY(-2px); }
+        .plan-card.active-plan { border-color: var(--accent-gold) !important; background: rgba(255, 210, 77, 0.08); }
+        .plan-card.locked-card { opacity: 0.4; cursor: not-allowed; filter: grayscale(0.6); }
 
         .limit-badge {
-            font-size: 11px;
-            color: var(--accent-gold);
-            background: rgba(255, 210, 77, 0.12);
-            padding: 2px 8px;
-            border-radius: 6px;
-            border: 1px solid rgba(255, 210, 77, 0.3);
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: inline-block;
-            align-self: flex-start;
+            font-size: 11px; color: var(--accent-gold); background: rgba(255, 210, 77, 0.12);
+            padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(255, 210, 77, 0.3);
+            display: inline-block; margin-bottom: 8px; align-self: flex-start;
         }
 
-        .limit-badge.maxed {
-            color: var(--danger-red);
-            background: rgba(255, 94, 94, 0.15);
-            border-color: rgba(255, 94, 94, 0.4);
-        }
-
-        .plan-card p {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-
-        .plan-reward-box {
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px dashed rgba(255, 255, 255, 0.1);
-        }
-
-        .reward-tag {
-            font-size: 12px;
-            color: var(--accent-gold);
-            background: rgba(255, 210, 77, 0.1);
-            padding: 4px 8px;
-            border-radius: 6px;
-            display: inline-block;
-            border: 1px solid rgba(255, 210, 77, 0.2);
-        }
-
-        .stamp-board-section {
-            background: rgba(0, 0, 0, 0.35);
-            border: 1px solid var(--panel-border);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 24px;
-        }
-
-        .board-title {
-            font-size: 15px;
-            margin-bottom: 18px;
-            color: var(--accent-lime);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .stamps-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            position: relative;
-            padding: 10px 0;
-        }
-
-        .stamps-container::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50px;
-            right: 50px;
-            height: 4px;
-            background: var(--panel-border);
-            z-index: 1;
-            transform: translateY(-50%);
-        }
-
-        .stamp-progress-line {
-            position: absolute;
-            top: 50%;
-            left: 50px;
-            height: 4px;
-            background: var(--accent-green);
-            z-index: 1;
-            transform: translateY(-50%);
-            transition: width 0.3s ease;
-            width: 0%;
-        }
-
+        .stamp-board-section { background: rgba(0, 0, 0, 0.35); border: 1px solid var(--panel-border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .board-title { font-size: 15px; margin-bottom: 18px; color: var(--accent-blue); display: flex; justify-content: space-between; }
+        .stamps-container { display: flex; justify-content: space-around; position: relative; padding: 10px 0; }
+        .stamps-container::before { content: ''; position: absolute; top: 50%; left: 50px; right: 50px; height: 4px; background: var(--panel-border); z-index: 1; transform: translateY(-50%); }
+        .stamp-progress-line { position: absolute; top: 50%; left: 50px; height: 4px; background: var(--accent-blue); z-index: 1; transform: translateY(-50%); transition: width 0.3s; width: 0%; }
         .stamp-slot {
-            width: 68px;
-            height: 68px;
-            border-radius: 16px;
-            background: #122116;
-            border: 2px dashed var(--panel-border);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 2;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            color: var(--text-muted);
+            width: 68px; height: 68px; border-radius: 16px; background: #0a1b28; border: 2px dashed var(--panel-border);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2; color: var(--text-muted);
         }
+        .stamp-slot.completed { background: rgba(77, 184, 255, 0.2); border: 2px solid var(--accent-blue); color: #fff; }
+        .stamp-slot.active { border: 2px solid var(--accent-gold); background: #182e3f; color: #fff; box-shadow: 0 0 12px rgba(255, 210, 77, 0.3); }
 
-        .stamp-slot.completed {
-            background: rgba(66, 227, 130, 0.15);
-            border: 2px solid var(--accent-green);
-            color: #fff;
+        .locked-wrapper { position: relative; border-radius: 12px; overflow: hidden; }
+        .blind-overlay {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(8, 19, 29, 0.9); backdrop-filter: blur(4px); z-index: 50;
+            justify-content: center; align-items: center; flex-direction: column;
+            border-radius: 12px; border: 2px dashed var(--panel-border);
         }
+        .blind-overlay.show { display: flex; }
+        .blind-msg { color: var(--accent-gold); font-size: 15px; font-weight: bold; text-align: center; line-height: 1.6; }
 
-        .stamp-icon {
-            font-size: 22px;
-            margin-bottom: 2px;
-            display: none;
-        }
-
-        .stamp-slot.completed .stamp-icon {
-            display: block;
-        }
-
-        .stamp-slot.active {
-            border: 2px solid var(--accent-gold);
-            background: #1c3323;
-            color: #fff;
-            box-shadow: 0 0 12px rgba(255, 210, 77, 0.3);
-        }
-
-        .stamp-slot.focused {
-            outline: 3px solid var(--accent-lime);
-            outline-offset: 4px;
-        }
-
-        .stamp-label {
-            position: absolute;
-            top: 74px;
-            font-size: 12px;
-            white-space: nowrap;
-            color: var(--text-muted);
-        }
-
-        .bottom-section {
-            background: rgba(0,0,0,0.2);
-            border: 1px solid var(--panel-border);
-            border-radius: 12px;
-            padding: 18px;
-            margin-bottom: 24px;
-        }
-
-        .panel-title {
-            font-size: 14px;
-            color: var(--accent-green);
-            margin-bottom: 14px;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            padding-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .day-reward-banner {
-            background: rgba(255, 210, 77, 0.08);
-            border: 1px solid var(--accent-gold);
-            border-radius: 8px;
-            padding: 10px 14px;
-            margin-bottom: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-        }
-
-        .day-reward-title {
-            color: var(--accent-gold);
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
+        .middle-grid { display: grid; grid-template-columns: 1fr 340px; gap: 16px; margin-bottom: 24px; position: relative; }
+        .bottom-section { background: rgba(0,0,0,0.2); border: 1px solid var(--panel-border); border-radius: 12px; padding: 18px; }
+        .panel-title { font-size: 14px; color: var(--accent-blue); margin-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .homework-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 14px;
-            background: rgba(0,0,0,0.25);
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.03);
-            font-size: 13px;
-            margin-bottom: 8px;
-            gap: 12px;
+            display: flex; justify-content: space-between; align-items: center; padding: 12px;
+            background: rgba(0,0,0,0.25); border-radius: 8px; border: 1px solid rgba(255,255,255,0.03); font-size: 13px; margin-bottom: 8px;
         }
+        .homework-item.completed { border-color: rgba(77, 184, 255, 0.3); background: rgba(77, 184, 255, 0.08); }
 
-        .homework-item.completed {
-            border-color: rgba(66, 227, 130, 0.3);
-            background: rgba(66, 227, 130, 0.05);
-        }
-
-        .homework-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .homework-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-grow: 1;
-        }
-
-        .homework-text {
-            font-weight: 500;
-        }
-
-        .sub-mission-badge {
-            font-size: 11px;
-            color: var(--accent-lime);
-            background: rgba(176, 245, 102, 0.1);
-            padding: 2px 6px;
-            border-radius: 4px;
-            border: 1px solid rgba(176, 245, 102, 0.2);
-            white-space: nowrap;
-        }
-
-        .plan-cumulative-panel-compact {
-            background: rgba(255, 210, 77, 0.05);
-            border: 1px dashed rgba(255, 210, 77, 0.4);
-            border-radius: 10px;
-            padding: 10px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 12px;
-        }
-
-        .cumulative-info-compact {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .cumulative-info-compact h5 {
-            font-size: 13px;
-            color: var(--accent-gold);
-            white-space: nowrap;
-        }
-
-        .cumulative-info-compact p {
-            color: var(--text-muted);
-        }
-
-        .cumulative-badge-compact {
-            background: var(--accent-gold);
-            color: #000;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 12px;
-            white-space: nowrap;
-        }
-
-        .btn {
-            background: var(--accent-green);
-            color: #0b1a10;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-        }
-
-        .btn:hover {
-            opacity: 0.9;
-            transform: scale(1.02);
-        }
-
-        .btn:disabled {
-            background: #233b2a;
-            color: #5d7a65;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-publish {
-            background: var(--accent-lime);
-            color: #0d1a12;
-            font-weight: 800;
-        }
-
-        .btn-edit-toggle {
-            background: rgba(255, 210, 77, 0.2);
-            border: 1px solid var(--accent-gold);
-            color: var(--accent-gold);
-        }
-
-        .btn-edit {
-            background: var(--accent-gold);
-            color: #000;
-        }
+        .salvage-panel { background: #05101a; border: 2px solid var(--panel-border); border-radius: 12px; padding: 16px; text-align: center; }
+        .salvage-panel h3 { color: var(--accent-gold); font-size: 16px; margin-bottom: 12px; }
+        .coin-display { font-size: 16px; font-weight: bold; color: var(--accent-gold); margin-bottom: 12px; background: rgba(255,210,77,0.1); padding: 8px; border-radius: 8px; border: 1px solid rgba(255,210,77,0.2); }
         
-        .btn-test {
-            background: rgba(77, 184, 255, 0.2);
-            color: var(--accent-blue);
-            border: 1px solid var(--accent-blue);
+        .salvage-stage {
+            width: 100%; height: 210px; background: linear-gradient(180deg, #184163 0%, #0c263d 30%, #030e1a 100%);
+            border: 2px inset #1e4a6d; border-radius: 8px; margin-bottom: 12px; position: relative; overflow: hidden;
+        }
+        .sea-water { position: absolute; top: 55px; left: 0; width: 100%; height: 155px; background: rgba(0, 100, 180, 0.25); }
+        .sea-wave { position: absolute; top: 50px; left: 0; width: 200%; height: 12px; background: repeating-linear-gradient(90deg, transparent 0, transparent 20px, rgba(255,255,255,0.2) 20px, rgba(255,255,255,0.2) 40px); animation: waveMove 3s linear infinite; }
+        @keyframes waveMove { 0% { transform: translateX(0); } 100% { transform: translateX(-40px); } }
+
+        .ship-body {
+            position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
+            width: 140px; height: 35px; background: #8B4513; border-radius: 0 0 40px 10px; border: 2px solid #5c2d0c; z-index: 5;
+            box-shadow: inset 0 -4px 0 rgba(0,0,0,0.3);
+            animation: shipSway 3s ease-in-out infinite alternate;
+        }
+        .ship-mast { position: absolute; bottom: 33px; left: 40px; width: 6px; height: 38px; background: #5c2d0c; }
+        .ship-sail { position: absolute; bottom: 45px; left: 46px; width: 25px; height: 22px; background: #ff79c6; border-radius: 2px 10px 10px 2px; }
+        .ship-crane-arm { position: absolute; bottom: 25px; right: -15px; width: 40px; height: 4px; background: #d4af37; transform: rotate(-25deg); transform-origin: left bottom; }
+
+        @keyframes shipSway { 0% { transform: translateX(-50%) rotate(-1.5deg); } 100% { transform: translateX(-50%) rotate(1.5deg); } }
+
+        .crane-line {
+            position: absolute; top: 32px; right: 88px; width: 2px; height: 0px; background: #aaa; z-index: 4;
+            transition: height 1s ease-in-out;
+        }
+        .hook-head {
+            position: absolute; bottom: -12px; left: -7px; width: 16px; height: 14px;
+            border: 2px solid var(--accent-gold); border-top: none; border-radius: 0 0 8px 8px;
+        }
+        .chest-box {
+            display: none; position: absolute; bottom: -32px; left: -16px; width: 34px; height: 22px;
+            background: #d4af37; border: 2px solid #6d5306; border-radius: 4px; text-align: center; font-size: 10px; color: #000; font-weight: bold; line-height: 18px;
+            box-shadow: 0 0 10px var(--accent-gold);
         }
 
-        .btn-add {
-            background: rgba(66, 227, 130, 0.15);
-            color: var(--accent-green);
-            border: 1px dashed var(--accent-green);
-            font-size: 12px;
-            padding: 4px 10px;
-        }
+        .btn-salvage { background: linear-gradient(180deg, #4db8ff, #0066cc); color: #fff; font-size: 13px; padding: 10px 16px; width: 100%; border: 1px solid #80ccff; box-shadow: 0 4px 0 #004080; margin-bottom: 6px; font-weight: bold; cursor: pointer; border-radius: 8px; }
+        .btn-salvage:active:not(:disabled) { transform: translateY(4px); box-shadow: none; }
+        .btn-salvage:disabled { background: #334e63; border-color: #223442; box-shadow: none; color: #607d94; cursor: not-allowed; }
 
-        body.published-mode .admin-only-btn {
-            display: none !important;
-        }
+        .btn-bulk-salvage { background: linear-gradient(180deg, #b0f566, #5eb800); color: #000; font-size: 13px; padding: 10px 16px; width: 100%; border: 1px solid #d0ff99; box-shadow: 0 4px 0 #3a7300; margin-bottom: 8px; font-weight: 800; cursor: pointer; border-radius: 8px; }
+        .btn-bulk-salvage:active:not(:disabled) { transform: translateY(4px); box-shadow: none; }
+        .btn-bulk-salvage:disabled { background: #334e63; border-color: #223442; box-shadow: none; color: #607d94; cursor: not-allowed; }
 
-        .btn-del {
-            background: transparent;
-            border: 1px solid rgba(255, 94, 94, 0.4);
-            color: var(--danger-red);
-            padding: 2px 6px;
-            font-size: 11px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-left: 6px;
-        }
+        .btn-status-check { background: rgba(255, 210, 77, 0.15); border: 1px solid var(--accent-gold); color: var(--accent-gold); font-size: 12px; padding: 8px 12px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 4px; transition: all 0.2s; }
+        .btn-status-check:hover { background: rgba(255, 210, 77, 0.3); }
 
-        .btn-reset {
-            background: transparent;
-            border: 1px solid var(--danger-red);
-            color: var(--danger-red);
-        }
+        /* General Custom Modals */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-overlay.open { display: flex; }
+        .modal-content { background: #0e1e2d; border: 2px solid var(--panel-border); border-radius: 16px; width: 90%; max-width: 560px; padding: 24px; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+        
+        .limit-status-box { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; border: 1px solid var(--panel-border); margin: 12px 0; text-align: center; }
+        .limit-status-text { font-size: 15px; font-weight: bold; color: var(--accent-lime); }
+        .limit-status-text.exceeded { color: var(--danger-red); }
 
-        .btn-save {
-            background: var(--accent-green);
-            color: #000;
-        }
+        .user-reward-setting-list { list-style: none; margin: 12px 0; max-height: 260px; overflow-y: auto; }
+        .user-reward-setting-list li { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.05); }
+        .qty-picker { display: flex; align-items: center; gap: 6px; }
+        .qty-picker input[type="number"] { width: 70px; background: #000; border: 1px solid var(--panel-border); color: var(--accent-gold); font-weight: bold; font-size: 14px; text-align: center; padding: 4px; border-radius: 6px; }
 
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
-        }
+        /* Reward Status Board UI Grid */
+        .status-grid { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; max-height: 300px; overflow-y: auto; }
+        .status-item-row { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.35); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); }
+        .status-badge { font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+        .status-badge.obtained { background: rgba(66, 227, 130, 0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
+        .status-badge.remaining { background: rgba(255, 210, 77, 0.15); color: var(--accent-gold); border: 1px solid var(--accent-gold); }
 
-        .modal-overlay.open {
-            display: flex;
-        }
-
-        .modal-content {
-            background: #14241a;
-            border: 2px solid var(--panel-border);
-            border-radius: 16px;
-            width: 90%;
-            max-width: 900px;
-            max-height: 85vh;
-            overflow-y: auto;
-            padding: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--panel-border);
-            padding-bottom: 12px;
-            margin-bottom: 16px;
-        }
-
-        .modal-header h2 {
-            font-size: 18px;
-            color: var(--accent-lime);
-        }
-
-        .modal-plan-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .modal-tab {
-            padding: 8px 16px;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid var(--panel-border);
-            border-radius: 8px;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .modal-tab.active {
-            background: rgba(66, 227, 130, 0.15);
-            border-color: var(--accent-green);
-            color: var(--accent-lime);
-            font-weight: bold;
-        }
-
-        .modal-day-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-        }
-
-        .modal-day-box {
-            background: rgba(0,0,0,0.25);
-            border: 1px solid var(--panel-border);
-            border-radius: 10px;
-            padding: 12px;
-        }
-
-        .modal-day-title {
-            font-size: 13px;
-            font-weight: bold;
-            color: var(--accent-gold);
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .edit-row {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            margin-bottom: 8px;
-            padding: 8px;
-            background: rgba(255,255,255,0.02);
-            border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .edit-input {
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--panel-border);
-            border-radius: 4px;
-            color: #fff;
-            padding: 6px 8px;
-            font-size: 12px;
-            width: 100%;
-        }
-
-        .edit-input:focus {
-            outline: none;
-            border-color: var(--accent-green);
-        }
+        body.published-mode .admin-bar { display: none !important; }
     </style>
 </head>
 <body class="edit-mode">
 
 <div class="container">
-    <div class="control-bar">
-        <div class="control-info" id="control-info-text">
-            <span>⚙️ <strong>관리자 센터:</strong></span>
-            <span class="mode-badge edit" id="current-mode-badge">기획자 편집 모드 ON</span>
+    <!-- Admin Settings Bar -->
+    <div class="admin-bar">
+        <div class="admin-top">
+            <div>
+                <span style="font-size:12px; color:#aaa;">⚙️ <strong>관리자 모드:</strong></span>
+                <span class="mode-badge edit" id="current-mode-badge" style="background:var(--accent-gold); color:#000; font-size:11px; padding:2px 6px; border-radius:4px; font-weight:bold;">편집 모드 ON</span>
+            </div>
+            <div class="admin-btns" style="display:flex; gap:6px;">
+                <button class="btn btn-save" onclick="saveStateToStorage()">수정 저장 💾</button>
+                <button class="btn btn-publish" id="btn-publish-toggle" onclick="publishAndLock()">최종 발행 &amp; 다운로드 🚀</button>
+                <button class="btn btn-blue" onclick="forceReset()">수요일 06:00 초기화</button>
+            </div>
         </div>
-        <div class="control-btns">
-            <button class="btn btn-test admin-only-btn" onclick="simulatePreHomework()">사전 일숙 완료(테스트)</button>
-            <button class="btn btn-test admin-only-btn" onclick="simulateWeeklyReset()">수요일 06:00 초기화(테스트)</button>
-            <button class="btn btn-edit admin-only-btn" onclick="openModal()">일괄 편집 📝</button>
-            <button class="btn btn-save admin-only-btn" onclick="saveAllData()">수정 저장 💾</button>
-            <button class="btn btn-publish" id="btn-publish-toggle" onclick="publishAndLock()">이벤트 최종 발행 🚀</button>
-            <button class="btn btn-reset admin-only-btn" onclick="resetAllData()">진행 초기화 🔄</button>
+        
+        <!-- Admin Master Pool Manager -->
+        <div class="admin-section-box">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:12px; color:var(--accent-blue); font-weight:bold;">🛠️ [관리자 영역] 플랜별 보물 풀 &amp; 개별/총 획득 제한 설정</span>
+                <div style="display:flex; align-items:center; gap:6px; font-size:12px;">
+                    <span>🎯 플랜 선택 총 수량 제한:</span>
+                    <input type="number" id="admin-total-pool-limit" value="20" min="1" max="100" style="width:60px; background:#000; border:1px solid var(--panel-border); color:var(--accent-gold); font-weight:bold; padding:4px; border-radius:4px; text-align:center;" onchange="updateTotalPoolLimit(this.value)">
+                    <span>개</span>
+                </div>
+            </div>
+            <div class="admin-tab-group">
+                <button class="admin-tab-btn active-pool" id="aptab-0" onclick="switchAdminPoolTab(0)">플랜 A 보물 풀</button>
+                <button class="admin-tab-btn" id="aptab-1" onclick="switchAdminPoolTab(1)">플랜 B 보물 풀</button>
+                <button class="admin-tab-btn" id="aptab-2" onclick="switchAdminPoolTab(2)">플랜 C 보물 풀</button>
+            </div>
+            <div class="admin-input-row">
+                <input type="text" id="admin-item-name-input" placeholder="보물 아이템명 입력">
+                <input type="number" id="admin-item-max-input" value="5" min="1" max="50" placeholder="개별 최대 제한 수량">
+                <button class="btn" onclick="addAdminPoolItem()">보물 추가</button>
+            </div>
+            <div class="admin-tag-list" id="admin-tag-list-ui"><div class="admin-tag">💎 운명의 파괴석 주머니 III x 5 <strong style="color:var(--accent-gold); margin-left:4px;">(최대 6개)</strong> <span onclick="deleteAdminPoolItem(0)">✕</span></div><div class="admin-tag">💎 운명의 수호석 주머니 III x 10 <strong style="color:var(--accent-gold); margin-left:4px;">(최대 6개)</strong> <span onclick="deleteAdminPoolItem(1)">✕</span></div><div class="admin-tag">💎 운명의 파편 주머니(중) x 5 <strong style="color:var(--accent-gold); margin-left:4px;">(최대 10개)</strong> <span onclick="deleteAdminPoolItem(2)">✕</span></div><div class="admin-tag">💎 재련 돌파석 선택 상자 IX x 5 <strong style="color:var(--accent-gold); margin-left:4px;">(최대 10개)</strong> <span onclick="deleteAdminPoolItem(3)">✕</span></div><div class="admin-tag">💎 재봉술 선택 상자 V x 1 <strong style="color:var(--accent-gold); margin-left:4px;">(최대 10개)</strong> <span onclick="deleteAdminPoolItem(4)">✕</span></div><div class="admin-tag">💎 야금술 선택 상자 V x 1 <strong style="color:var(--accent-gold); margin-left:4px;">(최대 5개)</strong> <span onclick="deleteAdminPoolItem(5)">✕</span></div><div class="admin-tag">💎 루페온의 빛이 깃든 화폐 상자 x 1 <strong style="color:var(--accent-gold); margin-left:4px;">(최대 10개)</strong> <span onclick="deleteAdminPoolItem(6)">✕</span></div></div>
+        </div>
+
+        <!-- Admin Daily Missions Manager -->
+        <div class="admin-section-box">
+            <span style="font-size:12px; color:var(--accent-gold); font-weight:bold;">📋 [관리자 영역] 플랜별 일일 미션 설정 (일일 최대 획득 캡: 3P)</span>
+            <div class="admin-tab-group">
+                <button class="admin-tab-btn active" id="atab-0" onclick="switchAdminMissionTab(0)">플랜 A 미션</button>
+                <button class="admin-tab-btn" id="atab-1" onclick="switchAdminMissionTab(1)">플랜 B 미션</button>
+                <button class="admin-tab-btn" id="atab-2" onclick="switchAdminMissionTab(2)">플랜 C 미션</button>
+            </div>
+            <div class="admin-input-row">
+                <input type="text" id="admin-mission-text-input" placeholder="선택한 플랜의 일일 미션 내용 입력">
+                <input type="number" id="admin-mission-coin-input" value="1" min="1" max="3" placeholder="포인트">
+                <button class="btn btn-save" onclick="addAdminMissionItem()">미션 추가</button>
+            </div>
+            <div class="admin-mission-list" id="admin-mission-list-ui"><div class="admin-mission-item">
+                <span>📋 게임 플레이 30분 달성 시 <strong style="color:var(--accent-gold);">(+1 P)</strong></span>
+                <button class="btn-del" onclick="deleteAdminMissionItem(0)">삭제</button>
+            </div><div class="admin-mission-item">
+                <span>📋 카오스 던전/쿠르잔 전선/혼돈의 균열 클리어 - 1회 <strong style="color:var(--accent-gold);">(+1 P)</strong></span>
+                <button class="btn-del" onclick="deleteAdminMissionItem(1)">삭제</button>
+            </div><div class="admin-mission-item">
+                <span>📋 가디언 토벌 (가디언의 의지 수집) - 1회 <strong style="color:var(--accent-gold);">(+1 P)</strong></span>
+                <button class="btn-del" onclick="deleteAdminMissionItem(2)">삭제</button>
+            </div><div class="admin-mission-item">
+                <span>📋 군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회 <strong style="color:var(--accent-gold);">(+2 P)</strong></span>
+                <button class="btn-del" onclick="deleteAdminMissionItem(3)">삭제</button>
+            </div></div>
         </div>
     </div>
 
     <header>
-        <h1 contenteditable="true" id="txt-header-title">🌱 모코코 위클리 플랜</h1>
-        <p contenteditable="true" id="txt-header-sub">원하는 주간 플랜을 고르고, 4일간 일일 숙제를 완료해 특화 보상을 획득하세요!</p>
+        <h1 contenteditable="true" id="header-title" onblur="saveHeaderTexts()">⚓ 모코코의 해저 보물 인양 대작전</h1>
+        <p contenteditable="true" id="header-sub" onblur="saveHeaderTexts()">원하는 탐사 플랜을 선택하고 보물별 인양 개수를 설정한 뒤, 인양 포인트로 크레인을 내려 보물을 끌어올리세요!</p>
     </header>
 
     <div class="plan-selection">
-        <div class="plan-card" id="pcard-0" onclick="selectPlan(0)">
+        <div class="plan-card" id="pcard-0" onclick="handleCardClick(0, event)">
             <div>
-                <h3>
-                    <span contenteditable="true" id="txt-plan1-title">대장 모코코 플랜(본캐 집중 육성)</span> 
-                    <span class="status-badge">진행중 (이번주)</span>
-                </h3>
+                <div class="plan-title-edit-box" style="display:flex; justify-content:space-between;">
+                    <span class="plan-title-text" contenteditable="true" id="txt-plan-0" onblur="updatePlanName(0, this.innerText)" onclick="event.stopPropagation()">플랜 A (심해 심층 탐사)</span>
+                </div>
                 <span class="limit-badge" id="limit-badge-0">진행 횟수: 0 / 4회</span>
-                <p contenteditable="true" id="txt-plan1-desc">핵심 성장 재료 특화</p>
+                <p style="font-size:13px; color:var(--text-muted);" id="desc-plan-0" contenteditable="true" onblur="updatePlanDesc(0, this.innerText)" onclick="event.stopPropagation()">고급 성과물 집중 인양</p>
             </div>
-            <div class="plan-reward-box">
-                <span style="font-size: 11px; color: var(--text-muted);">플랜 완주 보상:</span>
-                <div class="reward-tag" contenteditable="true" id="txt-plan1-reward">🎁 파괴석/수호석/돌파석 상자</div>
-            </div>
+            <div style="font-size:12px; color:var(--accent-blue); margin-top:8px; padding-top:8px; border-top:1px dashed rgba(255,255,255,0.1);">✨ 인양 횟수 세팅 가능</div>
         </div>
 
-        <div class="plan-card" id="pcard-1" onclick="selectPlan(1)">
+        <div class="plan-card" id="pcard-1" onclick="handleCardClick(1, event)">
             <div>
-                <h3>
-                    <span contenteditable="true" id="txt-plan2-title">정예 모코코 플랜(부캐 집중 육성)</span>
-                    <span class="status-badge">진행중 (이번주)</span>
-                </h3>
+                <div class="plan-title-edit-box" style="display:flex; justify-content:space-between;">
+                    <span class="plan-title-text" contenteditable="true" id="txt-plan-1" onblur="updatePlanName(1, this.innerText)" onclick="event.stopPropagation()">플랜 B (연안 표준 탐사)</span>
+                </div>
                 <span class="limit-badge" id="limit-badge-1">진행 횟수: 0 / 3회</span>
-                <p contenteditable="true" id="txt-plan2-desc">보조 성장 재료 특화</p>
+                <p style="font-size:13px; color:var(--text-muted);" id="desc-plan-1" contenteditable="true" onblur="updatePlanDesc(1, this.innerText)" onclick="event.stopPropagation()">균형 잡힌 재화 구성</p>
             </div>
-            <div class="plan-reward-box">
-                <span style="font-size: 11px; color: var(--text-muted);">플랜 완주 보상:</span>
-                <div class="reward-tag" contenteditable="true" id="txt-plan2-reward">🎁 아크 그리드 / 보조 재료</div>
-            </div>
+            <div style="font-size:12px; color:var(--accent-blue); margin-top:8px; padding-top:8px; border-top:1px dashed rgba(255,255,255,0.1);">✨ 인양 횟수 세팅 가능</div>
         </div>
 
-        <div class="plan-card" id="pcard-2" onclick="selectPlan(2)">
+        <div class="plan-card" id="pcard-2" onclick="handleCardClick(2, event)">
             <div>
-                <h3>
-                    <span contenteditable="true" id="txt-plan3-title">보급 모코코 플랜(원정대 성장)</span>
-                    <span class="status-badge">진행중 (이번주)</span>
-                </h3>
-                <span class="limit-badge" id="limit-badge-2">진행 횟수: 0 / 2회</span>
-                <p contenteditable="true" id="txt-plan3-desc">내실, 실링, 생활, 귀속골드 특화</p>
+                <div class="plan-title-edit-box" style="display:flex; justify-content:space-between;">
+                    <span class="plan-title-text" contenteditable="true" id="txt-plan-2" onblur="updatePlanName(2, this.innerText)" onclick="event.stopPropagation()">플랜 C (내해 경량 탐사)</span>
+                </div>
+                <span class="limit-badge" id="limit-badge-2">진행 횟수: 0 / 3회</span>
+                <p style="font-size:13px; color:var(--text-muted);" id="desc-plan-2" contenteditable="true" onblur="updatePlanDesc(2, this.innerText)" onclick="event.stopPropagation()">실속형 보상 탐사</p>
             </div>
-            <div class="plan-reward-box">
-                <span style="font-size: 11px; color: var(--text-muted);">플랜 완주 보상:</span>
-                <div class="reward-tag" contenteditable="true" id="txt-plan3-reward">🎁 실링 / 귀속 골드 상자</div>
-            </div>
+            <div style="font-size:12px; color:var(--accent-blue); margin-top:8px; padding-top:8px; border-top:1px dashed rgba(255,255,255,0.1);">✨ 인양 횟수 세팅 가능</div>
         </div>
     </div>
 
     <div class="stamp-board-section">
         <div class="board-title">
-            <span>🐾 [<span id="active-plan-name-display" style="color:var(--accent-lime);">대장 모코코 플랜(본캐 집중 육성)</span>] 4일 진행 현황</span>
+            <span>🐾 항해 및 인양 진행 현황 (<span id="active-plan-name" style="color:#fff;">선택 안됨</span>)</span>
             <span id="progress-text" style="color: var(--accent-gold); font-weight: bold;">0 / 4일 완료</span>
         </div>
         <div class="stamps-container">
             <div class="stamp-progress-line" id="progress-line" style="width: 0%;"></div>
-            
-            <div class="stamp-slot active focused" id="stamp-1" onclick="selectDayToView(1)">
-                <span class="stamp-icon">🌱</span>
-                <span style="font-size: 13px; font-weight: bold;">1일차</span>
-                <span class="stamp-label" contenteditable="true" id="txt-stamp1-label">1일차 도장</span>
-            </div>
-
-            <div class="stamp-slot" id="stamp-2" onclick="selectDayToView(2)">
-                <span class="stamp-icon">🌱</span>
-                <span style="font-size: 13px; font-weight: bold;">2일차</span>
-                <span class="stamp-label" contenteditable="true" id="txt-stamp2-label">2일차 도장</span>
-            </div>
-
-            <div class="stamp-slot" id="stamp-3" onclick="selectDayToView(3)">
-                <span class="stamp-icon">🌱</span>
-                <span style="font-size: 13px; font-weight: bold;">3일차</span>
-                <span class="stamp-label" contenteditable="true" id="txt-stamp3-label">3일차 도장</span>
-            </div>
-
-            <div class="stamp-slot" id="stamp-4" onclick="selectDayToView(4)">
-                <span class="stamp-icon">⭐</span>
-                <span style="font-size: 13px; font-weight: bold;">4일차</span>
-                <span class="stamp-label" contenteditable="true" id="txt-stamp4-label">플랜 완주</span>
-            </div>
+            <div class="stamp-slot active" id="stamp-1"><span style="font-size: 13px; font-weight: bold;">1일차</span></div>
+            <div class="stamp-slot" id="stamp-2"><span style="font-size: 13px; font-weight: bold;">2일차</span></div>
+            <div class="stamp-slot" id="stamp-3"><span style="font-size: 13px; font-weight: bold;">3일차</span></div>
+            <div class="stamp-slot" id="stamp-4"><span style="font-size: 13px; font-weight: bold;">4일차<br>(완주)</span></div>
         </div>
     </div>
 
-    <div class="bottom-section">
-        <div class="panel-title">
-            <span>📋 <strong id="current-view-day-text" style="color: var(--accent-gold);">1일차</strong> 하위 미션 및 보상</span>
-            <button class="btn btn-add admin-only-btn" onclick="addHomeworkToActivePlan()">+ 하위 미션 추가</button>
-        </div>
-
-        <div class="day-reward-banner">
-            <div class="day-reward-title">
-                <span>🎁 <span id="day-reward-label-day">1일차</span> 완주 보상:</span>
-                <span id="day-reward-text-display" contenteditable="true" onblur="updateDayRewardText(this.innerText)">1일차 완료 보상 상자(재련 재료)</span>
+    <div class="locked-wrapper">
+        <div class="blind-overlay show" id="sub-blind-overlay">
+            <div class="blind-msg">
+                🔒 탐사 플랜을 먼저 선택해 주세요!<br>
+                <span style="font-size:12px; color:var(--text-muted); font-weight:normal;">플랜 선택 및 인양 수량 설정 후 일일 미션과 인양 크레인이 활성화됩니다.</span>
             </div>
-            <div style="font-size: 12px; color: var(--text-muted); font-weight: normal;" id="day-reward-status-sub">(하위 미션 0/2 완료 시 자동 수령)</div>
         </div>
 
-        <div id="homework-list-container"></div>
-    </div>
+        <div class="middle-grid">
+            <div class="bottom-section">
+                <div class="panel-title">
+                    <span>📋 <span id="current-day-label">-일차</span> 항해 미션</span>
+                    <span style="font-size:11px; color:var(--accent-gold); font-weight:normal;" id="daily-cap-status-ui"></span>
+                </div>
+                <div id="mission-container"><div style="text-align:center; padding:20px; color:#666; font-size:13px;">상단에서 탐사 플랜을 먼저 선택해주세요.</div></div>
+                
+                <div style="margin-top:20px; padding-top:16px; border-top:1px dashed #555;">
+                    <div class="panel-title" style="color:var(--accent-gold); border:none; margin:0; padding:0 0 8px 0;">🏆 4일차 인양 완주 보상</div>
+                    <div style="background:rgba(255,210,77,0.1); padding:12px; border-radius:8px; border:1px solid rgba(255,210,77,0.3); font-size:13px;" id="completion-reward-text">플랜을 선택하면 보상을 확인할 수 있습니다.</div>
+                </div>
+            </div>
 
-    <div class="plan-cumulative-panel-compact">
-        <div class="cumulative-info-compact">
-            <h5>🎖️ 주간 플랜 완료 보너스:</h5>
-            <p contenteditable="true" id="txt-plan-bonus-desc">이벤트 기간 중 주간 플랜 누적 6회 완료 달성 시 특별 칭호 [일숙의 대가] 및 [일숙 마스터] 지급!</p>
-        </div>
-        <div>
-            <span class="cumulative-badge-compact" id="completed-plan-count-text">0 / 3개 달성</span>
+            <div class="salvage-panel">
+                <h3>⚓ 크레인 보물 인양 현장</h3>
+                <div class="coin-display">💡 보유 인양 포인트: <span id="ui-coins">0</span> P</div>
+                
+                <div class="salvage-stage">
+                    <div class="sea-wave"></div>
+                    <div class="sea-water"></div>
+                    
+                    <div class="ship-body">
+                        <div class="ship-mast"></div>
+                        <div class="ship-sail"></div>
+                        <div class="ship-crane-arm"></div>
+                    </div>
+
+                    <div class="crane-line" id="crane-line">
+                        <div class="hook-head"></div>
+                        <div class="chest-box" id="chest-box">📦</div>
+                    </div>
+                </div>
+
+                <button class="btn-salvage" id="btn-spin" onclick="startSalvageAnimation()" disabled="">1P 소모하여 1회 인양하기</button>
+                <button class="btn-bulk-salvage" id="btn-bulk-spin" onclick="startBulkSalvage()" disabled="">⚡ 보유 포인트로 한번에 인양하기</button>
+                <button class="btn-status-check" onclick="openStatusModal()">📊 보상 획득 현황 확인</button>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="modal-overlay" id="editModal">
+<!-- Total Limit Target Picker Modal -->
+<div class="modal-overlay" id="customModal">
     <div class="modal-content">
-        <div class="modal-header">
-            <h2>📝 3개 주간 플랜별 N일차 보상 &amp; 하위 미션 일괄 편집창</h2>
-            <button class="btn-del" style="font-size:14px; padding:4px 8px;" onclick="closeModal()">닫기 ✖</button>
-        </div>
+        <h2>🎁 <span id="modal-plan-name"></span> 보물 수량 배분 설정</h2>
+        <p style="font-size:12px; color:var(--text-muted); line-height:1.5; margin-top:4px;">
+            플랜 총 제한 수량 내에서 보물별 획득 개수를 설정하세요. (각 아이템별 개별 획득 제한 적용)
+        </p>
 
-        <div class="modal-plan-tabs">
-            <div class="modal-tab active" id="mtab-0" onclick="switchModalTab(0)">1. 대장 모코코 플랜</div>
-            <div class="modal-tab" id="mtab-1" onclick="switchModalTab(1)">2. 정예 모코코 플랜</div>
-            <div class="modal-tab" id="mtab-2" onclick="switchModalTab(2)">3. 보급 모코코 플랜</div>
+        <div class="limit-status-box">
+            <div class="limit-status-text" id="modal-limit-status-ui">
+                선택 수량: 0 / 20개 (남은 개수: 20개)
+            </div>
         </div>
-
-        <div class="modal-day-grid" id="modal-grid-container">
-            <!-- Dynamic Day Boxes Rendered Here -->
+        
+        <ul class="user-reward-setting-list" id="user-reward-setting-list-ui"></ul>
+        
+        <div style="text-align: right; margin-top: 20px;">
+            <button class="btn btn-del" style="padding:10px 16px; margin-right:8px;" onclick="closeModal()">취소</button>
+            <button class="btn" style="padding:10px 20px; font-size:14px;" id="btn-confirm-plan" onclick="confirmPlanWithPrompt()">이 구성으로 확정</button>
         </div>
+    </div>
+</div>
 
-        <div style="text-align: right; margin-top: 16px;">
-            <button class="btn btn-save" style="padding: 8px 20px;" onclick="saveModalChanges()">저장 및 적용 💾</button>
+<!-- Reward Status Modal -->
+<div class="modal-overlay" id="statusModal">
+    <div class="modal-content">
+        <h2>📊 내 보상 획득 현황</h2>
+        <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">
+            내가 커스텀 설정한 보물 목록과 개수별 획득 여부 현황입니다.
+        </p>
+        
+        <div class="status-grid" id="status-grid-ui"></div>
+        
+        <div style="text-align: center; margin-top: 16px;">
+            <button class="btn" style="padding:8px 20px;" onclick="closeStatusModal()">닫기</button>
         </div>
     </div>
 </div>
 
 <script>
-    const defaultState = {
-        isPublished: false,
-        selectedPlanIdx: 0,
-        completedPlanCount: 0,
-        targetPlanBonusCount: 3,
+    const PLAN_LIMITS = [4, 3, 3];
+    const COMPLETION_REWARDS = ["🎁 상급 대항해 인양 상자", "🎁 중간 대항해 인양 상자", "🎁 실링/해적 동전 패키지"];
+    const DAILY_MAX_POINTS = 3; // Daily Cap Limit
+    
+    let defaultData = {"isPublished":true,"headerTitle":"⚓ 모코코의 해저 보물 인양 대작전","headerSub":"원하는 탐사 플랜을 선택하고 보물별 인양 개수를 설정한 뒤, 인양 포인트로 크레인을 내려 보물을 끌어올리세요!","planNames":["플랜 A (심해 심층 탐사)","플랜 B (연안 표준 탐사)","플랜 C (내해 경량 탐사)"],"planDescs":["고급 성과물 집중 인양","균형 잡힌 재화 구성","실속형 보상 탐사"],"planTotalLimits":[10,10,10],"planMasterPools":[[{"name":"운명의 파괴석 주머니 III x 5","maxLimit":6},{"name":"운명의 수호석 주머니 III x 10","maxLimit":6},{"name":"운명의 파편 주머니(중) x 5","maxLimit":10},{"name":"재련 돌파석 선택 상자 IX x 5","maxLimit":10},{"name":"재봉술 선택 상자 V x 1","maxLimit":10},{"name":"야금술 선택 상자 V x 1","maxLimit":5},{"name":"루페온의 빛이 깃든 화폐 상자 x 1","maxLimit":10}],[{"name":"희귀 ~ 영웅 젬 상자 (이벤트) x 1","maxLimit":10},{"name":"환희의 전설 ~ 희귀 카드 팩 x 2","maxLimit":5},{"name":"빙하의 숨결 상자 II x 1","maxLimit":5},{"name":"용암의 숨결 상자 II x 1","maxLimit":5},{"name":"루페온의 빛이 깃든 화폐 상자 x 1","maxLimit":10},{"name":"정련된 운명의 돌 x 1","maxLimit":10},{"name":"태초의 조각 x 2","maxLimit":10}],[{"name":"운명의 파괴석 주머니 III x 1","maxLimit":10},{"name":"운명의 수호석 주머니 III x 3","maxLimit":10},{"name":"루페온의 빛이 깃든 화폐 상자 x 1","maxLimit":10},{"name":"생활 지원 선택 상자 x 1","maxLimit":5},{"name":"[이벤트] 5,000 골드 금괴 x 2","maxLimit":3},{"name":"공명의 기운/휴식 보너스 회복 비약 상자 x 1","maxLimit":3},{"name":"정련된 운명의 돌 x 1","maxLimit":10}]],"planMissions":[[{"text":"게임 플레이 30분 달성 시","coins":1},{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 클리어 - 1회","coins":1},{"text":"가디언 토벌 (가디언의 의지 수집) - 1회","coins":1},{"text":"군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회","coins":2}],[{"text":"게임 플레이 30분 달성 시","coins":1},{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 클리어 -1 회","coins":1},{"text":"에브니 큐브 1스테이지 이상 완료 또는 할의 모래시계 클리어 - 1회","coins":1},{"text":"어비스 던전 클리어 - 1회","coins":2}],[{"text":"게임 플레이 30분 달성 시","coins":1},{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 클리어 -1 회","coins":1},{"text":"가디언 토벌(가디언의 의지 수집) - 1회","coins":1},{"text":"영지 활동력 또는 생명의 기운 3,000 이상 사용 (누적) - 1회","coins":1}]],"state":{"activePlan":null,"activeDay":1,"coins":0,"dailyEarnedPoints":0,"planCompletions":[0,0,0],"customPool":[],"missionsCompleted":[]}};
 
-        // Plan Max Completion Limits (Adjusted 원정대 내실 횟수 제한)
-        planLimits: {
-            0: 4, // 쑥쑥 재련 플랜: 최대 4회
-            1: 3, // 도전 성장 플랜: 최대 3회
-            2: 2  // 알뜰 골드 플랜(원정대 내실 고려): 최대 2회로 축소
-        },
+    let data = JSON.parse(JSON.stringify(defaultData));
+    let tempPendingPlan = null;
+    let tempUserSelections = [];
+    let activeAdminPoolTabIdx = 0;
+    let activeAdminMissionTabIdx = 0;
 
-        // Weekly Selection Status
-        weeklyState: {
-            selectedPlan: null, // null means no plan chosen for this week yet
-            changeLeft: 1,      // 1 chance to change plan mid-week
-            preCompletedDay1: false // Test flag for retroactively clearing day 1
-        },
-
-        // Plan Completed Counts
-        planCompletions: {
-            0: 0,
-            1: 0,
-            2: 0
-        },
-
-        planProgress: {
-            0: { completedNodes: 0, activeViewDay: 1 },
-            1: { completedNodes: 0, activeViewDay: 1 },
-            2: { completedNodes: 0, activeViewDay: 1 }
-        },
-
-        planData: {
-            0: {
-                dayRewards: { 1: "🎁 파괴석/수호석 1,000개 상자", 2: "🎁 명예의 돌파석 50개 상자", 3: "🎁 명예의 파편 30,000 주머니", 4: "🎁 상급 재련 재료 패키지" },
-                missions: {
-                    1: [ { id: 101, text: "카오스 던전 / 쿠르잔 전선 1회 클리어", completed: false }, { id: 102, text: "가디언 토벌 1회 영혼 수확", completed: false } ],
-                    2: [ { id: 103, text: "카오스 던전 1회 클리어", completed: false }, { id: 104, text: "가디언 토벌 1회 영혼 수확", completed: false } ],
-                    3: [ { id: 105, text: "쿠르잔 전선 특별 지원 1회", completed: false } ],
-                    4: [ { id: 107, text: "재련 플랜 주간 최종 점검 완료", completed: false } ]
-                }
-            },
-            1: {
-                dayRewards: { 1: "🎁 아크 그리드 파편 10개", 2: "🎁 카르마 코어 5개 상자", 3: "🎁 상급 아크 그리드 재료", 4: "🎁 최종 성장 보너스 상자" },
-                missions: {
-                    1: [ { id: 201, text: "카오스 던전 1회 클리어", completed: false }, { id: 202, text: "에브니 큐브 1회 클리어", completed: false } ],
-                    2: [ { id: 203, text: "군단장 레이드 1관문 클리어", completed: false } ],
-                    3: [ { id: 205, text: "그림자 레이드 1회 정복", completed: false }, { id: 206, text: "필드 보스 1회 처치", completed: false } ],
-                    4: [ { id: 207, text: "성장 플랜 최종 모험 완료", completed: false } ]
-                }
-            },
-            2: {
-                dayRewards: { 1: "🎁 100,000 실링 상자", 2: "🎁 귀속 골드 주머니 (500골)", 3: "🎁 카오스게이트 각인서 상자", 4: "🎁 알뜰 재화 보너스 팩" },
-                missions: {
-                    1: [ { id: 301, text: "에브니 큐브 1회 클리어", completed: false }, { id: 302, text: "오늘의 모험섬 1회 참가", completed: false } ],
-                    2: [ { id: 303, text: "카오스게이트 1회 참가", completed: false }, { id: 304, text: "영지 파견 / 제작 1회", completed: false } ],
-                    3: [ { id: 305, text: "필드 보스 1회 수확", completed: false } ],
-                    4: [ { id: 307, text: "골드 수급 정산 및 최종 완료", completed: false } ]
-                }
-            }
-        }
-    };
-
-    let state = JSON.parse(JSON.stringify(defaultState));
-    let activeModalTab = 0;
-
-    const EDITABLE_IDS = [
-        'txt-header-title', 'txt-header-sub', 'txt-plan-bonus-desc',
-        'txt-plan1-title', 'txt-plan1-desc', 'txt-plan1-reward',
-        'txt-plan2-title', 'txt-plan2-desc', 'txt-plan2-reward',
-        'txt-plan3-title', 'txt-plan3-desc', 'txt-plan3-reward',
-        'txt-stamp1-label', 'txt-stamp2-label', 'txt-stamp3-label', 'txt-stamp4-label'
-    ];
-
-    window.onload = function() {
-        loadState();
-        loadSavedTexts();
-        applyPublishStateUI();
+    window.onload = () => {
+        loadStateFromStorage();
+        applyPublishModeUI();
         renderUI();
     };
 
-    function applyPublishStateUI() {
+    function saveStateToStorage() {
+        localStorage.setItem('mococo_v37_data', JSON.stringify(data));
+    }
+
+    function loadStateFromStorage() {
+        const saved = localStorage.getItem('mococo_v37_data');
+        if (saved) {
+            try {
+                data = Object.assign({}, defaultData, JSON.parse(saved));
+            } catch(e) { console.error("Load failed", e); }
+        }
+    }
+
+    function applyPublishModeUI() {
         const body = document.body;
         const badge = document.getElementById('current-mode-badge');
         const pubBtn = document.getElementById('btn-publish-toggle');
         const editables = document.querySelectorAll('[contenteditable]');
 
-        if (state.isPublished) {
+        if (data.isPublished) {
             body.className = "published-mode";
-            badge.className = "mode-badge published";
-            badge.innerText = "이벤트 라이브 중 (편집 불가)";
+            badge.innerText = "이벤트 라이브 중";
+            badge.style.background = "var(--accent-green)";
             pubBtn.innerText = "편집 모드로 전환 ✏️";
-            pubBtn.className = "btn btn-edit-toggle";
+            pubBtn.className = "btn btn-blue";
             editables.forEach(el => el.setAttribute('contenteditable', 'false'));
         } else {
             body.className = "edit-mode";
-            badge.className = "mode-badge edit";
-            badge.innerText = "기획자 편집 모드 ON";
-            pubBtn.innerText = "이벤트 최종 발행 🚀";
+            badge.innerText = "편집 모드 ON";
+            badge.style.background = "var(--accent-gold)";
+            pubBtn.innerText = "최종 발행 & 다운로드 🚀";
             pubBtn.className = "btn btn-publish";
             editables.forEach(el => el.setAttribute('contenteditable', 'true'));
         }
     }
 
     function publishAndLock() {
-        if (!state.isPublished) {
-            saveAllDataSilent();
-            state.isPublished = true;
-            saveState();
-            
+        if (!data.isPublished) {
+            data.isPublished = true;
+            saveStateToStorage();
             downloadSelfPublishedHTML();
-
-            applyPublishStateUI();
-            alert("🚀 이벤트가 성공적으로 발행되어 저장되었습니다!\n편집 모드가 OFF 상태로 전환되었습니다.");
+            applyPublishModeUI();
+            alert("🚀 이벤트가 최종 발행되어 다운로드되었습니다!\n편집 기능이 비활성화되었습니다.");
         } else {
-            state.isPublished = false;
-            saveState();
-            applyPublishStateUI();
-            alert("✏️ 기획자 편집 모드로 전환되었습니다.");
+            data.isPublished = false;
+            saveStateToStorage();
+            applyPublishModeUI();
+            alert("✏️ 편집 모드로 전환되었습니다.");
         }
     }
 
     function downloadSelfPublishedHTML() {
         let currentHtml = document.documentElement.outerHTML;
-        const stateJSON = JSON.stringify(state);
+        const dataJSON = JSON.stringify(data);
         currentHtml = currentHtml.replace(
-            /let state = JSON\.parse\(JSON\.stringify\(defaultState\)\);/,
-            `let state = ${stateJSON};`
+            /let defaultData = \{[\s\S]*?\};\n\n    let data = JSON\.parse\(JSON\.stringify\(defaultData\)\);/,
+            `let defaultData = ${dataJSON};\n\n    let data = JSON.parse(JSON.stringify(defaultData));`
         );
 
         const blob = new Blob([currentHtml], { type: 'text/html;charset=utf-8;' });
         const link = document.createElement("a");
         const url = URL.createObjectURL(blob);
         link.setAttribute("href", url);
-        link.setAttribute("download", "mococo_daily_plan_v17.html");
+        link.setAttribute("download", "mococo_daily_plan_v37_published.html");
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     }
 
-    function renderUI() {
-        const currentPlanIdx = state.selectedPlanIdx;
-        const curProgress = state.planProgress[currentPlanIdx];
-
-        // Render Plan Cards & Limits
-        for (let i = 0; i < 3; i++) {
-            const card = document.getElementById(`pcard-${i}`);
-            const limitBadge = document.getElementById(`limit-badge-${i}`);
-            const curDone = state.planCompletions[i] || 0;
-            const maxDone = state.planLimits[i] || 3;
-
-            limitBadge.innerText = `진행 횟수: ${curDone} / ${maxDone}회`;
-
-            if (curDone >= maxDone) {
-                limitBadge.classList.add('maxed');
-                limitBadge.innerText = `완료 달성 (최대 ${maxDone}회)`;
-                card.classList.add('disabled-plan');
-            } else {
-                limitBadge.classList.remove('maxed');
-                card.classList.remove('disabled-plan');
-            }
-            
-            // UI highlight for actual active plan this week
-            if (state.weeklyState.selectedPlan === i) {
-                card.classList.add('active-plan');
-            } else {
-                card.classList.remove('active-plan');
-            }
-
-            // Highlight currently viewing plan
-            if (i === currentPlanIdx) card.classList.add('selected');
-            else card.classList.remove('selected');
+    /* Admin Operations */
+    function switchAdminPoolTab(planIdx) {
+        activeAdminPoolTabIdx = planIdx;
+        for(let i=0; i<3; i++) {
+            const tabBtn = document.getElementById(`aptab-${i}`);
+            if(i === planIdx) tabBtn.classList.add('active-pool');
+            else tabBtn.classList.remove('active-pool');
         }
-
-        const planTitles = [
-            document.getElementById('txt-plan1-title').innerText,
-            document.getElementById('txt-plan2-title').innerText,
-            document.getElementById('txt-plan3-title').innerText
-        ];
-        document.getElementById('active-plan-name-display').innerText = planTitles[currentPlanIdx];
-        document.getElementById('completed-plan-count-text').innerText = `${state.completedPlanCount} / ${state.targetPlanBonusCount}개 달성`;
-
-        for (let i = 1; i <= 4; i++) {
-            const slot = document.getElementById(`stamp-${i}`);
-            slot.classList.remove('completed', 'active', 'focused');
-
-            if (i <= curProgress.completedNodes) {
-                slot.classList.add('completed');
-            } else if (i === curProgress.completedNodes + 1) {
-                slot.classList.add('active');
-            }
-
-            if (i === curProgress.activeViewDay) {
-                slot.classList.add('focused');
-            }
-        }
-
-        const progressLine = document.getElementById('progress-line');
-        if (curProgress.completedNodes === 0) progressLine.style.width = '0%';
-        else if (curProgress.completedNodes === 1) progressLine.style.width = '30%';
-        else if (curProgress.completedNodes === 2) progressLine.style.width = '60%';
-        else if (curProgress.completedNodes === 3) progressLine.style.width = '85%';
-        else progressLine.style.width = 'calc(100% - 100px)';
-
-        document.getElementById('progress-text').innerText = `${curProgress.completedNodes} / 4일 완료`;
-        document.getElementById('current-view-day-text').innerText = `${curProgress.activeViewDay}일차`;
-
-        renderDayRewardAndMissions();
+        document.getElementById('admin-total-pool-limit').value = data.planTotalLimits[activeAdminPoolTabIdx] || 20;
+        renderAdminTagList();
     }
 
-    function renderDayRewardAndMissions() {
-        const currentPlanIdx = state.selectedPlanIdx;
-        const curProgress = state.planProgress[currentPlanIdx];
-        const day = curProgress.activeViewDay;
+    function updateTotalPoolLimit(val) {
+        let parsed = parseInt(val);
+        if(isNaN(parsed) || parsed < 1) parsed = 20;
+        data.planTotalLimits[activeAdminPoolTabIdx] = parsed;
+        saveStateToStorage();
+    }
 
-        const pData = state.planData[currentPlanIdx];
-        const dayRewardText = (pData && pData.dayRewards && pData.dayRewards[day]) ? pData.dayRewards[day] : "🎁 N일차 클리어 보상";
-        const subMissions = (pData && pData.missions && pData.missions[day]) ? pData.missions[day] : [];
+    function addAdminPoolItem() {
+        const nameInput = document.getElementById('admin-item-name-input');
+        const maxInput = document.getElementById('admin-item-max-input');
+        const name = nameInput.value.trim();
+        const maxLimit = parseInt(maxInput.value) || 5;
 
-        document.getElementById('day-reward-label-day').innerText = `${day}일차`;
-        document.getElementById('day-reward-text-display').innerText = dayRewardText;
+        if(!name) return alert("보물 아이템명을 입력해주세요.");
+        if (!data.planMasterPools[activeAdminPoolTabIdx]) data.planMasterPools[activeAdminPoolTabIdx] = [];
+        if(data.planMasterPools[activeAdminPoolTabIdx].some(i => i.name === name)) return alert("이미 이 플랜에 등록된 아이템입니다.");
+        
+        data.planMasterPools[activeAdminPoolTabIdx].push({ name, maxLimit });
+        nameInput.value = "";
+        maxInput.value = "5";
+        
+        saveStateToStorage();
+        renderAdminTagList();
+    }
 
-        const isDayCompleted = day <= curProgress.completedNodes;
-        const statusSub = document.getElementById('day-reward-status-sub');
+    function deleteAdminPoolItem(idx) {
+        data.planMasterPools[activeAdminPoolTabIdx].splice(idx, 1);
+        saveStateToStorage();
+        renderAdminTagList();
+    }
 
-        if (isDayCompleted) {
-            statusSub.innerText = "✅ [보상 수령 완료]";
-            statusSub.style.color = "var(--accent-green)";
-            statusSub.style.fontWeight = "bold";
-        } else {
-            statusSub.innerText = `(하위 미션 ${subMissions.filter(m=>m.completed).length}/${subMissions.length} 완료 시 자동 수령)`;
-            statusSub.style.color = "var(--text-muted)";
-            statusSub.style.fontWeight = "normal";
-        }
+    function renderAdminTagList() {
+        const listUi = document.getElementById('admin-tag-list-ui');
+        listUi.innerHTML = "";
+        const currentPool = data.planMasterPools[activeAdminPoolTabIdx] || [];
 
-        const container = document.getElementById('homework-list-container');
-        container.innerHTML = '';
-
-        if (subMissions.length === 0) {
-            container.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-muted); font-size:12px;">${day}일차에 등록된 하위 미션이 없습니다. 상단 [+ 하위 미션 추가] 버튼을 눌러보세요!</div>`;
+        if (currentPool.length === 0) {
+            listUi.innerHTML = `<div style='color:#666; font-size:12px;'>${data.planNames[activeAdminPoolTabIdx]}에 등록된 보물이 없습니다.</div>`;
             return;
         }
 
-        const isDayLocked = day > curProgress.completedNodes + 1;
+        currentPool.forEach((item, idx) => {
+            const tag = document.createElement('div');
+            tag.className = 'admin-tag';
+            tag.innerHTML = `💎 ${item.name} <strong style="color:var(--accent-gold); margin-left:4px;">(최대 ${item.maxLimit}개)</strong> <span onclick="deleteAdminPoolItem(${idx})">✕</span>`;
+            listUi.appendChild(tag);
+        });
+    }
+
+    function switchAdminMissionTab(planIdx) {
+        activeAdminMissionTabIdx = planIdx;
+        for(let i=0; i<3; i++) {
+            const tabBtn = document.getElementById(`atab-${i}`);
+            if(i === planIdx) tabBtn.classList.add('active');
+            else tabBtn.classList.remove('active');
+        }
+        renderAdminMissionList();
+    }
+
+    function addAdminMissionItem() {
+        const txtInput = document.getElementById('admin-mission-text-input');
+        const coinInput = document.getElementById('admin-mission-coin-input');
+        const text = txtInput.value.trim();
+        const coins = parseInt(coinInput.value) || 1;
+
+        if(!text) return alert("미션 내용을 입력해주세요.");
+        if (!data.planMissions[activeAdminMissionTabIdx]) data.planMissions[activeAdminMissionTabIdx] = [];
+
+        data.planMissions[activeAdminMissionTabIdx].push({ text, coins });
+        txtInput.value = "";
+        coinInput.value = "1";
+
+        saveStateToStorage();
+        renderAdminMissionList();
+        renderUI();
+    }
+
+    function deleteAdminMissionItem(mIdx) {
+        data.planMissions[activeAdminMissionTabIdx].splice(mIdx, 1);
+        saveStateToStorage();
+        renderAdminMissionList();
+        renderUI();
+    }
+
+    function renderAdminMissionList() {
+        const listUi = document.getElementById('admin-mission-list-ui');
+        listUi.innerHTML = "";
+        const currentMissions = data.planMissions[activeAdminMissionTabIdx] || [];
+
+        if (currentMissions.length === 0) {
+            listUi.innerHTML = `<div style='color:#666; font-size:12px;'>${data.planNames[activeAdminMissionTabIdx]}에 등록된 미션이 없습니다.</div>`;
+            return;
+        }
+
+        currentMissions.forEach((m, mIdx) => {
+            const item = document.createElement('div');
+            item.className = 'admin-mission-item';
+            item.innerHTML = `
+                <span>📋 ${m.text} <strong style="color:var(--accent-gold);">(+${m.coins} P)</strong></span>
+                <button class="btn-del" onclick="deleteAdminMissionItem(${mIdx})">삭제</button>
+            `;
+            listUi.appendChild(item);
+        });
+    }
+
+    function saveHeaderTexts() {
+        data.headerTitle = document.getElementById('header-title').innerText;
+        data.headerSub = document.getElementById('header-sub').innerText;
+        saveStateToStorage();
+    }
+
+    function updatePlanName(idx, newName) {
+        if (newName.trim() !== "") {
+            data.planNames[idx] = newName.trim();
+            saveStateToStorage();
+            renderUI();
+        }
+    }
+
+    function updatePlanDesc(idx, newDesc) {
+        data.planDescs[idx] = newDesc.trim();
+        saveStateToStorage();
+    }
+
+    function handleCardClick(planIdx, event) {
+        if (event.target.getAttribute('contenteditable') === 'true') return;
         
-        // Disable missions if the plan is not the currently active weekly plan
-        const notActiveWeekPlan = state.weeklyState.selectedPlan !== currentPlanIdx;
+        if (data.state.activePlan !== null) {
+            alert("⚠️ 이번 주에는 이미 [" + data.planNames[data.state.activePlan] + "]을 선택하셨습니다.\n주간 중도 플랜 변경은 불가능하며, 완료 시 혹은 수요일 06:00 초기화 후 변경할 수 있습니다.");
+            return;
+        }
 
-        subMissions.forEach((m, idx) => {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = `homework-item ${m.completed ? 'completed' : ''}`;
+        if (data.state.planCompletions[planIdx] >= PLAN_LIMITS[planIdx]) {
+            alert("이 플랜은 최대 진행 횟수(" + PLAN_LIMITS[planIdx] + "회)를 모두 채웠습니다.");
+            return;
+        }
 
-            let btnDisabled = m.completed || isDayLocked || notActiveWeekPlan;
-            let btnText = m.completed ? '미션 완료됨 ✅' : (isDayLocked ? '이전 일차 미완료' : (notActiveWeekPlan ? '이번 주 미선택 플랜' : '미션 완료'));
+        const planPool = data.planMasterPools[planIdx] || [];
+        if (planPool.length === 0) {
+            alert("선택하신 플랜에 등록된 보물 아이템이 없습니다. 상단 관리자 영역에서 해당 플랜의 보물 아이템을 먼저 등록해 주세요.");
+            return;
+        }
 
-            const delBtnHtml = state.isPublished ? '' : `<button class="btn-del admin-only-btn" title="삭제" onclick="deleteSubMission(${day}, ${m.id})">❌</button>`;
+        openCustomModal(planIdx);
+    }
 
-            itemDiv.innerHTML = `
-                <div class="homework-info">
-                    <span class="sub-mission-badge">하위 미션 ${idx + 1}</span>
-                    <span class="homework-text" contenteditable="${!state.isPublished}" onblur="updateMissionText(${currentPlanIdx}, ${day}, ${m.id}, this.innerText)">${m.text}</span>
+    function openCustomModal(planIdx) {
+        tempPendingPlan = planIdx;
+        const planPool = data.planMasterPools[planIdx] || [];
+        tempUserSelections = planPool.map(item => ({ 
+            name: item.name, 
+            qty: 0, 
+            maxLimit: item.maxLimit || 5 
+        }));
+        
+        document.getElementById('modal-plan-name').innerText = data.planNames[planIdx];
+        renderUserRewardListUI();
+        document.getElementById('customModal').classList.add('open');
+    }
+
+    function closeModal() { document.getElementById('customModal').classList.remove('open'); }
+
+    function updateUserQty(idx, newQty) {
+        let parsed = parseInt(newQty);
+        if(isNaN(parsed) || parsed < 0) parsed = 0;
+        
+        const itemMax = tempUserSelections[idx].maxLimit;
+        if (parsed > itemMax) {
+            alert("이 보물은 1회 탐사당 최대 " + itemMax + "개까지만 선택할 수 있습니다.");
+            parsed = itemMax;
+        }
+
+        tempUserSelections[idx].qty = parsed;
+        renderUserRewardListUI();
+    }
+
+    function renderUserRewardListUI() {
+        const ul = document.getElementById('user-reward-setting-list-ui');
+        const maxLimit = data.planTotalLimits[tempPendingPlan] || 20;
+        const currentSum = tempUserSelections.reduce((acc, curr) => acc + curr.qty, 0);
+        const statusUi = document.getElementById('modal-limit-status-ui');
+        const confirmBtn = document.getElementById('btn-confirm-plan');
+
+        if (currentSum === maxLimit) {
+            statusUi.className = "limit-status-text";
+            statusUi.innerHTML = `🎯 설정 완료: <strong>${currentSum} / ${maxLimit}개</strong> 선택함`;
+            confirmBtn.disabled = false;
+        } else if (currentSum > maxLimit) {
+            statusUi.className = "limit-status-text exceeded";
+            statusUi.innerHTML = `⚠️ 제한 초과: <strong>${currentSum} / ${maxLimit}개</strong> (${currentSum - maxLimit}개 초과! 수량을 줄여주세요)`;
+            confirmBtn.disabled = true;
+        } else {
+            statusUi.className = "limit-status-text";
+            statusUi.innerHTML = `💡 현재 설정 수량: <strong>${currentSum} / ${maxLimit}개</strong> (앞으로 ${maxLimit - currentSum}개 더 설정 가능)`;
+            confirmBtn.disabled = false;
+        }
+
+        ul.innerHTML = "";
+        tempUserSelections.forEach((item, idx) => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <div>
+                    <span style="font-size:13px;">💎 <strong>${item.name}</strong></span>
+                    <span style="font-size:11px; color:var(--accent-gold); margin-left:6px;">(최대 ${item.maxLimit}개)</span>
                 </div>
-                <div style="display:flex; align-items:center;">
-                    <button class="btn" ${btnDisabled ? 'disabled' : ''} onclick="toggleSubMission(${day}, ${m.id})">
-                        ${btnText}
-                    </button>
-                    ${delBtnHtml}
+                <div class="qty-picker">
+                    <span style="font-size:11px; color:#aaa;">수량:</span>
+                    <input type="number" min="0" max="${item.maxLimit}" value="${item.qty}" onchange="updateUserQty(${idx}, this.value)" oninput="updateUserQty(${idx}, this.value)">
                 </div>
             `;
-            container.appendChild(itemDiv);
+            ul.appendChild(li);
         });
     }
 
-    function toggleSubMission(day, missionId) {
-        const planIdx = state.selectedPlanIdx;
-        
-        if (state.weeklyState.selectedPlan !== planIdx) {
-            alert("⚠️ 이번 주 주간 계획으로 선택된 플랜의 미션만 수행할 수 있습니다.");
-            return;
-        }
+    function confirmPlanWithPrompt() {
+        const maxLimit = data.planTotalLimits[tempPendingPlan] || 20;
+        const currentSum = tempUserSelections.reduce((acc, curr) => acc + curr.qty, 0);
 
-        const curProgress = state.planProgress[planIdx];
-        const curCompletions = state.planCompletions[planIdx] || 0;
-        const maxLimit = state.planLimits[planIdx] || 3;
+        if (currentSum === 0) return alert("최소 1개 이상의 보물 수량을 설정해 주세요.");
+        if (currentSum > maxLimit) return alert("설정한 수량의 총합(" + currentSum + "개)이 이 플랜의 최대 제한(" + maxLimit + "개)을 초과했습니다.");
 
-        if (curCompletions >= maxLimit) {
-            alert(`⚠️ 이 플랜은 최대 완료 횟수(${maxLimit}회)를 모두 달성했습니다!`);
-            return;
-        }
+        const activeItems = tempUserSelections.filter(i => i.qty > 0);
+        const chosenName = data.planNames[tempPendingPlan];
 
-        if (day !== curProgress.completedNodes + 1) {
-            alert(`⚠️ ${curProgress.completedNodes + 1}일차를 먼저 달성해야 진행 가능합니다.`);
-            return;
-        }
-
-        const subMissions = state.planData[planIdx].missions[day];
-        const target = subMissions.find(m => m.id === missionId);
-
-        if (target && !target.completed) {
-            target.completed = true;
-            const allDone = subMissions.every(m => m.completed);
-
-            if (allDone) {
-                curProgress.completedNodes = day;
-
-                if (curProgress.completedNodes === 4) {
-                    state.completedPlanCount += 1;
-                    state.planCompletions[planIdx] = curCompletions + 1;
-
-                    if (state.planCompletions[planIdx] < maxLimit) {
-                        alert(`🎉 ${day}일차 하위 미션 완료!\n🎁 ${day}일차 보상 및 플랜 완주 달성!\n\n(해당 플랜 진행 횟수: ${state.planCompletions[planIdx]} / ${maxLimit}회 달성)`);
-                    } else {
-                        alert(`🎉 ${day}일차 모든 미션 클리어!\n🏆 [${maxLimit}회] 최대 완료 횟수를 달성하여 해당 플랜이 완료되었습니다!`);
-                    }
-                } else {
-                    alert(`🎉 ${day}일차 모든 하위 미션을 클리어하여 ${day}일차 보상을 수령했습니다!\n다음 ${day + 1}일차로 넘어갑니다.`);
-                    curProgress.activeViewDay += 1;
-                }
-            }
-
-            saveState();
-            renderUI();
-        }
-    }
-
-    function selectPlan(planIdx) {
-        if (state.weeklyState.selectedPlan === null) {
-            if (confirm("해당 플랜을 이번 주 주간 계획으로 선택하시겠습니까?\n(수요일 06:00 초기화 전까지 4일만 달성하면 완료되며, 주중 1회 교체 가능합니다.)")) {
-                state.weeklyState.selectedPlan = planIdx;
-                state.selectedPlanIdx = planIdx;
-                
-                if (state.weeklyState.preCompletedDay1) {
-                    alert("💡 플랜 선택 전 오늘자 일일 숙제를 이미 진행한 기록이 확인되어, 1일차는 자동 클리어 처리됩니다!");
-                    state.planProgress[planIdx].completedNodes = Math.max(state.planProgress[planIdx].completedNodes, 1);
-                    state.planProgress[planIdx].activeViewDay = 2;
-                    // Auto-complete day 1 missions visually
-                    if (state.planData[planIdx].missions[1]) {
-                        state.planData[planIdx].missions[1].forEach(m => m.completed = true);
-                    }
-                    state.weeklyState.preCompletedDay1 = false;
-                }
-                
-                saveState();
-                renderUI();
-            }
-        } else if (state.weeklyState.selectedPlan !== planIdx) {
-            if (state.weeklyState.changeLeft <= 0) {
-                alert("⚠️ 이번 주 플랜 변경 기회를 모두 소진했습니다. 현재 보고 계신 플랜은 조회만 가능합니다.");
-                state.selectedPlanIdx = planIdx; 
-                renderUI();
-                return;
-            }
-            if (confirm("플랜을 교체하시겠습니까?\n교체 기회는 1회만 제공되며, 이전 플랜에서 달성한 진행도(N일차 보상 획득 상태)는 그대로 새 플랜에 이어집니다.\n\n※ 주의: 노드 보상 가치보다 플랜 완료 보상 가치가 높습니다!")) {
-                state.weeklyState.changeLeft--;
-                const oldPlanIdx = state.weeklyState.selectedPlan;
-                const prevNodes = state.planProgress[oldPlanIdx].completedNodes;
-                
-                // Transfer progress
-                state.planProgress[planIdx].completedNodes = prevNodes;
-                state.planProgress[planIdx].activeViewDay = Math.min(prevNodes + 1, 4);
-                
-                // Auto complete missions visually up to transferred days
-                for (let d = 1; d <= prevNodes; d++) {
-                    if (state.planData[planIdx].missions[d]) {
-                        state.planData[planIdx].missions[d].forEach(m => m.completed = true);
-                    }
-                }
-                
-                state.weeklyState.selectedPlan = planIdx;
-                state.selectedPlanIdx = planIdx;
-                saveState();
-                renderUI();
-                alert("🔄 플랜 교체가 완료되었습니다. 기존 진행도가 적용되었습니다.");
-            } else {
-                state.selectedPlanIdx = planIdx; 
-                renderUI();
-            }
-        } else {
-            // Already active, just viewing
-            state.selectedPlanIdx = planIdx;
-            saveState();
-            renderUI();
-        }
-    }
-    
-    function simulateWeeklyReset() {
-        if(confirm("매주 수요일 06:00 주간 계획 초기화를 테스트하시겠습니까?\n진행된 노드가 초기화되고 플랜을 다시 선택할 수 있게 됩니다.")) {
-            state.weeklyState.selectedPlan = null;
-            state.weeklyState.changeLeft = 1;
+        if (confirm("[" + chosenName + "]으로 최종 확정하시겠습니까?\n\n※ 설정 요약:\n- 총 " + currentSum + "개의 보물 타겟이 설정되었습니다.\n- 확정 후 이번 주 내 변경은 불가능합니다.")) {
+            data.state.activePlan = tempPendingPlan;
+            data.state.activeDay = 1;
+            data.state.dailyEarnedPoints = 0;
+            data.state.customPool = activeItems.map(item => ({
+                name: item.name,
+                totalQty: item.qty,
+                obtainedQty: 0
+            }));
+            data.state.missionsCompleted = [];
             
-            Object.keys(state.planProgress).forEach(idx => {
-                state.planProgress[idx].completedNodes = 0;
-                state.planProgress[idx].activeViewDay = 1;
-                // clear missions for the new week
-                if (state.planData[idx] && state.planData[idx].missions) {
-                    for(let d=1; d<=4; d++) {
-                        if(state.planData[idx].missions[d]) {
-                            state.planData[idx].missions[d].forEach(m => m.completed = false);
-                        }
-                    }
-                }
-            });
-            saveState();
+            saveStateToStorage();
+            closeModal();
             renderUI();
-            alert("⏰ 수요일 06:00가 되어 주간 계획이 초기화되었습니다.\n다시 플랜을 선택하고 4일간 참여하실 수 있습니다.");
-        }
-    }
-    
-    function simulatePreHomework() {
-        state.weeklyState.preCompletedDay1 = true;
-        saveState();
-        alert("🧪 [테스트] 이벤트 페이지 진입 전 일일 숙제를 마친 상태가 적용되었습니다.\n이제 플랜을 최초 선택하면 1일차가 자동 클리어 처리됩니다.");
-    }
-
-    function updateDayRewardText(val) {
-        if (state.isPublished) return;
-        const planIdx = state.selectedPlanIdx;
-        const day = state.planProgress[planIdx].activeViewDay;
-        state.planData[planIdx].dayRewards[day] = val;
-        saveState();
-    }
-
-    function updateMissionText(planIdx, day, id, text) {
-        if (state.isPublished) return;
-        const target = state.planData[planIdx].missions[day].find(m => m.id === id);
-        if (target) {
-            target.text = text;
-            saveState();
+            alert("🎉 [" + chosenName + "] 탐사가 시작되었습니다!");
         }
     }
 
-    function selectDayToView(day) {
-        state.planProgress[state.selectedPlanIdx].activeViewDay = day;
-        renderUI();
-    }
-
-    function addHomeworkToActivePlan() {
-        if (state.isPublished) return;
-        const planIdx = state.selectedPlanIdx;
+    /* Mission Completion Logic with Daily Cap (Max 3P / Day) */
+    function completeMission(idx) {
+        if (data.state.missionsCompleted.includes(idx)) return;
         
-        if (!state.planData[planIdx]) state.planData[planIdx] = { dayRewards: {}, missions: {} };
-        if (!state.planData[planIdx].missions) state.planData[planIdx].missions = {};
+        const currentMissions = data.planMissions[data.state.activePlan] || [];
+        const missionReward = currentMissions[idx].coins;
 
-        const day = state.planProgress[planIdx].activeViewDay || 1;
+        if (data.state.dailyEarnedPoints >= DAILY_MAX_POINTS) {
+            return alert("⚠️ 일일 최대 포인트 획득 제한(3P)에 이미 도달했습니다.");
+        }
 
-        if (!state.planData[planIdx].missions[day]) state.planData[planIdx].missions[day] = [];
+        let grantPoints = missionReward;
+        if (data.state.dailyEarnedPoints + grantPoints > DAILY_MAX_POINTS) {
+            grantPoints = DAILY_MAX_POINTS - data.state.dailyEarnedPoints;
+        }
 
-        state.planData[planIdx].missions[day].push({
-            id: Date.now(),
-            text: `[${day}일차 신규 미션] 클릭하여 수정`,
-            completed: false
-        });
-
-        saveState();
+        data.state.missionsCompleted.push(idx);
+        data.state.coins += grantPoints;
+        data.state.dailyEarnedPoints += grantPoints;
+        
+        // Progress to next day when 3P daily cap is reached or all missions completed
+        if (data.state.dailyEarnedPoints >= DAILY_MAX_POINTS || data.state.missionsCompleted.length === currentMissions.length) {
+            setTimeout(() => {
+                if (data.state.activeDay < 4) {
+                    alert(data.state.activeDay + "일차 포인트 획득 완료(3P 달성)! 다음 일차로 넘어갑니다.");
+                    data.state.activeDay++;
+                    data.state.dailyEarnedPoints = 0; // Reset daily cap counter for the new day
+                    data.state.missionsCompleted = [];
+                } else {
+                    data.state.planCompletions[data.state.activePlan]++;
+                    alert("🎉 4일차 완주 성공! 탐사를 완료했습니다!\n\n획득 보상: " + COMPLETION_REWARDS[data.state.activePlan]);
+                    data.state.activePlan = null; 
+                    data.state.customPool = [];
+                }
+                saveStateToStorage();
+                renderUI();
+            }, 300);
+        }
+        saveStateToStorage();
         renderUI();
     }
 
-    function deleteSubMission(day, id) {
-        if (state.isPublished) return;
-        const planIdx = state.selectedPlanIdx;
-        if (state.planData[planIdx] && state.planData[planIdx].missions && state.planData[planIdx].missions[day]) {
-            state.planData[planIdx].missions[day] = state.planData[planIdx].missions[day].filter(m => m.id !== id);
-            saveState();
-            renderUI();
+    /* 1-Time Single Salvage Animation */
+    function startSalvageAnimation() {
+        if (data.state.coins < 1) return;
+        const availablePool = data.state.customPool.filter(item => item.obtainedQty < item.totalQty);
+        
+        if (availablePool.length === 0) return alert("선택하신 모든 보물 인양이 완료되었습니다!");
+
+        data.state.coins -= 1;
+        saveStateToStorage();
+        renderUI();
+
+        const craneLine = document.getElementById('crane-line');
+        const chestBox = document.getElementById('chest-box');
+        const spinBtn = document.getElementById('btn-spin');
+        const bulkBtn = document.getElementById('btn-bulk-spin');
+
+        spinBtn.disabled = true;
+        bulkBtn.disabled = true;
+        chestBox.style.display = 'none';
+
+        const randIdx = Math.floor(Math.random() * availablePool.length);
+        const wonItem = availablePool[randIdx];
+
+        craneLine.style.height = '145px';
+
+        setTimeout(() => {
+            chestBox.style.display = 'block';
+            setTimeout(() => {
+                craneLine.style.height = '0px';
+                setTimeout(() => {
+                    chestBox.style.display = 'none';
+                    wonItem.obtainedQty += 1;
+                    saveStateToStorage();
+                    renderUI();
+                    alert("⚓ 보물 인양 성공!\n\n획득한 보물: [" + wonItem.name + "]\n\n보물이 게임 내 우편함으로 즉시 발송되었습니다.");
+                }, 1000);
+            }, 300);
+        }, 1000);
+    }
+
+    /* Bulk Salvage Functionality */
+    function startBulkSalvage() {
+        if (data.state.coins < 1) return;
+
+        const availablePool = data.state.customPool.filter(item => item.obtainedQty < item.totalQty);
+        if (availablePool.length === 0) return alert("선택하신 모든 보물 인양이 이미 완료되었습니다!");
+
+        const remainingTotalTarget = availablePool.reduce((sum, item) => sum + (item.totalQty - item.obtainedQty), 0);
+        const pullCount = Math.min(data.state.coins, remainingTotalTarget);
+
+        if (pullCount <= 0) return;
+
+        if (!confirm("💡 보유한 " + data.state.coins + "P 중 " + pullCount + "P를 사용하여 보물을 한번에 인양하시겠습니까?")) {
+            return;
         }
-    }
 
-    function openModal() {
-        if (state.isPublished) return;
-        activeModalTab = state.selectedPlanIdx;
-        renderModalContent();
-        document.getElementById('editModal').classList.add('open');
-    }
+        const resultSummary = {};
 
-    function closeModal() {
-        document.getElementById('editModal').classList.remove('open');
-    }
+        for (let i = 0; i < pullCount; i++) {
+            const currentAvailable = data.state.customPool.filter(item => item.obtainedQty < item.totalQty);
+            if (currentAvailable.length === 0) break;
 
-    function switchModalTab(planIdx) {
-        activeModalTab = planIdx;
-        for (let i = 0; i < 3; i++) {
-            const tab = document.getElementById(`mtab-${i}`);
-            if (i === planIdx) tab.classList.add('active');
-            else tab.classList.remove('active');
+            const randIdx = Math.floor(Math.random() * currentAvailable.length);
+            const wonItem = currentAvailable[randIdx];
+
+            wonItem.obtainedQty += 1;
+            resultSummary[wonItem.name] = (resultSummary[wonItem.name] || 0) + 1;
         }
-        renderModalContent();
+
+        data.state.coins -= pullCount;
+        saveStateToStorage();
+        renderUI();
+
+        let alertMsg = "⚓ 보물 일괄 인양 성공! (총 " + pullCount + "회 진행)\n\n[획득 보물 내역]:\n";
+        for (const [name, qty] of Object.entries(resultSummary)) {
+            alertMsg += `• ${name}: ${qty}개\n`;
+        }
+        alertMsg += "\n획득한 모든 보물이 게임 내 우편함으로 발송되었습니다!";
+
+        alert(alertMsg);
     }
 
-    function renderModalContent() {
-        const container = document.getElementById('modal-grid-container');
-        container.innerHTML = '';
+    function openStatusModal() {
+        if (data.state.activePlan === null) return alert("탐사 플랜을 먼저 선택해 주세요.");
+        
+        const gridUi = document.getElementById('status-grid-ui');
+        gridUi.innerHTML = "";
 
-        const planIdx = activeModalTab;
-        const pData = state.planData[planIdx] || { dayRewards: {}, missions: {} };
-
-        for (let day = 1; day <= 4; day++) {
-            const dayBox = document.createElement('div');
-            dayBox.className = 'modal-day-box';
-
-            const dayReward = (pData.dayRewards && pData.dayRewards[day]) ? pData.dayRewards[day] : "";
-            const missions = (pData.missions && pData.missions[day]) ? pData.missions[day] : [];
-            let rowsHtml = '';
-
-            missions.forEach((m, idx) => {
-                rowsHtml += `
-                    <div class="edit-row">
-                        <span style="font-size:11px; color:var(--accent-lime);">하위 미션 ${idx+1}</span>
-                        <input class="edit-input" type="text" value="${m.text}" onchange="updateModalMissionText(${planIdx}, ${day}, ${m.id}, this.value)" placeholder="미션 내용">
+        if (data.state.customPool.length === 0) {
+            gridUi.innerHTML = "<div style='text-align:center; padding:20px; color:#aaa;'>설정된 보물 목록이 없습니다.</div>";
+        } else {
+            data.state.customPool.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'status-item-row';
+                const isFullyObtained = item.obtainedQty >= item.totalQty;
+                
+                row.innerHTML = `
+                    <div style="font-size:13px;">💎 <strong>${item.name}</strong></div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span style="font-size:12px; color:var(--text-muted);">
+                            <strong style="color:${isFullyObtained ? 'var(--accent-green)' : 'var(--accent-gold)'}">${item.obtainedQty}</strong> / ${item.totalQty}회 획득
+                        </span>
+                        <span class="status-badge ${isFullyObtained ? 'obtained' : 'remaining'}">
+                            ${isFullyObtained ? '인양 완료' : '인양 가능'}
+                        </span>
                     </div>
                 `;
+                gridUi.appendChild(row);
             });
-
-            dayBox.innerHTML = `
-                <div class="modal-day-title">
-                    <span>${day}일차 보상 및 미션</span>
-                    <button class="btn btn-add" style="padding:2px 6px; font-size:11px;" onclick="addModalMission(${planIdx}, ${day})">+ 미션 추가</button>
-                </div>
-                <div style="margin-bottom:8px;">
-                    <label style="font-size:11px; color:var(--accent-gold);">🎁 ${day}일차 대표 완주 보상:</label>
-                    <input class="edit-input" style="color:var(--accent-gold); font-weight:bold; margin-top:2px;" type="text" value="${dayReward}" onchange="updateModalDayReward(${planIdx}, ${day}, this.value)">
-                </div>
-                <div>${rowsHtml.length > 0 ? rowsHtml : '<div style="font-size:11px; color:#666; text-align:center; padding:10px;">등록된 하위 미션 없음</div>'}</div>
-            `;
-
-            container.appendChild(dayBox);
         }
+        document.getElementById('statusModal').classList.add('open');
     }
 
-    function addModalMission(planIdx, day) {
-        if (!state.planData[planIdx]) state.planData[planIdx] = { dayRewards: {}, missions: {} };
-        if (!state.planData[planIdx].missions) state.planData[planIdx].missions = {};
-        if (!state.planData[planIdx].missions[day]) state.planData[planIdx].missions[day] = [];
+    function closeStatusModal() { document.getElementById('statusModal').classList.remove('open'); }
 
-        state.planData[planIdx].missions[day].push({
-            id: Date.now(),
-            text: `[${day}일차 신규 미션] 클릭하여 수정`,
-            completed: false
-        });
-        renderModalContent();
-    }
-
-    function updateModalDayReward(planIdx, day, val) {
-        if (!state.planData[planIdx]) state.planData[planIdx] = { dayRewards: {}, missions: {} };
-        if (!state.planData[planIdx].dayRewards) state.planData[planIdx].dayRewards = {};
-        state.planData[planIdx].dayRewards[day] = val;
-    }
-
-    function updateModalMissionText(planIdx, day, id, val) {
-        if (state.planData[planIdx] && state.planData[planIdx].missions && state.planData[planIdx].missions[day]) {
-            const target = state.planData[planIdx].missions[day].find(m => m.id === id);
-            if (target) {
-                target.text = val;
-            }
-        }
-    }
-
-    function saveModalChanges() {
-        saveState();
-        renderUI();
-        closeModal();
-        alert("💾 3개 주간 플랜의 N일차 보상 및 하위 미션 설정이 일괄 적용되었습니다!");
-    }
-
-    function saveState() {
-        localStorage.setItem('mococo_v17_state', JSON.stringify(state));
-    }
-
-    function loadState() {
-        const saved = localStorage.getItem('mococo_v17_state');
-        if (saved) {
-            try { 
-                const loaded = JSON.parse(saved);
-                state = Object.assign({}, JSON.parse(JSON.stringify(defaultState)), loaded);
-                // Ensure weeklyState exists for older saves
-                if(!state.weeklyState) state.weeklyState = { selectedPlan: null, changeLeft: 1, preCompletedDay1: false };
-            } catch(e) {
-                console.error("State load failed", e);
-            }
-        }
-    }
-
-    function saveAllDataSilent() {
-        const textData = {};
-        EDITABLE_IDS.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) textData[id] = el.innerText;
-        });
-        localStorage.setItem('mococo_v17_texts', JSON.stringify(textData));
-
-        const currentPlanIdx = state.selectedPlanIdx;
-        const currentDay = state.planProgress[currentPlanIdx].activeViewDay;
-        const rewardEl = document.getElementById('day-reward-text-display');
-        if (rewardEl && state.planData[currentPlanIdx] && state.planData[currentPlanIdx].dayRewards) {
-            state.planData[currentPlanIdx].dayRewards[currentDay] = rewardEl.innerText;
-        }
-
-        saveState();
-    }
-
-    function saveAllData() {
-        saveAllDataSilent();
-        alert('💾 타이틀, 보상 문구, 플랜 미션 및 진행 상태가 성공적으로 저장되었습니다!');
-    }
-
-    function loadSavedTexts() {
-        const savedTexts = localStorage.getItem('mococo_v17_texts');
-        if (savedTexts) {
-            try {
-                const data = JSON.parse(savedTexts);
-                Object.keys(data).forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.innerText = data[id];
-                });
-            } catch(e) {
-                console.error("Text load failed", e);
-            }
-        }
-    }
-
-    function resetAllData() {
-        if (confirm("모든 플랜 진행 상태, 편집 내용, 카운트 데이터를 완전 초기화하시겠습니까?")) {
-            localStorage.removeItem('mococo_v17_state');
-            localStorage.removeItem('mococo_v17_texts');
-            state = JSON.parse(JSON.stringify(defaultState));
-            applyPublishStateUI();
+    function forceReset() {
+        if(confirm("수요일 06:00 초기화를 진행합니다. 선택된 플랜과 진행도가 리셋됩니다.")) {
+            data.state.activePlan = null;
+            data.state.activeDay = 1;
+            data.state.coins = 0;
+            data.state.dailyEarnedPoints = 0;
+            data.state.customPool = [];
+            data.state.missionsCompleted = [];
+            saveStateToStorage();
             renderUI();
-            alert("🔄 모든 데이터가 초기화되었습니다.");
         }
+    }
+
+    function renderUI() {
+        document.getElementById('header-title').innerText = data.headerTitle;
+        document.getElementById('header-sub').innerText = data.headerSub;
+        document.getElementById('admin-total-pool-limit').value = data.planTotalLimits[activeAdminPoolTabIdx] || 20;
+
+        renderAdminTagList();
+        renderAdminMissionList();
+
+        const isPlanSelected = data.state.activePlan !== null;
+        const blindOverlay = document.getElementById('sub-blind-overlay');
+        
+        if (!isPlanSelected) blindOverlay.classList.add('show');
+        else blindOverlay.classList.remove('show');
+
+        for(let i=0; i<3; i++) {
+            const card = document.getElementById(`pcard-${i}`);
+            document.getElementById(`txt-plan-${i}`).innerText = data.planNames[i];
+            document.getElementById(`desc-plan-${i}`).innerText = data.planDescs[i];
+            document.getElementById(`limit-badge-${i}`).innerText = `진행 횟수: ${data.state.planCompletions[i]} / ${PLAN_LIMITS[i]}회`;
+            
+            card.classList.remove('active-plan', 'locked-card');
+
+            if (isPlanSelected) {
+                if (data.state.activePlan === i) card.classList.add('active-plan');
+                else card.classList.add('locked-card');
+            }
+        }
+
+        const planNameStr = isPlanSelected ? data.planNames[data.state.activePlan] : "선택 안됨";
+        document.getElementById('active-plan-name').innerText = planNameStr;
+        
+        const nodesCompleted = isPlanSelected ? data.state.activeDay - 1 : 0;
+        document.getElementById('progress-text').innerText = `${nodesCompleted} / 4일 완료`;
+        
+        const pLines = ["0%", "33%", "66%", "100%"];
+        document.getElementById('progress-line').style.width = pLines[nodesCompleted];
+        
+        for(let i=1; i<=4; i++) {
+            const slot = document.getElementById(`stamp-${i}`);
+            slot.className = "stamp-slot";
+            if (isPlanSelected) {
+                if (i < data.state.activeDay) slot.classList.add('completed');
+                else if (i === data.state.activeDay) slot.classList.add('active');
+            } else {
+                if (i===1) slot.classList.add('active');
+            }
+        }
+
+        document.getElementById('current-day-label').innerText = isPlanSelected ? `${data.state.activeDay}일차` : "-일차";
+        document.getElementById('daily-cap-status-ui').innerText = isPlanSelected ? `💡 오늘의 획득 포인트: ${data.state.dailyEarnedPoints} / ${DAILY_MAX_POINTS}P` : "";
+
+        const missionContainer = document.getElementById('mission-container');
+        
+        if (!isPlanSelected) {
+            missionContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#666; font-size:13px;">상단에서 탐사 플랜을 먼저 선택해주세요.</div>`;
+            document.getElementById('completion-reward-text').innerText = "플랜을 선택하면 보상을 확인할 수 있습니다.";
+        } else {
+            missionContainer.innerHTML = "";
+            const activeMissions = data.planMissions[data.state.activePlan] || [];
+
+            if (activeMissions.length === 0) {
+                missionContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#aaa; font-size:13px;">이 플랜에 등록된 일일 미션이 없습니다. (관리자 영역에서 플랜 미션을 추가해 주세요)</div>`;
+            } else {
+                const isDailyCapReached = data.state.dailyEarnedPoints >= DAILY_MAX_POINTS;
+
+                activeMissions.forEach((m, idx) => {
+                    const isDone = data.state.missionsCompleted.includes(idx);
+                    const div = document.createElement('div');
+                    div.className = `homework-item ${isDone ? 'completed' : ''}`;
+                    
+                    let btnText = "클리어";
+                    let isBtnDisabled = isDone;
+
+                    if (isDone) {
+                        btnText = "완료됨";
+                    } else if (isDailyCapReached) {
+                        btnText = `오늘 제한 달성 (${DAILY_MAX_POINTS}/${DAILY_MAX_POINTS}P)`;
+                        isBtnDisabled = true;
+                    }
+
+                    div.innerHTML = `
+                        <div><span style="color:var(--accent-blue); font-size:11px; margin-right:6px;">[미션]</span> ${m.text} <span style="color:var(--accent-gold); font-size:11px;">(+${m.coins} P)</span></div>
+                        <button class="btn" ${isBtnDisabled ? 'disabled' : ''} onclick="completeMission(${idx})">${btnText}</button>
+                    `;
+                    missionContainer.appendChild(div);
+                });
+            }
+            document.getElementById('completion-reward-text').innerHTML = `<strong>${COMPLETION_REWARDS[data.state.activePlan]}</strong> (4일차 모든 미션 완료 시 획득)`;
+        }
+
+        document.getElementById('ui-coins').innerText = data.state.coins;
+        const spinBtn = document.getElementById('btn-spin');
+        const bulkBtn = document.getElementById('btn-bulk-spin');
+        
+        const availablePool = data.state.customPool.filter(item => item.obtainedQty < item.totalQty);
+        const isDisabled = data.state.coins < 1 || !isPlanSelected || availablePool.length === 0;
+
+        spinBtn.disabled = isDisabled;
+        bulkBtn.disabled = isDisabled;
     }
 </script>
+
 
 </body></html>
