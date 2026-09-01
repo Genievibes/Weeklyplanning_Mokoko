@@ -1,7 +1,7 @@
 <html lang="ko"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>모코코의 해저 보물 인양 대작전 - 웹 이벤트 Prototype v48</title>
+    <title>모코코의 해저 보물 인양 대작전 - 웹 이벤트 Prototype v52</title>
     <style>
         :root {
             --bg-color: #08131d;
@@ -33,7 +33,7 @@
             position: relative;
         }
 
-        /* Top Right Mode Control Bar */
+        /* Top Right Control Bar */
         .live-mode-bar {
             display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
         }
@@ -42,7 +42,7 @@
         header h1 { color: var(--accent-blue); font-size: 28px; margin-bottom: 8px; text-shadow: 0 0 10px rgba(77, 184, 255, 0.3); }
         header p { color: var(--text-muted); font-size: 14px; }
 
-        /* Admin Controls */
+        /* Admin Controls Panel */
         .admin-bar { background: rgba(0,0,0,0.5); padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; border: 1px dashed #356388; display: flex; flex-direction: column; gap: 12px; }
         .admin-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .admin-section-box { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
@@ -66,6 +66,9 @@
         .btn-next-day:hover { background: rgba(66, 227, 130, 0.4); }
         .btn-reset-event { background: rgba(255, 94, 94, 0.2); border: 1px solid var(--danger-red); color: var(--danger-red); font-weight: bold; }
         .btn-reset-event:hover { background: rgba(255, 94, 94, 0.4); }
+        
+        .btn-edit-preset { background: rgba(255, 210, 77, 0.2); border: 1px solid var(--accent-gold); color: var(--accent-gold); font-size: 11px; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-edit-preset:hover { background: rgba(255, 210, 77, 0.4); }
 
         .middle-grid { display: grid; grid-template-columns: 1fr 340px; gap: 16px; margin-bottom: 24px; position: relative; }
         
@@ -156,6 +159,9 @@
         .btn-status-check { background: rgba(255, 210, 77, 0.15); border: 1px solid var(--accent-gold); color: var(--accent-gold); font-size: 12px; padding: 8px 12px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 4px; transition: all 0.2s; }
         .btn-status-check:hover { background: rgba(255, 210, 77, 0.3); }
 
+        .btn-confirm-preset { background: linear-gradient(180deg, #b0f566, #5eb800); color:#000; font-weight:900; font-size:14px; padding:12px; border-radius:8px; border:none; width:100%; cursor:pointer; margin-top:8px; box-shadow:0 4px 0 #3a7300; }
+        .btn-confirm-preset:active { transform:translateY(2px); box-shadow:none; }
+
         .lock-notice { font-size: 11px; color: var(--danger-red); margin-top: 4px; font-weight: bold; display: block; }
 
         /* Modals */
@@ -214,9 +220,9 @@
             <span style="font-size:12px; color:var(--accent-gold); font-weight:bold;">🌊 [관리자 영역] 뎁스 슬롯별 미션/보상 등록 (30m, 50m, 100m 슬롯당 최대 7개)</span>
             <div class="admin-tab-group">
                 <button class="admin-tab-btn" id="stab-0" style="opacity:0.5; cursor:not-allowed;" title="10m는 접속 미션 고정입니다.">10m (접속고정)</button>
-                <button class="admin-tab-btn" id="stab-1" onclick="switchAdminSlotTab(1)">30m 미션 풀</button>
+                <button class="admin-tab-btn active" id="stab-1" onclick="switchAdminSlotTab(1)">30m 미션 풀</button>
                 <button class="admin-tab-btn" id="stab-2" onclick="switchAdminSlotTab(2)">50m 미션 풀</button>
-                <button class="admin-tab-btn active" id="stab-3" onclick="switchAdminSlotTab(3)">100m 주간 미션 풀</button>
+                <button class="admin-tab-btn" id="stab-3" onclick="switchAdminSlotTab(3)">100m 주간 미션 풀</button>
             </div>
             <div class="admin-input-row" style="margin-top:10px;">
                 <input type="text" id="admin-slot-text-input" placeholder="미션 내용 입력">
@@ -224,26 +230,17 @@
                 <button class="btn" onclick="addSlotItem()">미션 추가</button>
             </div>
             <div id="admin-slot-item-list" style="display:flex; flex-direction:column; gap:4px; margin-top:8px;"><div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
-                <span>군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
+                <span>카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
                 <button class="btn-del" onclick="deleteSlotItem(0)">삭제</button>
             </div><div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
-                <span>모험섬 입장하기 - 1회 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
+                <span>가디언 토벌(가디언의 의지 수집) - 1회 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
                 <button class="btn-del" onclick="deleteSlotItem(1)">삭제</button>
             </div><div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
-                <span>필드 보스 보상 획득 - 1회 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
+                <span>생명의 기운 3,000 이상 사용 (누적) <strong style="color:var(--accent-gold);">(+1P)</strong></span>
                 <button class="btn-del" onclick="deleteSlotItem(2)">삭제</button>
             </div><div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
-                <span>카오스게이트 보상 획득 - 1회 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
+                <span>영지 활동력 3,000 이상 사용 (누적) <strong style="color:var(--accent-gold);">(+1P)</strong></span>
                 <button class="btn-del" onclick="deleteSlotItem(3)">삭제</button>
-            </div><div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
-                <span>어비스 던전 클리어 - 1회 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
-                <button class="btn-del" onclick="deleteSlotItem(4)">삭제</button>
-            </div><div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
-                <span>싱글/매칭 모드 클리어 - 1회 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
-                <button class="btn-del" onclick="deleteSlotItem(5)">삭제</button>
-            </div><div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
-                <span>어비스 던전/레이드 클리어 - 1회 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
-                <button class="btn-del" onclick="deleteSlotItem(6)">삭제</button>
             </div></div>
         </div>
 
@@ -278,23 +275,26 @@
     <div class="middle-grid">
         <!-- Left: Deep Sea Mission Map Slots -->
         <div class="sea-map-container">
-            <div style="font-size:14px; font-weight:bold; color:var(--accent-blue); border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px; display:flex; justify-content:space-between;">
-                <span>⚓ 해저 탐사 미션 맵</span>
-                <span style="font-size:11px; color:var(--accent-gold);" id="daily-cap-status-ui">💡 오늘의 획득 포인트: 3 / 3P</span>
+            <div style="font-size:14px; font-weight:bold; color:var(--accent-blue); border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span>⚓ 해저 탐사 미션 맵</span>
+                    <button class="btn-edit-preset" id="btn-edit-preset-ui" onclick="enablePresetEditMode()" style="display: none;">⚙️ 탐사 미션 수정하기</button>
+                </div>
+                <span style="font-size:11px; color:var(--accent-gold);" id="daily-cap-status-ui">💡 오늘의 획득 포인트: 0 / 3P</span>
             </div>
 
             <!-- 10m Fixed Slot -->
             <div class="depth-slot-card" id="slot-card-0">
                 <div class="slot-header">
                     <span class="depth-tag">10m 탐사</span>
-                    <span style="font-size:11px; color:var(--accent-green);" id="slot-status-text-0">✅ 접속 완료</span>
+                    <span style="font-size:11px; color:var(--accent-green);" id="slot-status-text-0">기본 접속 미션</span>
                 </div>
                 <div class="dropdown-mission-row">
                     <div class="fixed-mission-box">
                         <span>🎮 게임 접속 완료</span>
                         <span style="color:var(--accent-gold); font-size:11px;">(+1P)</span>
                     </div>
-                    <button class="btn" id="slot-btn-0" onclick="executeFixedSlotMission()" disabled="">완료됨</button>
+                    <button class="btn" id="slot-btn-0" onclick="executeFixedSlotMission()" disabled="">설정 대기</button>
                 </div>
             </div>
 
@@ -302,11 +302,11 @@
             <div class="depth-slot-card" id="slot-card-1">
                 <div class="slot-header">
                     <span class="depth-tag">30m 탐사</span>
-                    <span style="font-size: 11px; color: var(--accent-green);" id="slot-status-text-1">✅ 클리어 완료</span>
+                    <span style="font-size: 11px; color: var(--accent-gold);" id="slot-status-text-1">미션을 선택하세요</span>
                 </div>
                 <div class="dropdown-mission-row">
-                    <select class="mission-select" id="mission-select-1" onchange="onMissionSelectChange(1, this.value)" disabled=""><option value="">-- 미션 선택 --</option><option value="0">카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회 (+1P)</option><option value="1">가디언 토벌(가디언의 의지 수집) - 1회 (+1P)</option><option value="2">생명의 기운 3,000 이상 사용 (누적) (+1P)</option><option value="3">영지 활동력 3,000 이상 사용 (누적) (+1P)</option><option value="4">게임 플레이 60분 달성 시 (+1P)</option></select>
-                    <button class="btn" id="slot-btn-1" onclick="executeSlotMission(1)" disabled="">완료됨</button>
+                    <select class="mission-select" id="mission-select-1" onchange="onMissionSelectChange(1, this.value)"><option value="">-- 미션 선택 --</option><option value="0">카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회 (+1P)</option><option value="1">가디언 토벌(가디언의 의지 수집) - 1회 (+1P)</option><option value="2">생명의 기운 3,000 이상 사용 (누적) (+1P)</option><option value="3">영지 활동력 3,000 이상 사용 (누적) (+1P)</option></select>
+                    <button class="btn" id="slot-btn-1" onclick="executeSlotMission(1)" disabled="">클리어</button>
                 </div>
             </div>
 
@@ -314,11 +314,11 @@
             <div class="depth-slot-card" id="slot-card-2">
                 <div class="slot-header">
                     <span class="depth-tag">50m 탐사</span>
-                    <span style="font-size: 11px; color: var(--accent-green);" id="slot-status-text-2">✅ 클리어 완료</span>
+                    <span style="font-size: 11px; color: var(--accent-gold);" id="slot-status-text-2">미션을 선택하세요</span>
                 </div>
                 <div class="dropdown-mission-row">
-                    <select class="mission-select" id="mission-select-2" onchange="onMissionSelectChange(2, this.value)" disabled=""><option value="">-- 미션 선택 --</option><option value="0">카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회 (+1P)</option><option value="1">가디언 토벌(가디언의 의지 수집) - 1회 (+1P)</option><option value="2">생명의 기운 3,000 이상 사용 (누적) (+1P)</option><option value="3">영지 활동력 3,000 이상 사용 (누적) (+1P)</option><option value="4">게임 플레이 60분 달성 시 (+1P)</option></select>
-                    <button class="btn" id="slot-btn-2" onclick="executeSlotMission(2)" disabled="">완료됨</button>
+                    <select class="mission-select" id="mission-select-2" onchange="onMissionSelectChange(2, this.value)"><option value="">-- 미션 선택 --</option><option value="0">카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회 (+1P)</option><option value="1">가디언 토벌(가디언의 의지 수집) - 1회 (+1P)</option><option value="2">생명의 기운 3,000 이상 사용 (누적) (+1P)</option><option value="3">영지 활동력 3,000 이상 사용 (누적) (+1P)</option></select>
+                    <button class="btn" id="slot-btn-2" onclick="executeSlotMission(2)" disabled="">클리어</button>
                 </div>
             </div>
 
@@ -326,19 +326,24 @@
             <div class="depth-slot-card weekly-special" id="slot-card-3">
                 <div class="slot-header">
                     <span class="depth-tag" style="color:var(--accent-gold);">100m 심해</span>
-                    <span style="font-size: 11px; color: rgb(170, 170, 170);" id="slot-status-text-3">미션을 선택하세요</span>
+                    <span style="font-size: 11px; color: var(--accent-gold);" id="slot-status-text-3">미션을 선택하세요</span>
                 </div>
                 <div class="dropdown-mission-row">
-                    <select class="mission-select" id="mission-select-3" onchange="onMissionSelectChange(3, this.value)"><option value="">-- 주간 미션 선택 --</option><option value="0">군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회 (+1P)</option><option value="1">모험섬 입장하기 - 1회 (+1P)</option><option value="2">필드 보스 보상 획득 - 1회 (+1P)</option><option value="3">카오스게이트 보상 획득 - 1회 (+1P)</option><option value="4">어비스 던전 클리어 - 1회 (+1P)</option><option value="5">싱글/매칭 모드 클리어 - 1회 (+1P)</option><option value="6">어비스 던전/레이드 클리어 - 1회 (+1P)</option></select>
+                    <select class="mission-select" id="mission-select-3" onchange="onMissionSelectChange(3, this.value)"><option value="">-- 주간 미션 선택 --</option><option value="0">군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회 (+1P)</option><option value="1">모험섬 입장하기 - 1회 (+1P)</option><option value="2">필드 보스 보상 획득 - 1회 (+1P)</option><option value="3">카오스게이트 보상 획득 - 1회 (+1P)</option><option value="4">어비스 던전 클리어 - 1회 (+1P)</option></select>
                     <button class="btn btn-save" id="slot-btn-3" onclick="executeWeeklySlot()" disabled="">주간 클리어</button>
                 </div>
+            </div>
+
+            <!-- Mission Preset Confirmation Button Container -->
+            <div id="preset-confirm-container" style="display: block; margin-top: 4px;">
+                <button class="btn-confirm-preset" onclick="confirmMissionPreset()">✅ 선택한 미션으로 설정 완료하기</button>
             </div>
         </div>
 
         <!-- Right: Salvage Crane Panel -->
         <div class="salvage-panel">
             <h3>⚓ 크레인 보물 인양 현장</h3>
-            <div class="coin-display">💡 보유 인양 포인트: <span id="ui-coins">3</span> P</div>
+            <div class="coin-display">💡 보유 인양 포인트: <span id="ui-coins">0</span> P</div>
             
             <div class="salvage-stage">
                 <div class="sea-wave"></div>
@@ -356,13 +361,13 @@
                 </div>
             </div>
 
-            <button class="btn-salvage" id="btn-spin" onclick="startSalvageAnimation('normal')">1P 소모하여 일반 보물 인양하기</button>
-            <span class="lock-notice" id="normal-lock-msg" style="display: none;">🔒 일일 탐사 미션(3개)을 모두 완료해야 오픈됩니다!</span>
+            <button class="btn-salvage" id="btn-spin" onclick="startSalvageAnimation('normal')" disabled="">1P 소모하여 일반 보물 인양하기</button>
+            <span class="lock-notice" id="normal-lock-msg" style="display: block;">🔒 일일 탐사 미션(3개)을 모두 완료해야 오픈됩니다!</span>
 
             <button class="btn-special-salvage" id="btn-special-spin" style="margin-top:8px;" onclick="startSalvageAnimation('special')" disabled="">💎 주간 미션 완료로 특수 보물 인양하기 (0P 소모)</button>
             <span class="lock-notice" id="special-lock-msg" style="display: block;">🔒 100m 주간 미션을 완료해야 오픈됩니다!</span>
 
-            <button class="btn-bulk-salvage" id="btn-bulk-spin" style="margin-top:8px;" onclick="startBulkSalvage()">⚡ 보유 포인트로 한번에 인양하기</button>
+            <button class="btn-bulk-salvage" id="btn-bulk-spin" style="margin-top:8px;" onclick="startBulkSalvage()" disabled="">⚡ 보유 포인트로 한번에 인양하기</button>
             <button class="btn-status-check" onclick="openStatusModal()">📊 특수 보상 획득 현황 확인</button>
         </div>
     </div>
@@ -375,19 +380,30 @@
         <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">
             특수 인양을 통해 획득한 보물 리스트 현황입니다. (랜덤 그리드 무중복 획득)
         </p>
-        
         <div class="status-grid" id="status-grid-ui"></div>
-        
         <div style="text-align: center; margin-top: 16px;">
             <button class="btn" style="padding:8px 20px;" onclick="closeStatusModal()">닫기</button>
         </div>
     </div>
 </div>
 
+<!-- Welcome Guide Modal -->
+<div class="modal-overlay" id="guideModal">
+    <div class="modal-content" style="max-width:480px; text-align:center;">
+        <h2 style="color:var(--accent-blue); font-size:20px; margin-bottom:8px;">⚓ 해저 탐사 이벤트 가이드</h2>
+        <p style="font-size:13px; color:var(--text-color); line-height:1.6; text-align:left; background:rgba(0,0,0,0.4); padding:14px; border-radius:10px; border:1px solid var(--panel-border); margin:12px 0;">
+            1️⃣ <strong>나만의 미션 커스텀:</strong> 30m, 50m, 100m 슬롯에서 내 플레이 스타일(카던, 레이드, 생활 등)에 맞는 미션을 선택하고 <strong>[설정 완료]</strong>를 눌러주세요.<br><br>
+            2️⃣ <strong>미션 자동 유지:</strong> 지정한 미션은 이벤트 기간 동안 계속 유지되므로 매일 새로 설정할 필요가 없습니다. (언제든 <u>'탐사 미션 수정하기'</u>로 변경 가능)<br><br>
+            3️⃣ <strong>보물 인양하기:</strong> 클리어하여 얻은 포인트로 크레인을 작동시켜 해저 보물을 인양해 보세요!
+        </p>
+        <button class="btn btn-publish" style="width:100%; padding:10px; font-size:14px; font-weight:bold; margin-top:6px;" onclick="closeGuideModal()">탐사 시작하기 🚀</button>
+    </div>
+</div>
+
 <script>
     let activeSlotTabIdx = 1; // Default to 30m slot edit
     
-    let defaultData = {"isPublished":true,"dailyMaxPoints":3,"normalSalvageCost":1,"headerTitle":"⚓ 모코코의 해저 보물 인양 대작전","headerSub":"모든 탐사 미션을 클리어하여 포인트를 모으고, 해저 보물 인양 자격을 획득하세요!","slotPools":[[],[{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회","coin":1},{"text":"가디언 토벌(가디언의 의지 수집) - 1회","coin":1},{"text":"생명의 기운 3,000 이상 사용 (누적)","coin":1},{"text":"영지 활동력 3,000 이상 사용 (누적)","coin":1},{"text":"게임 플레이 60분 달성 시","coin":1}],[{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회","coin":1},{"text":"가디언 토벌(가디언의 의지 수집) - 1회","coin":1},{"text":"생명의 기운 3,000 이상 사용 (누적)","coin":1},{"text":"영지 활동력 3,000 이상 사용 (누적)","coin":1},{"text":"게임 플레이 60분 달성 시","coin":1}],[{"text":"군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회","coin":1},{"text":"모험섬 입장하기 - 1회","coin":1},{"text":"필드 보스 보상 획득 - 1회","coin":1},{"text":"카오스게이트 보상 획득 - 1회","coin":1},{"text":"어비스 던전 클리어 - 1회","coin":1},{"text":"싱글/매칭 모드 클리어 - 1회","coin":1},{"text":"어비스 던전/레이드 클리어 - 1회","coin":1}]],"normalPool":["일일 보상 #1","일일 보상 #2","일일 보상 #3","일일 보상 #4","일일 보상 #5"],"specialPool":["주간 보상 #1","주간 보상 #2","주간 보상 #3","주간 보상 #4","주간 보상 #5"],"state":{"coins":3,"dailyEarnedPoints":3,"selectedMissions":[null,1,0,null],"completedSlots":[0,1,2],"weeklyCompleted":false,"obtainedSpecialRewards":[]}};
+    let defaultData = {"isPublished":true,"dailyMaxPoints":3,"normalSalvageCost":1,"headerTitle":"⚓ 모코코의 해저 보물 인양 대작전","headerSub":"모든 탐사 미션을 클리어하여 포인트를 모으고, 해저 보물 인양 자격을 획득하세요!","slotPools":[[],[{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회","coin":1},{"text":"가디언 토벌(가디언의 의지 수집) - 1회","coin":1},{"text":"생명의 기운 3,000 이상 사용 (누적)","coin":1},{"text":"영지 활동력 3,000 이상 사용 (누적)","coin":1}],[{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회","coin":1},{"text":"가디언 토벌(가디언의 의지 수집) - 1회","coin":1},{"text":"생명의 기운 3,000 이상 사용 (누적)","coin":1},{"text":"영지 활동력 3,000 이상 사용 (누적)","coin":1}],[{"text":"군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회","coin":1},{"text":"모험섬 입장하기 - 1회","coin":1},{"text":"필드 보스 보상 획득 - 1회","coin":1},{"text":"카오스게이트 보상 획득 - 1회","coin":1},{"text":"어비스 던전 클리어 - 1회","coin":1}]],"normalPool":["일일 보상 #1","일일 보상 #2","일일 보상 #3","일일 보상 #4","일일 보상 #5"],"specialPool":["주간 보상 #1","주간 보상 #2","주간 보상 #3","주간 보상 #4","주간 보상 #5"],"state":{"presetLocked":false,"coins":0,"dailyEarnedPoints":0,"selectedMissions":[null,null,null,null],"completedSlots":[],"weeklyCompleted":false,"obtainedSpecialRewards":[]}};
 
     let data = JSON.parse(JSON.stringify(defaultData));
 
@@ -397,20 +413,27 @@
         renderAdminSlotList();
         renderAdminTagLists();
         renderUI();
+
+        if (data.isPublished && !data.state.presetLocked) {
+            openGuideModal();
+        }
     };
 
     function saveStateToStorage() {
-        localStorage.setItem('mococo_v48_data', JSON.stringify(data));
+        localStorage.setItem('mococo_v52_data', JSON.stringify(data));
     }
 
     function loadStateFromStorage() {
-        const saved = localStorage.getItem('mococo_v48_data');
+        const saved = localStorage.getItem('mococo_v52_data');
         if (saved) {
             try {
                 data = Object.assign({}, defaultData, JSON.parse(saved));
             } catch(e) { console.error("Load failed", e); }
         }
     }
+
+    function openGuideModal() { document.getElementById('guideModal').classList.add('open'); }
+    function closeGuideModal() { document.getElementById('guideModal').classList.remove('open'); }
 
     function updateDailyMaxSetting(val) {
         const num = parseInt(val);
@@ -457,47 +480,120 @@
         applyPublishModeUI();
         if (data.isPublished) {
             alert("🚀 최종 발행 라이브 모드로 전환되었습니다.");
+            if (!data.state.presetLocked) {
+                openGuideModal();
+            }
         } else {
             alert("✏️ 편집 모드로 전환되었습니다.");
         }
     }
 
-    /* Test Trigger: Advance to Next Day */
+    /* Mission Dropdown Selection with Duplicate Text Check */
+    function onMissionSelectChange(slotIdx, val) {
+        if (data.state.presetLocked) return;
+        
+        if (val === "") {
+            data.state.selectedMissions[slotIdx] = null;
+            saveStateToStorage();
+            renderUI();
+            return;
+        }
+
+        const chosenIdx = parseInt(val);
+        const chosenText = data.slotPools[slotIdx][chosenIdx].text;
+
+        // Duplicate Check against other slots
+        for (let i = 1; i <= 3; i++) {
+            if (i !== slotIdx && data.state.selectedMissions[i] !== null) {
+                const otherText = data.slotPools[i][data.state.selectedMissions[i]]?.text;
+                if (otherText === chosenText) {
+                    alert("⚠️ 동일한 미션은 중복으로 설정할 수 없습니다. 다른 미션을 선택해 주세요.");
+                    document.getElementById(`mission-select-${slotIdx}`).value = data.state.selectedMissions[slotIdx] !== null ? data.state.selectedMissions[slotIdx] : "";
+                    return;
+                }
+            }
+        }
+
+        data.state.selectedMissions[slotIdx] = chosenIdx;
+        saveStateToStorage();
+        renderUI();
+    }
+
+    /* Confirm Preset Popup Process with Validation */
+    function confirmMissionPreset() {
+        for (let i = 1; i <= 3; i++) {
+            if (data.state.selectedMissions[i] === null) {
+                return alert(`⚠️ ${i === 1 ? '30m' : i === 2 ? '50m' : '100m'} 미션을 드롭다운에서 먼저 선택해 주세요.`);
+            }
+        }
+
+        // Duplicate Mission Check Array
+        const chosenTexts = [
+            data.slotPools[1][data.state.selectedMissions[1]].text,
+            data.slotPools[2][data.state.selectedMissions[2]].text,
+            data.slotPools[3][data.state.selectedMissions[3]].text
+        ];
+
+        const hasDuplicate = new Set(chosenTexts).size !== chosenTexts.length;
+        if (hasDuplicate) {
+            return alert("⚠️ 동일한 미션이 포함되어 있습니다. 서로 다른 미션으로 중복 없이 설정해 주세요.");
+        }
+
+        let summaryText = "📋 선택하신 미션 구성:\n\n";
+        summaryText += `• 30m: [${chosenTexts[0]}]\n`;
+        summaryText += `• 50m: [${chosenTexts[1]}]\n`;
+        summaryText += `• 100m 주간: [${chosenTexts[2]}]\n\n`;
+        summaryText += "해당 구성으로 탐사 미션을 설정하시겠습니까?\n(설정 완료 시 이벤트 종료까지 자동으로 고정 적용됩니다.)";
+
+        if (confirm(summaryText)) {
+            data.state.presetLocked = true;
+            saveStateToStorage();
+            renderUI();
+            alert("🔒 탐사 미션 세팅이 완료되었습니다!\n이벤트 종료까지 이 커스텀 미션으로 계속 유지됩니다.");
+        }
+    }
+
+    function enablePresetEditMode() {
+        if (confirm("⚙️ 설정되어 있는 탐사 미션을 수정하시겠습니까?\n(기존에 클리어한 일일/주간 완료 현황은 유지됩니다.)")) {
+            data.state.presetLocked = false;
+            saveStateToStorage();
+            renderUI();
+        }
+    }
+
     function advanceToNextDay() {
         if(confirm("⏭️ 다음 날로 이동하시겠습니까?\n(오늘의 획득 포인트 및 10m/30m/50m 일일 미션 완수 상태가 초기화됩니다.)")) {
             data.state.dailyEarnedPoints = 0;
             data.state.completedSlots = data.state.completedSlots.filter(idx => idx === 3);
-            data.state.selectedMissions[0] = null;
-            data.state.selectedMissions[1] = null;
-            data.state.selectedMissions[2] = null;
             saveStateToStorage();
             renderUI();
-            alert("🌅 다음 날이 시작되었습니다. 일일 미션을 다시 진행할 수 있습니다!");
+            alert("🌅 다음 날이 시작되었습니다. 설정된 미션으로 바로 참여 가능합니다!");
         }
     }
 
     function resetWeeklyOnly() {
         if(confirm("테스트를 위해 주간 보상 획득 횟수(100m 심해 미션 완료 상태)를 초기화하시겠습니까?")) {
             data.state.weeklyCompleted = false;
-            data.state.selectedMissions[3] = null;
             saveStateToStorage();
             renderUI();
             alert("🔄 주간 보상 획득 횟수가 성공적으로 초기화되었습니다!");
         }
     }
 
-    /* Full Event Reset Button (Works in Live/Published Mode) */
     function resetFullEventState() {
-        if(confirm("🔄 현재 이벤트 진행 현황을 전체 초기화하시겠습니까?\n(보유 포인트, 미션 달성 내역, 특수 보상 획득 상태가 모두 0으로 초기화됩니다.)")) {
+        if(confirm("🔄 현재 이벤트 진행 현황을 전체 초기화하시겠습니까?\n(포인트, 미션 설정, 클리어 내역 및 보상 현황이 완전히 초기화됩니다.)")) {
             data.state.coins = 0;
             data.state.dailyEarnedPoints = 0;
             data.state.selectedMissions = [null, null, null, null];
             data.state.completedSlots = [];
             data.state.weeklyCompleted = false;
             data.state.obtainedSpecialRewards = [];
+            data.state.presetLocked = false;
             saveStateToStorage();
             renderUI();
-            alert("✨ 이벤트 진행 상태가 완전히 초기화되었습니다.");
+            if (data.isPublished) {
+                openGuideModal();
+            }
         }
     }
 
@@ -513,14 +609,14 @@
         const link = document.createElement("a");
         const url = URL.createObjectURL(blob);
         link.setAttribute("href", url);
-        link.setAttribute("download", "mococo_daily_plan_v48.html");
+        link.setAttribute("download", "mococo_daily_plan_v52.html");
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     }
 
     function switchAdminSlotTab(idx) {
-        if(idx === 0) return; // 10m is fixed
+        if(idx === 0) return;
         activeSlotTabIdx = idx;
         for(let i=1; i<4; i++) {
             const btn = document.getElementById(`stab-${i}`);
@@ -662,15 +758,11 @@
         saveStateToStorage();
     }
 
-    function onMissionSelectChange(slotIdx, val) {
-        if (data.state.completedSlots.includes(slotIdx) || (slotIdx === 3 && data.state.weeklyCompleted)) return;
-        data.state.selectedMissions[slotIdx] = val === "" ? null : parseInt(val);
-        saveStateToStorage();
-        renderUI();
-    }
-
     function executeFixedSlotMission() {
         const maxP = data.dailyMaxPoints || 3;
+        if (!data.state.presetLocked) {
+            return alert("⚠️ 먼저 하단의 [미션 설정 완료하기] 버튼을 눌러 미션을 지정해 주세요.");
+        }
         if (data.state.completedSlots.includes(0)) return;
         if (data.state.dailyEarnedPoints >= maxP) {
             return alert(`⚠️ 일일 최대 포인트 획득 제한(${maxP}P)에 도달했습니다.`);
@@ -687,11 +779,11 @@
 
     function executeSlotMission(slotIdx) {
         const maxP = data.dailyMaxPoints || 3;
-        const selectedIdx = data.state.selectedMissions[slotIdx];
-        if (selectedIdx === null || selectedIdx === undefined) {
-            return alert("수행할 미션을 먼저 드롭다운에서 선택해 주세요.");
+        if (!data.state.presetLocked) {
+            return alert("⚠️ 먼저 하단의 [미션 설정 완료하기] 버튼을 눌러 미션을 지정해 주세요.");
         }
 
+        const selectedIdx = data.state.selectedMissions[slotIdx];
         if (data.state.completedSlots.includes(slotIdx)) return;
         if (data.state.dailyEarnedPoints >= maxP) {
             return alert(`⚠️ 일일 최대 포인트 획득 제한(${maxP}P)에 도달했습니다.`);
@@ -710,11 +802,11 @@
     }
 
     function executeWeeklySlot() {
-        const selectedIdx = data.state.selectedMissions[3];
-        if (selectedIdx === null || selectedIdx === undefined) {
-            return alert("수행할 주간 미션을 먼저 드롭다운에서 선택해 주세요.");
+        if (!data.state.presetLocked) {
+            return alert("⚠️ 먼저 하단의 [미션 설정 완료하기] 버튼을 눌러 주간 미션을 지정해 주세요.");
         }
 
+        const selectedIdx = data.state.selectedMissions[3];
         if (data.state.weeklyCompleted) {
             return alert("이번 주 100m 주간 특수 미션을 이미 완료하셨습니다.");
         }
@@ -735,7 +827,6 @@
         const costP = data.normalSalvageCost || 1;
 
         if (type === 'special') {
-            // Special Salvage: Triggered by 100m Special Mission Completion (No P Cost)
             if (!data.state.weeklyCompleted) return alert("🔒 100m 주간 미션을 먼저 완료해야 특수 보물을 인양할 수 있습니다.");
 
             const unobtainedSpecial = data.specialPool.filter(item => !data.state.obtainedSpecialRewards.includes(item));
@@ -776,7 +867,6 @@
             }, 1000);
 
         } else {
-            // Normal Salvage: Requires Point Cost
             if (data.state.coins < costP) return alert(`인양 포인트가 부족합니다. (${costP}P 필요)`);
 
             const allDailyCompleted = [0, 1, 2].every(idx => data.state.completedSlots.includes(idx));
@@ -898,6 +988,12 @@
 
         document.getElementById('daily-cap-status-ui').innerText = `💡 오늘의 획득 포인트: ${data.state.dailyEarnedPoints} / ${maxP}P`;
 
+        const isLocked = data.state.presetLocked;
+
+        // Display "Modify Preset" Button when Locked
+        document.getElementById('btn-edit-preset-ui').style.display = isLocked ? "inline-block" : "none";
+        document.getElementById('preset-confirm-container').style.display = isLocked ? "none" : "block";
+
         // Render 10m Fixed Slot UI
         const slot0Btn = document.getElementById('slot-btn-0');
         const slot0Txt = document.getElementById('slot-status-text-0');
@@ -912,8 +1008,8 @@
             slot0Txt.innerText = "오늘 획득 제한 달성";
             slot0Txt.style.color = "var(--accent-gold)";
         } else {
-            slot0Btn.disabled = false;
-            slot0Btn.innerText = "클리어";
+            slot0Btn.disabled = !isLocked;
+            slot0Btn.innerText = isLocked ? "클리어" : "설정 대기";
             slot0Txt.innerText = "기본 접속 미션";
             slot0Txt.style.color = "var(--accent-green)";
         }
@@ -938,24 +1034,29 @@
                 selectEl.appendChild(opt);
             });
 
+            // Disable select dropdown if preset is locked
+            selectEl.disabled = isLocked;
+
             if (isCompleted) {
-                selectEl.disabled = true;
                 btnEl.disabled = true;
                 btnEl.innerText = "완료됨";
                 statusTxtEl.innerText = "✅ 클리어 완료";
                 statusTxtEl.style.color = "var(--accent-green)";
             } else if (slotIdx < 3 && data.state.dailyEarnedPoints >= maxP) {
-                selectEl.disabled = false;
                 btnEl.disabled = true;
                 btnEl.innerText = `${maxP}P 제한`;
                 statusTxtEl.innerText = "오늘 획득 제한 달성";
                 statusTxtEl.style.color = "var(--accent-gold)";
             } else {
-                selectEl.disabled = false;
-                btnEl.disabled = selectedIdx === null;
+                btnEl.disabled = !isLocked || selectedIdx === null;
                 btnEl.innerText = slotIdx === 3 ? "주간 클리어" : "클리어";
-                statusTxtEl.innerText = selectedIdx !== null ? "미션 수행 준비 완료" : "미션을 선택하세요";
-                statusTxtEl.style.color = "#aaa";
+                if (!isLocked) {
+                    statusTxtEl.innerText = selectedIdx !== null ? "미션 선택됨 (설정 완료 필요)" : "미션을 선택하세요";
+                    statusTxtEl.style.color = "var(--accent-gold)";
+                } else {
+                    statusTxtEl.innerText = "미션 수행 준비 완료";
+                    statusTxtEl.style.color = "#aaa";
+                }
             }
         }
 
@@ -984,7 +1085,7 @@
             normalLockMsg.style.display = "none";
         }
 
-        // Special Salvage Check (Unlocked via 100m Weekly Special Mission)
+        // Special Salvage Check
         if (!isWeeklyCompleted) {
             specialBtn.disabled = true;
             specialLockMsg.style.display = "block";
