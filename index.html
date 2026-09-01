@@ -214,9 +214,9 @@
             <span style="font-size:12px; color:var(--accent-gold); font-weight:bold;">🌊 [관리자 영역] 뎁스 슬롯별 미션/보상 등록 (30m, 50m, 100m 슬롯당 최대 7개)</span>
             <div class="admin-tab-group">
                 <button class="admin-tab-btn" id="stab-0" style="opacity:0.5; cursor:not-allowed;" title="10m는 접속 미션 고정입니다.">10m (접속고정)</button>
-                <button class="admin-tab-btn active" id="stab-1" onclick="switchAdminSlotTab(1)">30m 미션 풀</button>
+                <button class="admin-tab-btn" id="stab-1" onclick="switchAdminSlotTab(1)">30m 미션 풀</button>
                 <button class="admin-tab-btn" id="stab-2" onclick="switchAdminSlotTab(2)">50m 미션 풀</button>
-                <button class="admin-tab-btn" id="stab-3" onclick="switchAdminSlotTab(3)">100m 주간 미션 풀</button>
+                <button class="admin-tab-btn active" id="stab-3" onclick="switchAdminSlotTab(3)">100m 주간 미션 풀</button>
             </div>
             <div class="admin-input-row" style="margin-top:10px;">
                 <input type="text" id="admin-slot-text-input" placeholder="미션 내용 입력">
@@ -224,20 +224,26 @@
                 <button class="btn" onclick="addSlotItem()">미션 추가</button>
             </div>
             <div id="admin-slot-item-list" style="display:flex; flex-direction:column; gap:4px; margin-top:8px;"><div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
-                <span>카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
+                <span>군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
                 <button class="btn-del" onclick="deleteSlotItem(0)">삭제</button>
             </div><div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
-                <span>가디언 토벌(가디언의 의지 수집) - 1회 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
+                <span>모험섬 입장하기 - 1회 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
                 <button class="btn-del" onclick="deleteSlotItem(1)">삭제</button>
             </div><div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
-                <span>생명의 기운 3,000 이상 사용 (누적) <strong style="color:var(--accent-gold);">(+1P)</strong></span>
+                <span>필드 보스 보상 획득 - 1회 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
                 <button class="btn-del" onclick="deleteSlotItem(2)">삭제</button>
             </div><div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
-                <span>영지 활동력 3,000 이상 사용 (누적) <strong style="color:var(--accent-gold);">(+1P)</strong></span>
+                <span>카오스게이트 보상 획득 - 1회 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
                 <button class="btn-del" onclick="deleteSlotItem(3)">삭제</button>
             </div><div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
-                <span>게임 플레이 60분 달성 시 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
+                <span>어비스 던전 클리어 - 1회 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
                 <button class="btn-del" onclick="deleteSlotItem(4)">삭제</button>
+            </div><div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                <span>싱글/매칭 모드 클리어 - 1회 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
+                <button class="btn-del" onclick="deleteSlotItem(5)">삭제</button>
+            </div><div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                <span>어비스 던전/레이드 클리어 - 1회 <strong style="color:var(--accent-gold);">(+1P)</strong></span>
+                <button class="btn-del" onclick="deleteSlotItem(6)">삭제</button>
             </div></div>
         </div>
 
@@ -274,21 +280,21 @@
         <div class="sea-map-container">
             <div style="font-size:14px; font-weight:bold; color:var(--accent-blue); border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px; display:flex; justify-content:space-between;">
                 <span>⚓ 해저 탐사 미션 맵</span>
-                <span style="font-size:11px; color:var(--accent-gold);" id="daily-cap-status-ui">💡 오늘의 획득 포인트: 0 / 3P</span>
+                <span style="font-size:11px; color:var(--accent-gold);" id="daily-cap-status-ui">💡 오늘의 획득 포인트: 3 / 3P</span>
             </div>
 
             <!-- 10m Fixed Slot -->
             <div class="depth-slot-card" id="slot-card-0">
                 <div class="slot-header">
                     <span class="depth-tag">10m 탐사</span>
-                    <span style="font-size:11px; color:var(--accent-green);" id="slot-status-text-0">기본 접속 미션</span>
+                    <span style="font-size:11px; color:var(--accent-green);" id="slot-status-text-0">✅ 접속 완료</span>
                 </div>
                 <div class="dropdown-mission-row">
                     <div class="fixed-mission-box">
                         <span>🎮 게임 접속 완료</span>
                         <span style="color:var(--accent-gold); font-size:11px;">(+1P)</span>
                     </div>
-                    <button class="btn" id="slot-btn-0" onclick="executeFixedSlotMission()">클리어</button>
+                    <button class="btn" id="slot-btn-0" onclick="executeFixedSlotMission()" disabled="">완료됨</button>
                 </div>
             </div>
 
@@ -296,11 +302,11 @@
             <div class="depth-slot-card" id="slot-card-1">
                 <div class="slot-header">
                     <span class="depth-tag">30m 탐사</span>
-                    <span style="font-size:11px; color:#aaa;" id="slot-status-text-1">미션을 선택하세요</span>
+                    <span style="font-size: 11px; color: var(--accent-green);" id="slot-status-text-1">✅ 클리어 완료</span>
                 </div>
                 <div class="dropdown-mission-row">
-                    <select class="mission-select" id="mission-select-1" onchange="onMissionSelectChange(1, this.value)"><option value="">-- 미션 선택 --</option><option value="0">카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회 (+1P)</option><option value="1">가디언 토벌(가디언의 의지 수집) - 1회 (+1P)</option><option value="2">생명의 기운 3,000 이상 사용 (누적) (+1P)</option><option value="3">영지 활동력 3,000 이상 사용 (누적) (+1P)</option><option value="4">게임 플레이 60분 달성 시 (+1P)</option></select>
-                    <button class="btn" id="slot-btn-1" onclick="executeSlotMission(1)" disabled="">클리어</button>
+                    <select class="mission-select" id="mission-select-1" onchange="onMissionSelectChange(1, this.value)" disabled=""><option value="">-- 미션 선택 --</option><option value="0">카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회 (+1P)</option><option value="1">가디언 토벌(가디언의 의지 수집) - 1회 (+1P)</option><option value="2">생명의 기운 3,000 이상 사용 (누적) (+1P)</option><option value="3">영지 활동력 3,000 이상 사용 (누적) (+1P)</option><option value="4">게임 플레이 60분 달성 시 (+1P)</option></select>
+                    <button class="btn" id="slot-btn-1" onclick="executeSlotMission(1)" disabled="">완료됨</button>
                 </div>
             </div>
 
@@ -308,11 +314,11 @@
             <div class="depth-slot-card" id="slot-card-2">
                 <div class="slot-header">
                     <span class="depth-tag">50m 탐사</span>
-                    <span style="font-size:11px; color:#aaa;" id="slot-status-text-2">미션을 선택하세요</span>
+                    <span style="font-size: 11px; color: var(--accent-green);" id="slot-status-text-2">✅ 클리어 완료</span>
                 </div>
                 <div class="dropdown-mission-row">
-                    <select class="mission-select" id="mission-select-2" onchange="onMissionSelectChange(2, this.value)"><option value="">-- 미션 선택 --</option><option value="0">카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회 (+1P)</option><option value="1">가디언 토벌(가디언의 의지 수집) - 1회 (+1P)</option><option value="2">생명의 기운 3,000 이상 사용 (누적) (+1P)</option><option value="3">영지 활동력 3,000 이상 사용 (누적) (+1P)</option><option value="4">게임 플레이 60분 달성 시 (+1P)</option></select>
-                    <button class="btn" id="slot-btn-2" onclick="executeSlotMission(2)" disabled="">클리어</button>
+                    <select class="mission-select" id="mission-select-2" onchange="onMissionSelectChange(2, this.value)" disabled=""><option value="">-- 미션 선택 --</option><option value="0">카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회 (+1P)</option><option value="1">가디언 토벌(가디언의 의지 수집) - 1회 (+1P)</option><option value="2">생명의 기운 3,000 이상 사용 (누적) (+1P)</option><option value="3">영지 활동력 3,000 이상 사용 (누적) (+1P)</option><option value="4">게임 플레이 60분 달성 시 (+1P)</option></select>
+                    <button class="btn" id="slot-btn-2" onclick="executeSlotMission(2)" disabled="">완료됨</button>
                 </div>
             </div>
 
@@ -323,7 +329,7 @@
                     <span style="font-size: 11px; color: rgb(170, 170, 170);" id="slot-status-text-3">미션을 선택하세요</span>
                 </div>
                 <div class="dropdown-mission-row">
-                    <select class="mission-select" id="mission-select-3" onchange="onMissionSelectChange(3, this.value)"><option value="">-- 주간 미션 선택 --</option><option value="0">군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회 (+1P)</option><option value="1">모험섬 입장하기 - 1회 (+1P)</option><option value="2">필드 보스 보상 획득 - 1회 (+1P)</option><option value="3">카오스게이트 보상 획득 - 1회 (+1P)</option><option value="4">어비스 던전 클리어 - 1회 (+1P)</option></select>
+                    <select class="mission-select" id="mission-select-3" onchange="onMissionSelectChange(3, this.value)"><option value="">-- 주간 미션 선택 --</option><option value="0">군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회 (+1P)</option><option value="1">모험섬 입장하기 - 1회 (+1P)</option><option value="2">필드 보스 보상 획득 - 1회 (+1P)</option><option value="3">카오스게이트 보상 획득 - 1회 (+1P)</option><option value="4">어비스 던전 클리어 - 1회 (+1P)</option><option value="5">싱글/매칭 모드 클리어 - 1회 (+1P)</option><option value="6">어비스 던전/레이드 클리어 - 1회 (+1P)</option></select>
                     <button class="btn btn-save" id="slot-btn-3" onclick="executeWeeklySlot()" disabled="">주간 클리어</button>
                 </div>
             </div>
@@ -332,7 +338,7 @@
         <!-- Right: Salvage Crane Panel -->
         <div class="salvage-panel">
             <h3>⚓ 크레인 보물 인양 현장</h3>
-            <div class="coin-display">💡 보유 인양 포인트: <span id="ui-coins">0</span> P</div>
+            <div class="coin-display">💡 보유 인양 포인트: <span id="ui-coins">3</span> P</div>
             
             <div class="salvage-stage">
                 <div class="sea-wave"></div>
@@ -350,13 +356,13 @@
                 </div>
             </div>
 
-            <button class="btn-salvage" id="btn-spin" onclick="startSalvageAnimation('normal')" disabled="">1P 소모하여 일반 보물 인양하기</button>
-            <span class="lock-notice" id="normal-lock-msg" style="display: block;">🔒 일일 탐사 미션(3개)을 모두 완료해야 오픈됩니다!</span>
+            <button class="btn-salvage" id="btn-spin" onclick="startSalvageAnimation('normal')">1P 소모하여 일반 보물 인양하기</button>
+            <span class="lock-notice" id="normal-lock-msg" style="display: none;">🔒 일일 탐사 미션(3개)을 모두 완료해야 오픈됩니다!</span>
 
             <button class="btn-special-salvage" id="btn-special-spin" style="margin-top:8px;" onclick="startSalvageAnimation('special')" disabled="">💎 주간 미션 완료로 특수 보물 인양하기 (0P 소모)</button>
             <span class="lock-notice" id="special-lock-msg" style="display: block;">🔒 100m 주간 미션을 완료해야 오픈됩니다!</span>
 
-            <button class="btn-bulk-salvage" id="btn-bulk-spin" style="margin-top:8px;" onclick="startBulkSalvage()" disabled="">⚡ 보유 포인트로 한번에 인양하기</button>
+            <button class="btn-bulk-salvage" id="btn-bulk-spin" style="margin-top:8px;" onclick="startBulkSalvage()">⚡ 보유 포인트로 한번에 인양하기</button>
             <button class="btn-status-check" onclick="openStatusModal()">📊 특수 보상 획득 현황 확인</button>
         </div>
     </div>
@@ -381,7 +387,7 @@
 <script>
     let activeSlotTabIdx = 1; // Default to 30m slot edit
     
-    let defaultData = {"isPublished":true,"dailyMaxPoints":3,"normalSalvageCost":1,"headerTitle":"⚓ 모코코의 해저 보물 인양 대작전","headerSub":"모든 탐사 미션을 클리어하여 포인트를 모으고, 해저 보물 인양 자격을 획득하세요!","slotPools":[[],[{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회","coin":1},{"text":"가디언 토벌(가디언의 의지 수집) - 1회","coin":1},{"text":"생명의 기운 3,000 이상 사용 (누적)","coin":1},{"text":"영지 활동력 3,000 이상 사용 (누적)","coin":1},{"text":"게임 플레이 60분 달성 시","coin":1}],[{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회","coin":1},{"text":"가디언 토벌(가디언의 의지 수집) - 1회","coin":1},{"text":"생명의 기운 3,000 이상 사용 (누적)","coin":1},{"text":"영지 활동력 3,000 이상 사용 (누적)","coin":1},{"text":"게임 플레이 60분 달성 시","coin":1}],[{"text":"군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회","coin":1},{"text":"모험섬 입장하기 - 1회","coin":1},{"text":"필드 보스 보상 획득 - 1회","coin":1},{"text":"카오스게이트 보상 획득 - 1회","coin":1},{"text":"어비스 던전 클리어 - 1회","coin":1}]],"normalPool":["일일 보상 #1","일일 보상 #2","일일 보상 #3","일일 보상 #4","일일 보상 #5"],"specialPool":["주간 보상 #1","주간 보상 #2","주간 보상 #3","주간 보상 #4","주간 보상 #5"],"state":{"coins":0,"dailyEarnedPoints":0,"selectedMissions":[null,null,null,null],"completedSlots":[],"weeklyCompleted":false,"obtainedSpecialRewards":[]}};
+    let defaultData = {"isPublished":true,"dailyMaxPoints":3,"normalSalvageCost":1,"headerTitle":"⚓ 모코코의 해저 보물 인양 대작전","headerSub":"모든 탐사 미션을 클리어하여 포인트를 모으고, 해저 보물 인양 자격을 획득하세요!","slotPools":[[],[{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회","coin":1},{"text":"가디언 토벌(가디언의 의지 수집) - 1회","coin":1},{"text":"생명의 기운 3,000 이상 사용 (누적)","coin":1},{"text":"영지 활동력 3,000 이상 사용 (누적)","coin":1},{"text":"게임 플레이 60분 달성 시","coin":1}],[{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회","coin":1},{"text":"가디언 토벌(가디언의 의지 수집) - 1회","coin":1},{"text":"생명의 기운 3,000 이상 사용 (누적)","coin":1},{"text":"영지 활동력 3,000 이상 사용 (누적)","coin":1},{"text":"게임 플레이 60분 달성 시","coin":1}],[{"text":"군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회","coin":1},{"text":"모험섬 입장하기 - 1회","coin":1},{"text":"필드 보스 보상 획득 - 1회","coin":1},{"text":"카오스게이트 보상 획득 - 1회","coin":1},{"text":"어비스 던전 클리어 - 1회","coin":1},{"text":"싱글/매칭 모드 클리어 - 1회","coin":1},{"text":"어비스 던전/레이드 클리어 - 1회","coin":1}]],"normalPool":["일일 보상 #1","일일 보상 #2","일일 보상 #3","일일 보상 #4","일일 보상 #5"],"specialPool":["주간 보상 #1","주간 보상 #2","주간 보상 #3","주간 보상 #4","주간 보상 #5"],"state":{"coins":3,"dailyEarnedPoints":3,"selectedMissions":[null,1,0,null],"completedSlots":[0,1,2],"weeklyCompleted":false,"obtainedSpecialRewards":[]}};
 
     let data = JSON.parse(JSON.stringify(defaultData));
 
