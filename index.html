@@ -330,7 +330,7 @@
             </div>
             <div class="plan-select-card" id="main-plan-card-B" onclick="selectPlanOnMainScreen('B')">
                 <div style="font-weight:bold; color:var(--accent-green); font-size:14px; margin-bottom:6px;" id="main-plan-title-B">🌿 탐사 플랜 B (캐주얼/생활)</div>
-                <div style="font-size:11px; color:var(--text-muted); line-height:1.5;" id="main-plan-desc-B">• 보물 인양 준비: 🎮 게임 접속 완료<br>• 30m: 생명의 기운 3,000 이상 사용 (누적)<br>• 50m: 게임 플레이 60분 달성 시<br>• 심해 탐사: 모험섬 / 필드 보스 / 카오스게이트 중 1회 참여</div>
+                <div style="font-size:11px; color:var(--text-muted); line-height:1.5;" id="main-plan-desc-B">• 보물 인양 준비: 🎮 게임 접속 완료<br>• 30m: 카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회<br>• 50m: 생명의 기운/영지 활동력 3,000 이상 사용 (누적)<br>• 심해 탐사: 모험섬 / 필드 보스 / 카오스게이트 중 1회 보상 획득</div>
             </div>
         </div>
     </div>
@@ -525,7 +525,7 @@
     let activeAdminPlan = 'A';
     let activeSlotTabIdx = 1;
 
-    let defaultData = {"isPublished":true,"headerTitle":"⚓ 모코코의 해저 보물 인양 대작전","headerSub":"원하는 탐사 플랜을 선택하고 보물 인양 준비부터 심해 탐사까지 완수해 보세요!","plans":{"A":{"name":"⚔️ 탐사 플랜 A (전투/레이드)","missions":[{"text":"🎮 게임 접속 완료"},{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회"},{"text":"가디언 토벌(가디언의 의지 수집) - 1회"},{"text":"군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회"}]},"B":{"name":"🌿 탐사 플랜 B (캐주얼/생활)","missions":[{"text":"🎮 게임 접속 완료"},{"text":"생명의 기운 3,000 이상 사용 (누적)"},{"text":"게임 플레이 60분 달성 시"},{"text":"모험섬 / 필드 보스 / 카오스게이트 중 1회 참여"}]}},"normalPool":["일일 보상 #1","일일 보상 #2","일일 보상 #3","일일 보상 #4","일일 보상 #5"],"specialPool":["주간 보상 #1","주간 보상 #2","주간 보상 #3","주간 보상 #4","주간 보상 #5"],"state":{"selectedPlan":null,"completedSlots":[],"normalSalvagesUsed":0,"weeklyCompleted":false,"weeklySalvageUsed":false,"obtainedSpecialRewards":[]}};
+    let defaultData = {"isPublished":true,"headerTitle":"⚓ 모코코의 해저 보물 인양 대작전","headerSub":"원하는 탐사 플랜을 선택하고 보물 인양 준비부터 심해 탐사까지 완수해 보세요!","plans":{"A":{"name":"⚔️ 탐사 플랜 A (전투/레이드)","missions":[{"text":"🎮 게임 접속 완료"},{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회"},{"text":"가디언 토벌(가디언의 의지 수집) - 1회"},{"text":"군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회"}]},"B":{"name":"🌿 탐사 플랜 B (캐주얼/생활)","missions":[{"text":"🎮 게임 접속 완료"},{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회"},{"text":"생명의 기운/영지 활동력 3,000 이상 사용 (누적)"},{"text":"모험섬 / 필드 보스 / 카오스게이트 중 1회 보상 획득"}]}},"normalPool":["일일 보상 #1","일일 보상 #2","일일 보상 #3","일일 보상 #4","일일 보상 #5"],"specialPool":["주간 보상 #1","주간 보상 #2","주간 보상 #3","주간 보상 #4","주간 보상 #5"],"state":{"selectedPlan":null,"completedSlots":[],"normalSalvagesUsed":0,"weeklyCompleted":false,"weeklySalvageUsed":false,"obtainedSpecialRewards":[]}};
 
     let data = JSON.parse(JSON.stringify(defaultData));
 
