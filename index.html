@@ -1,7 +1,7 @@
 <html lang="ko"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>모코코의 해저 보물 인양 대작전 - 웹 이벤트 Prototype v63</title>
+    <title>모코코의 해저 보물 인양 대작전 - 웹 이벤트 Prototype v72</title>
     <style>
         :root {
             --bg-color: #08131d;
@@ -221,6 +221,42 @@
         .btn-special-salvage:active:not(:disabled) { transform: translateY(4px); box-shadow: none; }
         .btn-special-salvage:disabled { background: #334e63; border-color: #223442; box-shadow: none; color: #607d94; cursor: not-allowed; }
 
+        .btn-all-salvage {
+            background: linear-gradient(135deg, #ffd700 0%, #ff8c00 50%, #e65100 100%);
+            color: #0d1a2d;
+            font-size: 14px;
+            letter-spacing: -0.2px;
+            padding: 13px 16px;
+            width: 100%;
+            border: 1.5px solid #ffe57f;
+            box-shadow: 0 4px 15px rgba(255, 160, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            margin-top: 12px;
+            margin-bottom: 6px;
+            font-weight: 900;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-all-salvage:hover:not(:disabled) {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(255, 160, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+        .btn-all-salvage:active:not(:disabled) {
+            transform: translateY(2px);
+            box-shadow: 0 2px 8px rgba(255, 160, 0, 0.3);
+        }
+        .btn-all-salvage:disabled {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: none;
+            color: #526f84;
+            cursor: not-allowed;
+            filter: grayscale(0.8);
+        }
+
         .btn-status-check { background: rgba(255, 210, 77, 0.15); border: 1px solid var(--accent-gold); color: var(--accent-gold); font-size: 12px; padding: 8px 12px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 6px; transition: all 0.2s; }
         .btn-status-check:hover { background: rgba(255, 210, 77, 0.3); }
 
@@ -267,29 +303,29 @@
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                 <span style="font-size:12px; color:var(--accent-gold); font-weight:bold;">🌊 [관리자] 플랜 명칭 및 뎁스 슬롯 미션 고정 등록</span>
                 <div style="display:flex; gap:6px;">
-                    <button class="admin-tab-btn" id="plan-tab-A" onclick="switchAdminPlanTab('A')">플랜 A 편집</button>
-                    <button class="admin-tab-btn active" id="plan-tab-B" onclick="switchAdminPlanTab('B')">플랜 B 편집</button>
+                    <button class="admin-tab-btn active" id="plan-tab-A" onclick="switchAdminPlanTab('A')">플랜 A 편집</button>
+                    <button class="admin-tab-btn" id="plan-tab-B" onclick="switchAdminPlanTab('B')">플랜 B 편집</button>
                 </div>
             </div>
 
             <!-- Editable Plan Name Row -->
             <div class="admin-input-row" style="background:rgba(255,255,255,0.03); padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.1); margin-bottom:8px;">
-                <span style="font-size:12px; color:var(--accent-blue); font-weight:bold; white-space:nowrap;" id="admin-plan-title-label">📌 [플랜 B] 명칭:</span>
+                <span style="font-size:12px; color:var(--accent-blue); font-weight:bold; white-space:nowrap;" id="admin-plan-title-label">📌 [플랜 A] 명칭:</span>
                 <input type="text" id="admin-plan-name-input" placeholder="플랜 명칭 입력">
                 <button class="btn btn-save" onclick="saveAdminPlanName()">명칭 저장</button>
             </div>
 
             <div class="admin-tab-group">
                 <button class="admin-tab-btn" id="stab-0" style="opacity:0.5; cursor:not-allowed;" title="보물 인양 준비는 접속 미션 고정입니다.">보물 인양 준비 (접속고정)</button>
-                <button class="admin-tab-btn" id="stab-1" onclick="switchAdminSlotTab(1)">30m 미션</button>
-                <button class="admin-tab-btn active" id="stab-2" onclick="switchAdminSlotTab(2)">50m 미션</button>
+                <button class="admin-tab-btn active" id="stab-1" onclick="switchAdminSlotTab(1)">30m 미션</button>
+                <button class="admin-tab-btn" id="stab-2" onclick="switchAdminSlotTab(2)">50m 미션</button>
                 <button class="admin-tab-btn" id="stab-3" onclick="switchAdminSlotTab(3)">심해 탐사 주간 미션</button>
             </div>
             <div class="admin-input-row" style="margin-top:10px;">
                 <input type="text" id="admin-slot-text-input" placeholder="고정 미션 내용 입력">
                 <button class="btn" onclick="saveAdminSlotMission()">미션 설정/저장</button>
             </div>
-            <div id="admin-slot-item-display" style="font-size:12px; color:var(--accent-lime); margin-top:8px;">현재 설정된 미션: "생명의 기운/영지 활동력 3,000 이상 소모(누적) - 1회"</div>
+            <div id="admin-slot-item-display" style="font-size:12px; color:var(--accent-lime); margin-top:8px;">현재 설정된 미션: "카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회"</div>
         </div>
 
         <!-- Master Pools Manager -->
@@ -322,15 +358,15 @@
 
     <!-- Main Screen Plan Selection UI -->
     <div class="plan-selection-bar">
-        <div class="plan-selection-title">🧭 나만의 해저 탐사 플랜 선택 (1종 선택 가능)</div>
+        <div class="plan-selection-title">🧭 나만의 주간 해저 탐사 플랜 선택 (1종 선택 가능 / 주간 중도 변경 불가)</div>
         <div class="plan-cards-container">
-            <div class="plan-select-card active" id="main-plan-card-A" onclick="selectPlanOnMainScreen('A')">
+            <div class="plan-select-card" id="main-plan-card-A" onclick="selectPlanOnMainScreen('A')">
                 <div style="font-weight:bold; color:var(--accent-gold); font-size:14px; margin-bottom:6px;" id="main-plan-title-A">⚔️ 탐사 플랜 A (전투/레이드)</div>
                 <div style="font-size:11px; color:var(--text-muted); line-height:1.5;" id="main-plan-desc-A">• 보물 인양 준비: 🎮 게임 접속 완료<br>• 30m: 카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회<br>• 50m: 가디언 토벌(가디언의 의지 수집) - 1회<br>• 심해 탐사: 군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회</div>
             </div>
             <div class="plan-select-card" id="main-plan-card-B" onclick="selectPlanOnMainScreen('B')">
                 <div style="font-weight:bold; color:var(--accent-green); font-size:14px; margin-bottom:6px;" id="main-plan-title-B">🌿 탐사 플랜 B (캐주얼/생활)</div>
-                <div style="font-size:11px; color:var(--text-muted); line-height:1.5;" id="main-plan-desc-B">• 보물 인양 준비: 🎮 게임 접속 완료<br>• 30m: 카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회<br>• 50m: 생명의 기운/영지 활동력 3,000 이상 소모(누적) - 1회<br>• 심해 탐사: 모험섬 / 필드 보스 / 카오스게이트 중 1회 참여</div>
+                <div style="font-size:11px; color:var(--text-muted); line-height:1.5;" id="main-plan-desc-B">• 보물 인양 준비: 🎮 게임 접속 완료<br>• 30m: 카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회<br>• 50m: 생명의 기운/영지 활동력 3,000 이상 소모 시 - 1회<br>• 심해 탐사: 모험섬 / 필드 보스 / 카오스게이트 중 1회 참여</div>
             </div>
         </div>
     </div>
@@ -351,19 +387,19 @@
                 </div>
 
                 <!-- STEP 1: 보물 인양 준비 Slot -->
-                <div class="depth-slot-card active-step" id="slot-card-0">
+                <div class="depth-slot-card locked-step" id="slot-card-0">
                     <div class="slot-header">
                         <div>
                             <span class="step-badge">STEP 01</span>
                             <span class="depth-tag">보물 인양 준비</span>
                         </div>
-                        <span style="font-size: 11px; color: var(--accent-blue);" id="slot-status-text-0">진행 가능</span>
+                        <span style="font-size: 11px; color: var(--danger-red);" id="slot-status-text-0">플랜 선택 필요</span>
                     </div>
                     <div class="fixed-mission-row">
                         <div class="fixed-mission-box">
                             <span>🎮 게임 접속 완료</span>
                         </div>
-                        <button class="btn" id="slot-btn-0" onclick="executeFixedSlotMission()">클리어</button>
+                        <button class="btn" id="slot-btn-0" onclick="executeFixedSlotMission()" disabled="">플랜 선택 대기</button>
                     </div>
                 </div>
 
@@ -418,7 +454,7 @@
                     </div>
                     <div class="fixed-mission-row">
                         <div class="fixed-mission-box" id="mission-text-box-3" style="border-color:var(--accent-purple);"><span>군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회</span></div>
-                        <button class="btn btn-save" id="slot-btn-3" style="background:var(--accent-purple); color:#fff;" onclick="executeWeeklySlot()">주간 클리어</button>
+                        <button class="btn btn-save" id="slot-btn-3" style="background:var(--accent-purple); color:#fff;" onclick="executeWeeklySlot()" disabled="">주간 클리어</button>
                     </div>
                 </div>
             </div>
@@ -433,7 +469,7 @@
             <div class="ticket-status-box">
                 <div class="ticket-row">
                     <span>📦 오늘 일반 인양 가능 횟수:</span>
-                    <strong style="color:var(--accent-lime); font-size:14px;" id="daily-salvage-count-ui">0 / 0 회 (당일 소모: 0회)</strong>
+                    <strong style="color:var(--accent-lime); font-size:14px;" id="daily-salvage-count-ui">3회 (오늘: 0회 + 이월: 3회)</strong>
                 </div>
                 <div class="ticket-row" style="font-size:10px; color:var(--text-muted);">
                     (일일 최대 2회: 30m 클리어 +1회, 50m 클리어 +1회)
@@ -478,13 +514,13 @@
                 </div>
             </div>
 
-            <button class="btn-salvage" id="btn-spin" onclick="startSalvageAnimation('normal')" disabled="">📦 일반 보물 인양 (1회)</button>
-            <span class="lock-notice" id="normal-lock-msg" style="display: block;">🔒 인양할 수 있는 일반 기회가 없습니다. (30m/50m 미션을 완료해 보세요)</span>
+            <button class="btn-salvage" id="btn-spin" onclick="startSalvageAnimation('normal')">📦 일반 보물 인양 (1회)</button>
+            <span class="lock-notice" id="normal-lock-msg" style="display: none;">🔒 30m 또는 50m 탐사 미션을 클리어하여 인양 기회를 획득하세요!</span>
 
             <button class="btn-special-salvage" id="btn-special-spin" style="margin-top:8px;" onclick="startSalvageAnimation('special')" disabled="">💎 주간 특수 보물 인양 (1회)</button>
             <span class="lock-notice" id="special-lock-msg" style="display: block;">🔒 인양 가능한 특수 기회가 없습니다. [심해 탐사] 주간 미션을 클리어하세요!</span>
 
-            <button class="btn-all-salvage" id="btn-all-salvage" onclick="executeUnifiedBulkSalvage()" disabled="">⚡ 보물 한번에 인양하기</button>
+            <button class="btn-all-salvage" id="btn-all-salvage" onclick="executeUnifiedBulkSalvage()">⚡ 보물 한번에 인양하기</button>
 
             <button class="btn-status-check" onclick="openStatusModal()">📊 특수 보상 획득 현황 확인</button>
         </div>
@@ -512,12 +548,12 @@
         <div style="font-size:12px; color:var(--text-color); line-height:1.6; text-align:left; background:rgba(0,0,0,0.4); padding:14px; border-radius:10px; border:1px solid var(--panel-border); margin:12px 0;">
             1️⃣ <strong>상단 메인 UI에서 탐사 플랜 선택:</strong><br>
             • 원하는 탐사 플랜 중 1종을 메인 화면 상단에서 직접 선택해 주세요.<br>
-            • <u>단, 당일 일일 일반 보상을 1회라도 인양한 이후에는 플랜 변경이 불가능합니다.</u><br><br>
+            • <u>한 번 선택한 탐사 플랜은 해당 주차 동안 변경할 수 없습니다. (매주 수요일 06:00 재선택 가능)</u><br><br>
             2️⃣ <strong>탐사 단계 명칭 및 해금 규칙:</strong><br>
             • <strong>☀️ 일일 탐사:</strong> [보물 인양 준비(접속)] 완료 시 30m, 50m 미션이 동시 해금되어 원하는 순서대로 자유롭게 완료할 수 있습니다.<br>
             • <strong>👑 주간 심해 탐사:</strong> [심해 탐사] 미션은 이전 단계 완료 여부와 관계없이 <u>주간 단위로 언제든지 독립적으로 클리어 가능</u>합니다.<br><br>
             3️⃣ <strong>주간 초기화 규칙:</strong><br>
-            • 매주 <strong>수요일 오전 06:00</strong>에 주간 미션 및 주간 특수 인양 기회가 초기화됩니다.
+            • 매주 <strong>수요일 오전 06:00</strong>에 주간 미션, 플랜 선택 및 주간 특수 인양 기회가 초기화됩니다.
         </div>
         <button class="btn btn-publish" style="width:100%; padding:10px; font-size:14px; font-weight:bold; margin-top:6px;" onclick="closeGuideModal()">가이드 확인 완료 🚀</button>
     </div>
@@ -528,7 +564,7 @@
     let activeAdminPlan = 'A';
     let activeSlotTabIdx = 1;
 
-    let defaultData = {"isPublished":true,"headerTitle":"⚓ 모코코의 해저 보물 인양 대작전","headerSub":"원하는 탐사 플랜을 선택하고 보물 인양 준비부터 심해 탐사까지 완수해 보세요!","plans":{"A":{"name":"⚔️ 탐사 플랜 A (전투/레이드)","missions":[{"text":"🎮 게임 접속 완료"},{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회"},{"text":"가디언 토벌(가디언의 의지 수집) - 1회"},{"text":"군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회"}]},"B":{"name":"🌿 탐사 플랜 B (캐주얼/생활)","missions":[{"text":"🎮 게임 접속 완료"},{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회"},{"text":"생명의 기운/영지 활동력 3,000 이상 소모(누적) - 1회"},{"text":"모험섬 / 필드 보스 / 카오스게이트 중 1회 참여"}]}},"normalPool":["일일 보상 #1","일일 보상 #2","일일 보상 #3","일일 보상 #4","일일 보상 #5"],"specialPool":["주간 보상 #1","주간 보상 #2","주간 보상 #3","주간 보상 #4","주간 보상 #5"],"state":{"selectedPlan":"A","completedSlots":[],"normalSalvagesUsed":0,"carriedOverNormalTickets":0,"weeklyCompleted":false,"weeklySalvageUsed":false,"carriedOverWeeklyTickets":0,"obtainedSpecialRewards":[]}};
+    let defaultData = {"isPublished":true,"headerTitle":"⚓ 모코코의 해저 보물 인양 대작전","headerSub":"원하는 탐사 플랜을 선택하고 보물 인양 준비부터 심해 탐사까지 완수해 보세요!","plans":{"A":{"name":"⚔️ 탐사 플랜 A (전투/레이드)","missions":[{"text":"🎮 게임 접속 완료"},{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회"},{"text":"가디언 토벌(가디언의 의지 수집) - 1회"},{"text":"군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회"}]},"B":{"name":"🌿 탐사 플랜 B (캐주얼/생활)","missions":[{"text":"🎮 게임 접속 완료"},{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회"},{"text":"생명의 기운/영지 활동력 3,000 이상 소모 시 - 1회"},{"text":"모험섬 / 필드 보스 / 카오스게이트 중 1회 참여"}]}},"normalPool":["일일 보상 #1","일일 보상 #2","일일 보상 #3","일일 보상 #4","일일 보상 #5"],"specialPool":["주간 보상 #1","주간 보상 #2","주간 보상 #3","주간 보상 #4","주간 보상 #5"],"state":{"selectedPlan":null,"completedSlots":[],"normalSalvagesUsed":0,"weeklyCompleted":false,"weeklySalvageUsed":false,"obtainedSpecialRewards":[],"carriedOverNormalTickets":3}};
 
     let data = JSON.parse(JSON.stringify(defaultData));
 
@@ -568,25 +604,19 @@
     function selectPlanOnMainScreen(planKey) {
         if (data.state.selectedPlan === planKey) return;
 
-        if (data.state.normalSalvagesUsed > 0) {
-            alert("⚠️ 이미 오늘 일일 일반 보물을 인양하여 보상을 획득하셨습니다!\n\n당일 보상을 1회 이상 획득한 이후에는 탐사 플랜을 변경할 수 없습니다.\n(※ 다음 날 일일 초기화 이후 변경 가능합니다.)");
+        if (data.state.selectedPlan !== null) {
+            alert("⚠️ 탐사 플랜은 한 번 선택하면 해당 주차 동안 변경할 수 없습니다!\n\n(※ 매주 수요일 06:00 주간 초기화 시 다른 플랜으로 재선택이 가능합니다.)");
             return;
         }
 
         const planName = data.plans[planKey].name || `탐사 플랜 ${planKey}`;
-        
-        let confirmText = "";
-        if (data.state.selectedPlan === null) {
-            confirmText = `🧭 [${planName}]을 선택하시겠습니까?\n\n선택한 플랜의 미션으로 해저 탐사가 진행됩니다.`;
-        } else {
-            confirmText = `🧭 탐사 플랜을 [${planName}]로 변경하시겠습니까?\n\n(※ 오늘 일일 보상을 인양하기 전이므로 플랜 변경이 가능합니다.)`;
-        }
+        let confirmText = `🧭 [${planName}]을 선택하시겠습니까?\n\n⚠️ 한 번 선택한 탐사 플랜은 이번 주 동안 변경할 수 없으니 신중히 선택해 주세요.`;
 
         if (confirm(confirmText)) {
             data.state.selectedPlan = planKey;
             saveStateToStorage();
             renderUI();
-            alert(`⚓ [${planName}] 선택이 완료되었습니다!\n원하는 미션을 자유롭게 클리어해 보세요.`);
+            alert(`⚓ [${planName}] 선택이 완료되었습니다!\n이번 주 탐사를 완수해 보세요.`);
         }
     }
 
@@ -628,7 +658,7 @@
     }
 
     function advanceToNextDay() {
-        if(confirm("⏭️ 다음 날로 이동하시겠습니까?\n(당일 미사용한 일반 인양 기회는 다음 날로 누적/이월되며, 일일 미션 클리어 내역이 초기화됩니다.)")) {
+        if(confirm("⏭️ 다음 날로 이동하시겠습니까?\n(당일 미사용한 일반 인양 기회는 다음 날로 누적/이월되며, 일일 미션 클리어 내역이 초기화됩니다.\n선택한 주간 플랜은 유지됩니다.)")) {
             let todayEarned = 0;
             if (data.state.completedSlots.includes(1)) todayEarned += 1;
             if (data.state.completedSlots.includes(2)) todayEarned += 1;
@@ -642,7 +672,7 @@
             saveStateToStorage();
             renderUI();
             
-            let msg = "🌅 일일 초기화 완료!";
+            let msg = "🌅 일일 초기화 완료! (주간 플랜 상태는 유지됩니다)";
             if (unusedToday > 0) {
                 msg += `\n(당일 미사용 일반 인양 기회 ${unusedToday}회가 이월 및 누적되었습니다.)`;
             }
@@ -651,28 +681,30 @@
     }
 
     function resetWeeklyOnly() {
-        if(confirm("🔄 주간 리셋을 진행하시겠습니까?\n\n• 금주 미사용한 특수 인양 기회는 다음 주차로 누적/이월됩니다.\n• [심해 탐사] 주간 미션 완료 상태가 초기화됩니다.")) {
+        if(confirm("🔄 주간 리셋을 진행하시겠습니까?\n\n• 선택했던 탐사 플랜이 해제되어 새 플랜 선택이 가능해집니다.\n• 금주 미사용한 특수 인양 기회는 다음 주차로 누적/이월됩니다.\n• [심해 탐사] 주간 미션 완료 상태가 초기화됩니다.")) {
             if (data.state.weeklyCompleted && !data.state.weeklySalvageUsed) {
                 if (!data.state.carriedOverWeeklyTickets) data.state.carriedOverWeeklyTickets = 0;
                 data.state.carriedOverWeeklyTickets += 1;
             }
+            data.state.selectedPlan = null;
             data.state.weeklyCompleted = false;
             data.state.weeklySalvageUsed = false;
             saveStateToStorage();
             renderUI();
-            alert("🔄 주간 리셋 완료! 미사용한 특수 인양 기회가 정상적으로 이월되었습니다.");
+            alert("🔄 주간 리셋 완료! 미사용한 특수 인양 기회가 정상적으로 이월되었으며, 새로운 탐사 플랜 선택이 가능합니다.");
         }
     }
 
     function forceWeeklyResetByAdmin() {
-        if(confirm("🔄 [수요일 06:00 정기 점검] 전체 초기화를 수행하시겠습니까?\n\n• 일일 탐사 및 일반 인양 횟수 초기화\n• 주간 [심해 탐사] 및 특수 인양 횟수 초기화")) {
+        if(confirm("🔄 [수요일 06:00 정기 점검] 전체 주간 초기화를 수행하시겠습니까?\n\n• 선택된 주간 탐사 플랜 해제\n• 일일/주간 탐사 미션 및 인양 횟수 초기화")) {
+            data.state.selectedPlan = null;
             data.state.completedSlots = [];
             data.state.normalSalvagesUsed = 0;
             data.state.weeklyCompleted = false;
             data.state.weeklySalvageUsed = false;
             saveStateToStorage();
             renderUI();
-            alert("🧹 수요일 06:00 기준 주간/일일 진행 현황이 정상 리셋되었습니다.");
+            alert("🧹 수요일 06:00 기준 주간/일일 진행 현황 및 플랜 선택이 정상 리셋되었습니다.");
         }
     }
 
@@ -895,8 +927,6 @@
         alert(`⚓ [심해 탐사 주간 미션] 완수!\n주간 특수 보물 인양 기회 1회를 획득했습니다!`);
     }
 
-    
-    
     function executeUnifiedBulkSalvage() {
         // Calculate normal salvages available
         let todayEarned = 0;
@@ -976,92 +1006,6 @@
         alert(resultText);
     }
 
-    function executeBulkSalvage_OLD(type) {
-        if (type === 'special') {
-            let carriedWeekly = data.state.carriedOverWeeklyTickets || 0;
-            let currentWeeklyAvail = (data.state.weeklyCompleted && !data.state.weeklySalvageUsed) ? 1 : 0;
-            let totalWeeklyAvail = currentWeeklyAvail + carriedWeekly;
-
-            if (totalWeeklyAvail <= 0) {
-                return alert("🔒 인양 가능한 특수 보물 기회가 없습니다.");
-            }
-
-            let unobtainedSpecial = data.specialPool.filter(item => !data.state.obtainedSpecialRewards.includes(item));
-            if (data.specialPool.length === 0) return alert("등록된 특수 보물 풀이 없습니다.");
-            if (unobtainedSpecial.length === 0) return alert("모든 특수 보물을 이미 중복 없이 획득하셨습니다!");
-
-            let pullCount = Math.min(totalWeeklyAvail, unobtainedSpecial.length);
-            if (!confirm(`💎 보유 중인 특수 보물 인양 기회 총 ${totalWeeklyAvail}회 중 ${pullCount}회를 한 번에 소모하여 인양하시겠습니까?`)) {
-                return;
-            }
-
-            let wonItems = [];
-            for (let i = 0; i < pullCount; i++) {
-                let currentPool = data.specialPool.filter(item => !data.state.obtainedSpecialRewards.includes(item));
-                if (currentPool.length === 0) break;
-
-                let randIdx = Math.floor(Math.random() * currentPool.length);
-                let wonItem = currentPool[randIdx];
-
-                data.state.obtainedSpecialRewards.push(wonItem);
-                wonItems.push(wonItem);
-
-                if (data.state.weeklyCompleted && !data.state.weeklySalvageUsed) {
-                    data.state.weeklySalvageUsed = true;
-                } else if (data.state.carriedOverWeeklyTickets > 0) {
-                    data.state.carriedOverWeeklyTickets -= 1;
-                }
-            }
-
-            saveStateToStorage();
-            renderUI();
-
-            let summary = wonItems.map((item, idx) => `${idx + 1}. [${item}]`).join('\n');
-            alert(`⚓ [특수 보물 한 번에 인양 완료!]\n\n총 ${wonItems.length}개의 특수 보물을 획득했습니다:\n\n${summary}\n\n게임 내 우편함으로 즉시 발송되었습니다.`);
-
-        } else {
-            let todayEarned = 0;
-            if (data.state.completedSlots.includes(1)) todayEarned += 1;
-            if (data.state.completedSlots.includes(2)) todayEarned += 1;
-
-            let todayAvail = Math.max(0, todayEarned - data.state.normalSalvagesUsed);
-            let carriedNormal = data.state.carriedOverNormalTickets || 0;
-            let totalNormalAvail = todayAvail + carriedNormal;
-
-            if (totalNormalAvail <= 0) {
-                return alert("🔒 인양 가능한 일반 보물 기회가 없습니다.");
-            }
-
-            if (data.normalPool.length === 0) return alert("등록된 일반 보물 풀이 없습니다.");
-
-            if (!confirm(`📦 보유 중인 일반 보물 인양 기회 총 ${totalNormalAvail}회를 한 번에 모두 소모하여 인양하시겠습니까?`)) {
-                return;
-            }
-
-            let wonItems = [];
-            let iterations = totalNormalAvail;
-
-            for (let i = 0; i < iterations; i++) {
-                let randIdx = Math.floor(Math.random() * data.normalPool.length);
-                let wonItem = data.normalPool[randIdx];
-                wonItems.push(wonItem);
-
-                let currentTodayAvail = Math.max(0, todayEarned - data.state.normalSalvagesUsed);
-                if (currentTodayAvail > 0) {
-                    data.state.normalSalvagesUsed += 1;
-                } else if (data.state.carriedOverNormalTickets > 0) {
-                    data.state.carriedOverNormalTickets -= 1;
-                }
-            }
-
-            saveStateToStorage();
-            renderUI();
-
-            let summary = wonItems.map((item, idx) => `${idx + 1}. [${item}]`).join('\n');
-            alert(`⚓ [일반 보물 한 번에 인양 완료!]\n\n총 ${wonItems.length}회 연속 인양 결과:\n\n${summary}\n\n게임 내 우편함으로 즉시 발송되었습니다.`);
-        }
-    }
-
     function startSalvageAnimation(type) {
         if (type === 'special') {
             let carriedWeekly = data.state.carriedOverWeeklyTickets || 0;
@@ -1107,11 +1051,7 @@
 
                         saveStateToStorage();
                         renderUI();
-                        alert(`⚓ [특수 보물 인양 성공!]
-
-획득한 보물: [${wonItem}]
-
-게임 내 우편함으로 즉시 발송되었습니다.`);
+                        alert(`⚓ [특수 보물 인양 성공!]\n\n획득한 보물: [${wonItem}]\n\n게임 내 우편함으로 즉시 발송되었습니다.`);
                     }, 1000);
                 }, 300);
             }, 1000);
@@ -1161,11 +1101,7 @@
 
                         saveStateToStorage();
                         renderUI();
-                        alert(`⚓ 일반 보물 인양 성공!
-
-획득한 보물: [${wonItem}]
-
-게임 내 우편함으로 즉시 발송되었습니다.`);
+                        alert(`⚓ 일반 보물 인양 성공!\n\n획득한 보물: [${wonItem}]\n\n게임 내 우편함으로 즉시 발송되었습니다.`);
                     }, 1000);
                 }, 300);
             }, 1000);
@@ -1381,7 +1317,6 @@
     }
 
 </script>
-
 
 
 </body></html>
