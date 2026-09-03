@@ -1,7 +1,7 @@
 <html lang="ko"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>모코코의 해저 보물 인양 대작전 - 웹 이벤트 Prototype v59</title>
+    <title>모코코의 해저 보물 인양 대작전 - 웹 이벤트 Prototype v63</title>
     <style>
         :root {
             --bg-color: #08131d;
@@ -95,13 +95,45 @@
         .sea-map-container {
             background: linear-gradient(180deg, #184163 0%, #0e2942 35%, #08192a 70%, #020a12 100%);
             border: 2px solid var(--panel-border); border-radius: 12px; padding: 20px;
-            display: flex; flex-direction: column; gap: 8px; position: relative;
+            display: flex; flex-direction: column; gap: 12px; position: relative;
             box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
         }
 
+        /* Group Sections for Daily vs Weekly */
+        .mission-group-section {
+            border-radius: 12px; padding: 12px; position: relative;
+        }
+        .mission-group-section.daily-group {
+            background: rgba(77, 184, 255, 0.04);
+            border: 1px solid rgba(77, 184, 255, 0.25);
+        }
+        .mission-group-section.weekly-group {
+            background: rgba(192, 132, 252, 0.06);
+            border: 2px solid var(--accent-purple);
+            box-shadow: 0 0 15px rgba(192, 132, 252, 0.15);
+            margin-top: 4px;
+        }
+
+        .group-header-tag {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.15);
+        }
+        .group-title-badge {
+            font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px;
+        }
+        .daily-group .group-title-badge {
+            background: rgba(77, 184, 255, 0.2); color: var(--accent-blue); border: 1px solid var(--accent-blue);
+        }
+        .weekly-group .group-title-badge {
+            background: rgba(192, 132, 252, 0.25); color: var(--accent-purple); border: 1px solid var(--accent-purple);
+        }
+        .group-cycle-desc {
+            font-size: 11px; color: var(--text-muted); font-weight: normal;
+        }
+
         .step-arrow-divider {
-            text-align: center; color: var(--accent-blue); font-size: 12px; font-weight: bold;
-            margin: -2px 0; opacity: 0.8; letter-spacing: 1px;
+            text-align: center; color: var(--accent-blue); font-size: 11px; font-weight: bold;
+            margin: 4px 0; opacity: 0.8; letter-spacing: 1px;
         }
 
         .depth-slot-card {
@@ -112,12 +144,12 @@
         .depth-slot-card.locked-step { opacity: 0.4; filter: grayscale(0.8); }
         .depth-slot-card.active-step { border-color: var(--accent-blue); background: rgba(77, 184, 255, 0.08); }
         .depth-slot-card.completed-step { border-color: var(--accent-green); background: rgba(66, 227, 130, 0.08); }
-        .depth-slot-card.weekly-special { border: 2px solid var(--accent-gold); background: rgba(255, 210, 77, 0.08); }
+        .depth-slot-card.weekly-special { border: 1px solid var(--accent-purple); background: rgba(192, 132, 252, 0.08); }
 
         .slot-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 6px; }
         .step-badge { font-size: 11px; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; color: var(--text-muted); font-weight: bold; }
         .depth-tag { font-size: 15px; font-weight: 900; color: var(--accent-blue); margin-left: 6px; }
-        .weekly-special .depth-tag { color: var(--accent-gold); }
+        .weekly-special .depth-tag { color: var(--accent-purple); }
 
         .fixed-mission-row { display: flex; gap: 10px; align-items: center; width: 100%; }
         .fixed-mission-box {
@@ -235,23 +267,23 @@
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                 <span style="font-size:12px; color:var(--accent-gold); font-weight:bold;">🌊 [관리자] 플랜 명칭 및 뎁스 슬롯 미션 고정 등록</span>
                 <div style="display:flex; gap:6px;">
-                    <button class="admin-tab-btn" id="plan-tab-A" onclick="switchAdminPlanTab('A')">플랜 A 편집</button>
-                    <button class="admin-tab-btn active" id="plan-tab-B" onclick="switchAdminPlanTab('B')">플랜 B 편집</button>
+                    <button class="admin-tab-btn active" id="plan-tab-A" onclick="switchAdminPlanTab('A')">플랜 A 편집</button>
+                    <button class="admin-tab-btn" id="plan-tab-B" onclick="switchAdminPlanTab('B')">플랜 B 편집</button>
                 </div>
             </div>
 
             <!-- Editable Plan Name Row -->
             <div class="admin-input-row" style="background:rgba(255,255,255,0.03); padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.1); margin-bottom:8px;">
-                <span style="font-size:12px; color:var(--accent-blue); font-weight:bold; white-space:nowrap;" id="admin-plan-title-label">📌 [플랜 B] 명칭:</span>
+                <span style="font-size:12px; color:var(--accent-blue); font-weight:bold; white-space:nowrap;" id="admin-plan-title-label">📌 [플랜 A] 명칭:</span>
                 <input type="text" id="admin-plan-name-input" placeholder="플랜 명칭 입력">
                 <button class="btn btn-save" onclick="saveAdminPlanName()">명칭 저장</button>
             </div>
 
             <div class="admin-tab-group">
-                <button class="admin-tab-btn" id="stab-0" style="opacity:0.5; cursor:not-allowed;" title="10m는 접속 미션 고정입니다.">10m (접속고정)</button>
+                <button class="admin-tab-btn" id="stab-0" style="opacity:0.5; cursor:not-allowed;" title="보물 인양 준비는 접속 미션 고정입니다.">보물 인양 준비 (접속고정)</button>
                 <button class="admin-tab-btn active" id="stab-1" onclick="switchAdminSlotTab(1)">30m 미션</button>
                 <button class="admin-tab-btn" id="stab-2" onclick="switchAdminSlotTab(2)">50m 미션</button>
-                <button class="admin-tab-btn" id="stab-3" onclick="switchAdminSlotTab(3)">100m 주간 미션</button>
+                <button class="admin-tab-btn" id="stab-3" onclick="switchAdminSlotTab(3)">심해 탐사 주간 미션</button>
             </div>
             <div class="admin-input-row" style="margin-top:10px;">
                 <input type="text" id="admin-slot-text-input" placeholder="고정 미션 내용 입력">
@@ -285,7 +317,7 @@
 
     <header>
         <h1 contenteditable="false" id="header-title" onblur="saveHeaderTexts()">⚓ 모코코의 해저 보물 인양 대작전</h1>
-        <p contenteditable="false" id="header-sub" onblur="saveHeaderTexts()">원하는 탐사 플랜을 선택하고, 10m부터 100m까지 순차적으로 해저 탐사를 완료하세요!</p>
+        <p contenteditable="false" id="header-sub" onblur="saveHeaderTexts()">원하는 탐사 플랜을 선택하고 보물 인양 준비부터 심해 탐사까지 완수해 보세요!</p>
     </header>
 
     <!-- Main Screen Plan Selection UI -->
@@ -293,91 +325,104 @@
         <div class="plan-selection-title">🧭 나만의 해저 탐사 플랜 선택 (1종 선택 가능)</div>
         <div class="plan-cards-container">
             <div class="plan-select-card" id="main-plan-card-A" onclick="selectPlanOnMainScreen('A')">
-                <div style="font-weight:bold; color:var(--accent-gold); font-size:14px; margin-bottom:6px;" id="main-plan-title-A">⚔️ 탐사 플랜 A (카던/가토/주간레이드 루틴)</div>
-                <div style="font-size:11px; color:var(--text-muted); line-height:1.5;" id="main-plan-desc-A">• 10m: 🎮 게임 접속 완료<br>• 30m: 카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회<br>• 50m: 가디언 토벌(가디언의 의지 수집) - 1회<br>• 100m: 군단장/카제로스/그림자 레이드/싱글/매칭/어비스던전 클리어 - 1회</div>
+                <div style="font-weight:bold; color:var(--accent-gold); font-size:14px; margin-bottom:6px;" id="main-plan-title-A">⚔️ 탐사 플랜 A (전투/레이드)</div>
+                <div style="font-size:11px; color:var(--text-muted); line-height:1.5;" id="main-plan-desc-A">• 보물 인양 준비: 🎮 게임 접속 완료<br>• 30m: 카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회<br>• 50m: 가디언 토벌(가디언의 의지 수집) - 1회<br>• 심해 탐사: 군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회</div>
             </div>
             <div class="plan-select-card" id="main-plan-card-B" onclick="selectPlanOnMainScreen('B')">
-                <div style="font-weight:bold; color:var(--accent-green); font-size:14px; margin-bottom:6px;" id="main-plan-title-B">🌿 탐사 플랜 B (생활,프로키온의나침반 루틴)</div>
-                <div style="font-size:11px; color:var(--text-muted); line-height:1.5;" id="main-plan-desc-B">• 10m: 🎮 게임 접속 완료<br>• 30m: 카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회<br>• 50m: 생명의 기운/영지 활동력 3,000 이상 사용 (누적)<br>• 100m: 모험섬/필드 보스/카오스게이트 보상 획득 - 1회</div>
+                <div style="font-weight:bold; color:var(--accent-green); font-size:14px; margin-bottom:6px;" id="main-plan-title-B">🌿 탐사 플랜 B (캐주얼/생활)</div>
+                <div style="font-size:11px; color:var(--text-muted); line-height:1.5;" id="main-plan-desc-B">• 보물 인양 준비: 🎮 게임 접속 완료<br>• 30m: 생명의 기운 3,000 이상 사용 (누적)<br>• 50m: 게임 플레이 60분 달성 시<br>• 심해 탐사: 모험섬 / 필드 보스 / 카오스게이트 중 1회 참여</div>
             </div>
         </div>
     </div>
 
     <div class="middle-grid">
-        <!-- Left: Sequential Path Sea Map Slots -->
+        <!-- Left: Visual Grouping Sea Map Slots -->
         <div class="sea-map-container">
             <div style="font-size:14px; font-weight:bold; color:var(--accent-blue); border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
-                <span>⚓ 해저 탐사 경로 (순차 클리어 진행)</span>
+                <span>⚓ 해저 탐사 미션 현황</span>
                 <button class="btn" style="font-size:11px; padding:3px 8px; background:rgba(255,255,255,0.1);" onclick="openGuideModal()">❓ 가이드 다시보기</button>
             </div>
 
-            <!-- STEP 1: 10m Fixed Slot -->
-            <div class="depth-slot-card locked-step" id="slot-card-0">
-                <div class="slot-header">
-                    <div>
-                        <span class="step-badge">STEP 01</span>
-                        <span class="depth-tag">10m 탐사</span>
-                    </div>
-                    <span style="font-size: 11px; color: var(--danger-red);" id="slot-status-text-0">플랜 선택 필요</span>
+            <!-- DAILY MISSION GROUP SECTION -->
+            <div class="mission-group-section daily-group">
+                <div class="group-header-tag">
+                    <span class="group-title-badge">☀️ 일일 탐사 구간</span>
+                    <span class="group-cycle-desc">🔄 매일 06:00 초기화 (하루 최대 2회 인양)</span>
                 </div>
-                <div class="fixed-mission-row">
-                    <div class="fixed-mission-box">
-                        <span>🎮 게임 접속 완료</span>
+
+                <!-- STEP 1: 보물 인양 준비 Slot -->
+                <div class="depth-slot-card locked-step" id="slot-card-0">
+                    <div class="slot-header">
+                        <div>
+                            <span class="step-badge">STEP 01</span>
+                            <span class="depth-tag">보물 인양 준비</span>
+                        </div>
+                        <span style="font-size: 11px; color: var(--danger-red);" id="slot-status-text-0">플랜 선택 필요</span>
                     </div>
-                    <button class="btn" id="slot-btn-0" onclick="executeFixedSlotMission()" disabled="">플랜 선택 대기</button>
+                    <div class="fixed-mission-row">
+                        <div class="fixed-mission-box">
+                            <span>🎮 게임 접속 완료</span>
+                        </div>
+                        <button class="btn" id="slot-btn-0" onclick="executeFixedSlotMission()" disabled="">플랜 선택 대기</button>
+                    </div>
+                </div>
+
+                <div class="step-arrow-divider">⬇️ 보물 인양 준비 달성 시 30m &amp; 50m 탐사 자율 오픈 ⬇️</div>
+
+                <!-- STEP 2: 30m Slot -->
+                <div class="depth-slot-card locked-step" id="slot-card-1">
+                    <div class="slot-header">
+                        <div>
+                            <span class="step-badge">일일 선택</span>
+                            <span class="depth-tag">30m 탐사</span>
+                        </div>
+                        <span style="font-size: 11px; color: var(--text-muted);" id="slot-status-text-1">보물 인양 준비 미션 필요</span>
+                    </div>
+                    <div class="fixed-mission-row">
+                        <div class="fixed-mission-box" id="mission-text-box-1"><span>카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회</span></div>
+                        <button class="btn" id="slot-btn-1" onclick="executeSlotMission(1)" disabled="">🔒 잠김</button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: 50m Slot -->
+                <div class="depth-slot-card locked-step" id="slot-card-2" style="margin-top:8px;">
+                    <div class="slot-header">
+                        <div>
+                            <span class="step-badge">일일 선택</span>
+                            <span class="depth-tag">50m 탐사</span>
+                        </div>
+                        <span style="font-size: 11px; color: var(--text-muted);" id="slot-status-text-2">보물 인양 준비 미션 필요</span>
+                    </div>
+                    <div class="fixed-mission-row">
+                        <div class="fixed-mission-box" id="mission-text-box-2"><span>가디언 토벌(가디언의 의지 수집) - 1회</span></div>
+                        <button class="btn" id="slot-btn-2" onclick="executeSlotMission(2)" disabled="">🔒 잠김</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="step-arrow-divider">⬇️ STEP 02 잠금 해제 경로 ⬇️</div>
-
-            <!-- STEP 2: 30m Slot -->
-            <div class="depth-slot-card locked-step" id="slot-card-1">
-                <div class="slot-header">
-                    <div>
-                        <span class="step-badge">STEP 02</span>
-                        <span class="depth-tag">30m 탐사</span>
-                    </div>
-                    <span style="font-size: 11px; color: var(--text-muted);" id="slot-status-text-1">이전 단계 완료 필요</span>
+            <!-- WEEKLY MISSION GROUP SECTION (심해 탐사 - Independent) -->
+            <div class="mission-group-section weekly-group">
+                <div class="group-header-tag">
+                    <span class="group-title-badge">👑 주간 심해 탐사 구간</span>
+                    <span class="group-cycle-desc" style="color:var(--accent-purple);">🗓️ 매주 수요일 06:00 초기화 (언제든 달성 가능)</span>
                 </div>
-                <div class="fixed-mission-row">
-                    <div class="fixed-mission-box" id="mission-text-box-1"><span>카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회</span></div>
-                    <button class="btn" id="slot-btn-1" onclick="executeSlotMission(1)" disabled="">🔒 잠김</button>
+
+                <!-- STEP 4: 심해 탐사 Weekly Special Slot -->
+                <div class="depth-slot-card weekly-special active-step" id="slot-card-3">
+                    <div class="slot-header">
+                        <div>
+                            <span class="step-badge" style="background:rgba(192, 132, 252, 0.25); color:var(--accent-purple);">주간 미션</span>
+                            <span class="depth-tag">심해 탐사</span>
+                        </div>
+                        <span style="font-size:11px; color:var(--accent-purple);" id="slot-status-text-3">언제든 진행 가능</span>
+                    </div>
+                    <div class="fixed-mission-row">
+                        <div class="fixed-mission-box" id="mission-text-box-3" style="border-color:var(--accent-purple);"><span>군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회</span></div>
+                        <button class="btn btn-save" id="slot-btn-3" style="background:var(--accent-purple); color:#fff;" onclick="executeWeeklySlot()" disabled="">주간 클리어</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="step-arrow-divider">⬇️ STEP 03 잠금 해제 경로 ⬇️</div>
-
-            <!-- STEP 3: 50m Slot -->
-            <div class="depth-slot-card locked-step" id="slot-card-2">
-                <div class="slot-header">
-                    <div>
-                        <span class="step-badge">STEP 03</span>
-                        <span class="depth-tag">50m 탐사</span>
-                    </div>
-                    <span style="font-size: 11px; color: var(--text-muted);" id="slot-status-text-2">이전 단계 완료 필요</span>
-                </div>
-                <div class="fixed-mission-row">
-                    <div class="fixed-mission-box" id="mission-text-box-2"><span>가디언 토벌(가디언의 의지 수집) - 1회</span></div>
-                    <button class="btn" id="slot-btn-2" onclick="executeSlotMission(2)" disabled="">🔒 잠김</button>
-                </div>
-            </div>
-
-            <div class="step-arrow-divider">⬇️ STEP 04 심해 미션 잠금 해제 ⬇️</div>
-
-            <!-- STEP 4: 100m Weekly Special Slot -->
-            <div class="depth-slot-card weekly-special locked-step" id="slot-card-3">
-                <div class="slot-header">
-                    <div>
-                        <span class="step-badge" style="background:rgba(255,210,77,0.2); color:var(--accent-gold);">STEP 04</span>
-                        <span class="depth-tag" style="color:var(--accent-gold);">100m 심해</span>
-                    </div>
-                    <span style="font-size: 11px; color: var(--text-muted);" id="slot-status-text-3">이전 단계 완료 필요</span>
-                </div>
-                <div class="fixed-mission-row">
-                    <div class="fixed-mission-box" id="mission-text-box-3" style="border-color:var(--accent-gold);"><span>군단장/카제로스/그림자 레이드/싱글/매칭/어비스던전 클리어 - 1회</span></div>
-                    <button class="btn btn-save" id="slot-btn-3" onclick="executeWeeklySlot()" disabled="">🔒 잠김</button>
-                </div>
-            </div>
         </div>
 
         <!-- Right: Salvage Crane Panel & Reward Info -->
@@ -391,7 +436,7 @@
                     <strong style="color:var(--accent-lime); font-size:14px;" id="daily-salvage-count-ui">0 / 0 회 (소모: 0/2)</strong>
                 </div>
                 <div class="ticket-row" style="font-size:10px; color:var(--text-muted);">
-                    (일일 최대 2회 제한: 30m 클리어 +1회, 50m 클리어 +1회)
+                    (일일 최대 2회: 30m 클리어 +1회, 50m 클리어 +1회)
                 </div>
                 <div class="ticket-row" style="margin-top:6px; padding-top:6px; border-top:1px dashed rgba(255,255,255,0.1);">
                     <span>💎 주간 특수 인양 가능 횟수:</span>
@@ -406,13 +451,13 @@
             <div class="reward-info-box">
                 <div class="reward-info-title">
                     <span>📦 일반 인양 가능 보물 풀</span>
-                    <span style="font-size:10px; color:var(--text-muted); font-weight:normal;">(랜덤)</span>
+                    <span style="font-size:10px; color:var(--text-muted); font-weight:normal;">(일일)</span>
                 </div>
                 <div class="reward-info-tags" id="user-normal-pool-list"><span class="reward-info-chip">📦 일일 보상 #1</span><span class="reward-info-chip">📦 일일 보상 #2</span><span class="reward-info-chip">📦 일일 보상 #3</span><span class="reward-info-chip">📦 일일 보상 #4</span><span class="reward-info-chip">📦 일일 보상 #5</span></div>
 
                 <div class="reward-info-title" style="margin-top:8px; color:var(--accent-purple);">
                     <span>💎 특수 인양 가능 보물 풀</span>
-                    <span style="font-size:10px; color:var(--text-muted); font-weight:normal;">(무중복)</span>
+                    <span style="font-size:10px; color:var(--text-muted); font-weight:normal;">(주간 무중복)</span>
                 </div>
                 <div class="reward-info-tags" id="user-special-pool-list"><span class="reward-info-chip special">💎 주간 보상 #1</span><span class="reward-info-chip special">💎 주간 보상 #2</span><span class="reward-info-chip special">💎 주간 보상 #3</span><span class="reward-info-chip special">💎 주간 보상 #4</span><span class="reward-info-chip special">💎 주간 보상 #5</span></div>
             </div>
@@ -437,7 +482,7 @@
             <span class="lock-notice" id="normal-lock-msg" style="display: block;">🔒 30m 또는 50m 탐사 미션을 클리어하여 인양 기회를 획득하세요!</span>
 
             <button class="btn-special-salvage" id="btn-special-spin" style="margin-top:8px;" onclick="startSalvageAnimation('special')" disabled="">💎 주간 특수 보물 인양하기 (주 1회)</button>
-            <span class="lock-notice" id="special-lock-msg" style="display: block;">🔒 100m 주간 미션을 클리어해야 인양 가능합니다!</span>
+            <span class="lock-notice" id="special-lock-msg" style="display: block;">🔒 심해 탐사 주간 미션을 클리어해야 인양 가능합니다!</span>
 
             <button class="btn-status-check" onclick="openStatusModal()">📊 특수 보상 획득 현황 확인</button>
         </div>
@@ -451,32 +496,7 @@
         <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">
             특수 인양을 통해 획득한 보물 리스트 현황입니다. (랜덤 그리드 무중복 획득)
         </p>
-        <div class="status-grid" id="status-grid-ui"><div class="status-item-row">
-                    <div style="font-size:13px;">💎 <strong>주간 보상 #1</strong></div>
-                    <span class="status-badge special" style="opacity:0.5;">
-                        미획득 (주간 미션 클리어 시 랜덤 획득)
-                    </span>
-                </div><div class="status-item-row">
-                    <div style="font-size:13px;">💎 <strong>주간 보상 #2</strong></div>
-                    <span class="status-badge special" style="opacity:0.5;">
-                        미획득 (주간 미션 클리어 시 랜덤 획득)
-                    </span>
-                </div><div class="status-item-row">
-                    <div style="font-size:13px;">💎 <strong>주간 보상 #3</strong></div>
-                    <span class="status-badge special" style="opacity:0.5;">
-                        미획득 (주간 미션 클리어 시 랜덤 획득)
-                    </span>
-                </div><div class="status-item-row">
-                    <div style="font-size:13px;">💎 <strong>주간 보상 #4</strong></div>
-                    <span class="status-badge special" style="opacity:0.5;">
-                        미획득 (주간 미션 클리어 시 랜덤 획득)
-                    </span>
-                </div><div class="status-item-row">
-                    <div style="font-size:13px;">💎 <strong>주간 보상 #5</strong></div>
-                    <span class="status-badge special" style="opacity:0.5;">
-                        미획득 (주간 미션 클리어 시 랜덤 획득)
-                    </span>
-                </div></div>
+        <div class="status-grid" id="status-grid-ui"></div>
         <div style="text-align: center; margin-top: 16px;">
             <button class="btn" style="padding:8px 20px;" onclick="closeStatusModal()">닫기</button>
         </div>
@@ -491,10 +511,9 @@
             1️⃣ <strong>상단 메인 UI에서 탐사 플랜 선택:</strong><br>
             • 원하는 탐사 플랜 중 1종을 메인 화면 상단에서 직접 선택해 주세요.<br>
             • <u>단, 당일 일일 일반 보상을 1회라도 인양한 이후에는 플랜 변경이 불가능합니다.</u><br><br>
-            2️⃣ <strong>10m~100m 순차 탐사 진행:</strong><br>
-            • 이전 단계 탐사 미션을 완료해야 다음 단계 탐사가 순차적으로 열립니다.<br>
-            • <strong>일일 보상 제한:</strong> 하루 최대 2회 (30m, 50m 각 1회 인양 기회 부여)<br>
-            • <strong>주간 보상 제한:</strong> 주간 1회 제한 (100m 완료 시 특수 보물 1회 인양)<br><br>
+            2️⃣ <strong>탐사 단계 명칭 및 해금 규칙:</strong><br>
+            • <strong>☀️ 일일 탐사:</strong> [보물 인양 준비(접속)] 완료 시 30m, 50m 미션이 동시 해금되어 원하는 순서대로 자유롭게 완료할 수 있습니다.<br>
+            • <strong>👑 주간 심해 탐사:</strong> [심해 탐사] 미션은 이전 단계 완료 여부와 관계없이 <u>주간 단위로 언제든지 독립적으로 클리어 가능</u>합니다.<br><br>
             3️⃣ <strong>주간 초기화 규칙:</strong><br>
             • 매주 <strong>수요일 오전 06:00</strong>에 주간 미션 및 주간 특수 인양 기회가 초기화됩니다.
         </div>
@@ -506,7 +525,7 @@
     let activeAdminPlan = 'A';
     let activeSlotTabIdx = 1;
 
-    let defaultData = {"isPublished":true,"headerTitle":"⚓ 모코코의 해저 보물 인양 대작전","headerSub":"원하는 탐사 플랜을 선택하고, 10m부터 100m까지 순차적으로 해저 탐사를 완료하세요!","plans":{"A":{"name":"⚔️ 탐사 플랜 A (카던/가토/주간레이드 루틴)","missions":[{"text":"🎮 게임 접속 완료"},{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회"},{"text":"가디언 토벌(가디언의 의지 수집) - 1회"},{"text":"군단장/카제로스/그림자 레이드/싱글/매칭/어비스던전 클리어 - 1회"}]},"B":{"name":"🌿 탐사 플랜 B (생활,프로키온의나침반 루틴)","missions":[{"text":"🎮 게임 접속 완료"},{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회"},{"text":"생명의 기운/영지 활동력 3,000 이상 사용 (누적)"},{"text":"모험섬/필드 보스/카오스게이트 보상 획득 - 1회"}]}},"normalPool":["일일 보상 #1","일일 보상 #2","일일 보상 #3","일일 보상 #4","일일 보상 #5"],"specialPool":["주간 보상 #1","주간 보상 #2","주간 보상 #3","주간 보상 #4","주간 보상 #5"],"state":{"selectedPlan":null,"completedSlots":[],"normalSalvagesUsed":0,"weeklyCompleted":false,"weeklySalvageUsed":false,"obtainedSpecialRewards":[]}};
+    let defaultData = {"isPublished":true,"headerTitle":"⚓ 모코코의 해저 보물 인양 대작전","headerSub":"원하는 탐사 플랜을 선택하고 보물 인양 준비부터 심해 탐사까지 완수해 보세요!","plans":{"A":{"name":"⚔️ 탐사 플랜 A (전투/레이드)","missions":[{"text":"🎮 게임 접속 완료"},{"text":"카오스 던전/쿠르잔 전선/혼돈의 균열 - 1회"},{"text":"가디언 토벌(가디언의 의지 수집) - 1회"},{"text":"군단장/카제로스/그림자 레이드 1관문 이상 클리어 - 1회"}]},"B":{"name":"🌿 탐사 플랜 B (캐주얼/생활)","missions":[{"text":"🎮 게임 접속 완료"},{"text":"생명의 기운 3,000 이상 사용 (누적)"},{"text":"게임 플레이 60분 달성 시"},{"text":"모험섬 / 필드 보스 / 카오스게이트 중 1회 참여"}]}},"normalPool":["일일 보상 #1","일일 보상 #2","일일 보상 #3","일일 보상 #4","일일 보상 #5"],"specialPool":["주간 보상 #1","주간 보상 #2","주간 보상 #3","주간 보상 #4","주간 보상 #5"],"state":{"selectedPlan":null,"completedSlots":[],"normalSalvagesUsed":0,"weeklyCompleted":false,"weeklySalvageUsed":false,"obtainedSpecialRewards":[]}};
 
     let data = JSON.parse(JSON.stringify(defaultData));
 
@@ -523,11 +542,11 @@
     };
 
     function saveStateToStorage() {
-        localStorage.setItem('mococo_v59_data', JSON.stringify(data));
+        localStorage.setItem('mococo_v63_data', JSON.stringify(data));
     }
 
     function loadStateFromStorage() {
-        const saved = localStorage.getItem('mococo_v59_data');
+        const saved = localStorage.getItem('mococo_v63_data');
         if (saved) {
             try {
                 data = Object.assign({}, defaultData, JSON.parse(saved));
@@ -543,11 +562,9 @@
         document.getElementById('guideModal').classList.remove('open');
     }
 
-    /* Main Screen Plan Selection with Daily Reward Obtained Check */
     function selectPlanOnMainScreen(planKey) {
         if (data.state.selectedPlan === planKey) return;
 
-        // CRITICAL CHECK: Block plan change if user has already used daily normal salvage today
         if (data.state.normalSalvagesUsed > 0) {
             alert("⚠️ 이미 오늘 일일 일반 보물을 인양하여 보상을 획득하셨습니다!\n\n당일 보상을 1회 이상 획득한 이후에는 탐사 플랜을 변경할 수 없습니다.\n(※ 다음 날 일일 초기화 이후 변경 가능합니다.)");
             return;
@@ -566,9 +583,7 @@
             data.state.selectedPlan = planKey;
             saveStateToStorage();
             renderUI();
-            alert(`⚓ [${planName}] 선택이 완료되었습니다!\n10m 탐사부터 순차적으로 완료해 주세요.`);
-        } else {
-            console.log("Plan selection cancelled by user.");
+            alert(`⚓ [${planName}] 선택이 완료되었습니다!\n원하는 미션을 자유롭게 클리어해 보세요.`);
         }
     }
 
@@ -609,9 +624,8 @@
         }
     }
 
-    /* Test Controls: Daily Reset */
     function advanceToNextDay() {
-        if(confirm("⏭️ 다음 날로 이동하시겠습니까?\n(10m/30m/50m 일일 탐사 클리어 내역 및 당일 소모한 일반 인양 횟수가 초기화됩니다.)")) {
+        if(confirm("⏭️ 다음 날로 이동하시겠습니까?\n(보물 인양 준비/30m/50m 일일 탐사 클리어 내역 및 당일 소모한 일반 인양 횟수가 초기화됩니다.)")) {
             data.state.completedSlots = [];
             data.state.normalSalvagesUsed = 0;
             saveStateToStorage();
@@ -620,9 +634,8 @@
         }
     }
 
-    /* Test Controls: Weekly Reset (Wed 06:00 Simulator) */
     function resetWeeklyOnly() {
-        if(confirm("🔄 주간 리셋(매주 수요일 06:00 기준)을 진행하시겠습니까?\n\n• 100m 주간 미션 완료 상태 초기화\n• 주간 특수 보물 인양 사용 횟수 초기화")) {
+        if(confirm("🔄 주간 리셋(매주 수요일 06:00 기준)을 진행하시겠습니까?\n\n• [심해 탐사] 주간 미션 완료 상태 초기화\n• 주간 특수 보물 인양 사용 횟수 초기화")) {
             data.state.weeklyCompleted = false;
             data.state.weeklySalvageUsed = false;
             saveStateToStorage();
@@ -632,7 +645,7 @@
     }
 
     function forceWeeklyResetByAdmin() {
-        if(confirm("🔄 [수요일 06:00 정기 점검] 전체 초기화를 수행하시겠습니까?\n\n• 일일 탐사 및 일반 인양 횟수 초기화\n• 주간 100m 탐사 및 특수 인양 횟수 초기화")) {
+        if(confirm("🔄 [수요일 06:00 정기 점검] 전체 초기화를 수행하시겠습니까?\n\n• 일일 탐사 및 일반 인양 횟수 초기화\n• 주간 [심해 탐사] 및 특수 인양 횟수 초기화")) {
             data.state.completedSlots = [];
             data.state.normalSalvagesUsed = 0;
             data.state.weeklyCompleted = false;
@@ -661,7 +674,7 @@
         let currentHtml = document.documentElement.outerHTML;
         const dataJSON = JSON.stringify(data);
         currentHtml = currentHtml.replace(
-            /let defaultData = \{[\s\S]*?\};\n\n    let data = JSON\.parse\(JSON\.stringify\(defaultData\)\);/,
+            /let defaultData = \{[\s\S]*?\};\s*let data = JSON\.parse\(JSON\.stringify\(defaultData\)\);/,
             `let defaultData = ${dataJSON};\n\n    let data = JSON.parse(JSON.stringify(defaultData));`
         );
 
@@ -669,7 +682,7 @@
         const link = document.createElement("a");
         const url = URL.createObjectURL(blob);
         link.setAttribute("href", url);
-        link.setAttribute("download", "mococo_daily_plan_v59.html");
+        link.setAttribute("download", "mococo_daily_plan_v63.html");
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -715,7 +728,7 @@
         saveStateToStorage();
         renderAdminSlotInput();
         renderUI();
-        alert(`✅ [플랜 ${activeAdminPlan}] - ${activeSlotTabIdx === 1 ? '30m' : activeSlotTabIdx === 2 ? '50m' : '100m'} 미션이 수정/저장되었습니다.`);
+        alert(`✅ [플랜 ${activeAdminPlan}] - ${activeSlotTabIdx === 1 ? '30m' : activeSlotTabIdx === 2 ? '50m' : '심해 탐사'} 미션이 수정/저장되었습니다.`);
     }
 
     function renderAdminSlotInput() {
@@ -817,7 +830,6 @@
         saveStateToStorage();
     }
 
-    /* Sequential Mission Execution Logic */
     function executeFixedSlotMission() {
         if (!data.state.selectedPlan) return alert("⚠️ 상단 화면에서 탐사 플랜을 먼저 선택해 주세요.");
         if (data.state.completedSlots.includes(0)) return;
@@ -825,14 +837,14 @@
         data.state.completedSlots.push(0);
         saveStateToStorage();
         renderUI();
-        alert("🌊 STEP 01 [10m 접속 미션] 완수!\n다음 단계인 30m 탐사가 잠금 해제되었습니다.");
+        alert("🌊 STEP 01 [보물 인양 준비] 완수!\n30m 및 50m 탐사 미션이 자율 해금되었습니다.");
     }
 
     function executeSlotMission(slotIdx) {
         if (!data.state.selectedPlan) return alert("⚠️ 상단 화면에서 탐사 플랜을 먼저 선택해 주세요.");
         
-        if (!data.state.completedSlots.includes(slotIdx - 1)) {
-            return alert(`🔒 이전 단계(${slotIdx === 1 ? '10m' : '30m'}) 미션을 먼저 클리어해야 진행할 수 있습니다!`);
+        if (!data.state.completedSlots.includes(0)) {
+            return alert("🔒 먼저 [보물 인양 준비](게임 접속) 미션을 완료해야 30m / 50m 탐사를 진행할 수 있습니다!");
         }
 
         if (data.state.completedSlots.includes(slotIdx)) return;
@@ -844,18 +856,14 @@
         saveStateToStorage();
         renderUI();
 
-        alert(`🌊 STEP 0${slotIdx + 1} [${currentMission.text}] 수행 완료!\n일반 보물 인양 기회 +1회를 획득했습니다.`);
+        alert(`🌊 [${currentMission.text}] 수행 완료!\n일반 보물 인양 기회 +1회를 획득했습니다.`);
     }
 
     function executeWeeklySlot() {
         if (!data.state.selectedPlan) return alert("⚠️ 상단 화면에서 탐사 플랜을 먼저 선택해 주세요.");
 
-        if (!data.state.completedSlots.includes(2)) {
-            return alert("🔒 이전 단계(50m) 탐사를 먼저 완료해야 100m 심해 주간 미션에 도전할 수 있습니다!");
-        }
-
         if (data.state.weeklyCompleted) {
-            return alert("이번 주 100m 주간 특수 미션을 이미 완료하셨습니다.");
+            return alert("이번 주 [심해 탐사] 주간 특수 미션을 이미 완료하셨습니다.");
         }
 
         const planKey = data.state.selectedPlan;
@@ -864,14 +872,13 @@
         data.state.weeklyCompleted = true;
         saveStateToStorage();
         renderUI();
-        alert(`⚓ STEP 04 [100m 심해 주간 미션] 완수!\n주간 특수 보물 인양 기회 1회를 획득했습니다!`);
+        alert(`⚓ [심해 탐사 주간 미션] 완수!\n주간 특수 보물 인양 기회 1회를 획득했습니다!`);
     }
 
-    /* Salvage Trigger */
     function startSalvageAnimation(type) {
         if (type === 'special') {
             if (!data.state.weeklyCompleted) {
-                return alert("🔒 100m 주간 미션을 먼저 완료해야 특수 보물을 인양할 수 있습니다.");
+                return alert("🔒 [심해 탐사] 주간 미션을 먼저 완료해야 특수 보물을 인양할 수 있습니다.");
             }
             if (data.state.weeklySalvageUsed) {
                 return alert("🔒 이번 주 특수 보물 인양 기회(주 1회)를 이미 사용하셨습니다.\n(매주 수요일 06:00 초기화)");
@@ -930,7 +937,7 @@
 
             if (data.normalPool.length === 0) return alert("등록된 일반 보물 풀이 없습니다.");
 
-            data.state.normalSalvagesUsed += 1; // Increment daily normal salvage count
+            data.state.normalSalvagesUsed += 1;
             saveStateToStorage();
             renderUI();
 
@@ -1021,18 +1028,18 @@
         // Render Plan Description Lists
         const mA = data.plans.A.missions;
         const mB = data.plans.B.missions;
-        document.getElementById('main-plan-desc-A').innerHTML = `• 10m: ${mA[0].text}<br>• 30m: ${mA[1].text}<br>• 50m: ${mA[2].text}<br>• 100m: ${mA[3].text}`;
-        document.getElementById('main-plan-desc-B').innerHTML = `• 10m: ${mB[0].text}<br>• 30m: ${mB[1].text}<br>• 50m: ${mB[2].text}<br>• 100m: ${mB[3].text}`;
+        document.getElementById('main-plan-desc-A').innerHTML = `• 보물 인양 준비: ${mA[0].text}<br>• 30m: ${mA[1].text}<br>• 50m: ${mA[2].text}<br>• 심해 탐사: ${mA[3].text}`;
+        document.getElementById('main-plan-desc-B').innerHTML = `• 보물 인양 준비: ${mB[0].text}<br>• 30m: ${mB[1].text}<br>• 50m: ${mB[2].text}<br>• 심해 탐사: ${mB[3].text}`;
 
-        // Render Sequential Depth Mission Slots
         const activeMissions = currentPlan ? data.plans[currentPlan].missions : data.plans.A.missions;
 
-        // Render STEP 01 (10m)
+        // STEP 01 (보물 인양 준비 - Login)
         const slot0Btn = document.getElementById('slot-btn-0');
         const slot0Txt = document.getElementById('slot-status-text-0');
         const slot0Card = document.getElementById('slot-card-0');
+        const is10mCleared = data.state.completedSlots.includes(0);
 
-        if (data.state.completedSlots.includes(0)) {
+        if (is10mCleared) {
             slot0Btn.disabled = true;
             slot0Btn.innerText = "완료됨";
             slot0Txt.innerText = "✅ 클리어 완료";
@@ -1046,16 +1053,15 @@
             slot0Card.className = currentPlan ? "depth-slot-card active-step" : "depth-slot-card locked-step";
         }
 
-        // Render STEP 02 ~ 04 (30m, 50m, 100m)
-        for(let slotIdx=1; slotIdx<4; slotIdx++) {
+        // STEP 02 (30m) & STEP 03 (50m)
+        for(let slotIdx=1; slotIdx<=2; slotIdx++) {
             const textBox = document.getElementById(`mission-text-box-${slotIdx}`);
             const btnEl = document.getElementById(`slot-btn-${slotIdx}`);
             const statusTxtEl = document.getElementById(`slot-status-text-${slotIdx}`);
             const cardEl = document.getElementById(`slot-card-${slotIdx}`);
 
             const mData = activeMissions[slotIdx];
-            const isCompleted = slotIdx === 3 ? data.state.weeklyCompleted : data.state.completedSlots.includes(slotIdx);
-            const isPrevCompleted = data.state.completedSlots.includes(slotIdx - 1);
+            const isCompleted = data.state.completedSlots.includes(slotIdx);
 
             textBox.innerHTML = `<span>${mData.text}</span>`;
 
@@ -1064,23 +1070,46 @@
                 btnEl.innerText = "완료됨";
                 statusTxtEl.innerText = "✅ 클리어 완료";
                 statusTxtEl.style.color = "var(--accent-green)";
-                cardEl.className = slotIdx === 3 ? "depth-slot-card weekly-special completed-step" : "depth-slot-card completed-step";
-            } else if (!isPrevCompleted) {
+                cardEl.className = "depth-slot-card completed-step";
+            } else if (!is10mCleared) {
                 btnEl.disabled = true;
                 btnEl.innerText = "🔒 잠김";
-                statusTxtEl.innerText = "이전 단계 완료 필요";
+                statusTxtEl.innerText = "보물 인양 준비 미션 필요";
                 statusTxtEl.style.color = "var(--text-muted)";
-                cardEl.className = slotIdx === 3 ? "depth-slot-card weekly-special locked-step" : "depth-slot-card locked-step";
+                cardEl.className = "depth-slot-card locked-step";
             } else {
                 btnEl.disabled = !currentPlan;
-                btnEl.innerText = slotIdx === 3 ? "주간 클리어" : "클리어";
-                statusTxtEl.innerText = "진행 가능";
+                btnEl.innerText = "클리어";
+                statusTxtEl.innerText = "자율 진행 가능";
                 statusTxtEl.style.color = "var(--accent-gold)";
-                cardEl.className = slotIdx === 3 ? "depth-slot-card weekly-special active-step" : "depth-slot-card active-step";
+                cardEl.className = "depth-slot-card active-step";
             }
         }
 
-        // Salvage Controls UI & Count Calculation
+        // STEP 04 (심해 탐사 Weekly)
+        const textBox3 = document.getElementById('mission-text-box-3');
+        const btnEl3 = document.getElementById('slot-btn-3');
+        const statusTxtEl3 = document.getElementById('slot-status-text-3');
+        const cardEl3 = document.getElementById('slot-card-3');
+        const mData3 = activeMissions[3];
+
+        textBox3.innerHTML = `<span>${mData3.text}</span>`;
+
+        if (data.state.weeklyCompleted) {
+            btnEl3.disabled = true;
+            btnEl3.innerText = "완료됨";
+            statusTxtEl3.innerText = "✅ 주간 클리어 완료";
+            statusTxtEl3.style.color = "var(--accent-green)";
+            cardEl3.className = "depth-slot-card weekly-special completed-step";
+        } else {
+            btnEl3.disabled = !currentPlan;
+            btnEl3.innerText = "주간 클리어";
+            statusTxtEl3.innerText = "언제든 진행 가능";
+            statusTxtEl3.style.color = "var(--accent-purple)";
+            cardEl3.className = "depth-slot-card weekly-special active-step";
+        }
+
+        // Salvage Counts & Logic
         let totalEarnedSalvages = 0;
         if (data.state.completedSlots.includes(1)) totalEarnedSalvages += 1;
         if (data.state.completedSlots.includes(2)) totalEarnedSalvages += 1;
@@ -1088,7 +1117,6 @@
         const remainingSalvages = totalEarnedSalvages - data.state.normalSalvagesUsed;
         document.getElementById('daily-salvage-count-ui').innerText = `${remainingSalvages} / ${totalEarnedSalvages} 회 (소모: ${data.state.normalSalvagesUsed}/2)`;
 
-        // Weekly Salvage Status
         const weeklyCountUi = document.getElementById('weekly-salvage-count-ui');
         if (data.state.weeklySalvageUsed) {
             weeklyCountUi.innerText = "0 / 1 회 (완료됨)";
@@ -1108,7 +1136,6 @@
 
         const unobtainedSpecial = data.specialPool.filter(item => !data.state.obtainedSpecialRewards.includes(item));
 
-        // Normal Salvage Button Condition Check (Daily Max 2)
         if (remainingSalvages <= 0 || data.state.normalSalvagesUsed >= 2) {
             spinBtn.disabled = true;
             normalLockMsg.style.display = "block";
@@ -1120,11 +1147,10 @@
             normalLockMsg.style.display = "none";
         }
 
-        // Special Salvage Check (Weekly Max 1)
         if (!data.state.weeklyCompleted) {
             specialBtn.disabled = true;
             specialLockMsg.style.display = "block";
-            specialLockMsg.innerText = "🔒 100m 주간 미션을 클리어해야 인양 가능합니다!";
+            specialLockMsg.innerText = "🔒 심해 탐사 주간 미션을 클리어해야 인양 가능합니다!";
         } else if (data.state.weeklySalvageUsed) {
             specialBtn.disabled = true;
             specialLockMsg.style.display = "block";
@@ -1135,6 +1161,7 @@
         }
     }
 </script>
+
 
 
 </body></html>
