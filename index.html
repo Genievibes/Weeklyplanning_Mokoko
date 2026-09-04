@@ -73,11 +73,7 @@
             text-align: left;
         }
 
-        .main-tab-btn:hover {
-            background: rgba(77, 184, 255, 0.08);
-            color: var(--accent-blue);
-        }
-
+        .main-tab-btn:hover { background: rgba(77, 184, 255, 0.08); color: var(--accent-blue); }
         .main-tab-btn.active {
             background: rgba(77, 184, 255, 0.18);
             border-color: var(--accent-blue);
@@ -98,6 +94,25 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
+        /* Mode Control Switch Bar */
+        .mode-control-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.4); border: 1px solid var(--panel-border);
+            padding: 10px 16px; border-radius: 10px; margin-bottom: 16px;
+        }
+
+        .mode-toggle-btn {
+            padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 12px; cursor: pointer; border: none; transition: all 0.2s;
+        }
+        .mode-toggle-btn.edit-mode { background: var(--accent-gold); color: #000; }
+        .mode-toggle-btn.publish-mode { background: var(--accent-green); color: #000; }
+
+        .btn-download-html {
+            background: linear-gradient(180deg, #b0f566, #5eb800); color: #000;
+            border: 1px solid #d0ff99; padding: 6px 14px; border-radius: 6px;
+            font-size: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 2px 0 #3a7300;
+        }
+
         /* SPEC TAB STYLES */
         .doc-section { background: rgba(0,0,0,0.3); border: 1px solid var(--panel-border); border-radius: 10px; padding: 18px; margin-bottom: 16px; line-height: 1.6; }
         .doc-section h2 { color: var(--accent-gold); font-size: 18px; margin-bottom: 10px; border-bottom: 1px dashed var(--panel-border); padding-bottom: 6px; }
@@ -110,11 +125,11 @@
         /* EVENT GAME TAB STYLES */
         .live-mode-bar { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-bottom: 12px; }
         .btn { background: var(--accent-blue); color: #08131d; border: none; padding: 6px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+        .btn-next-day { background: rgba(66, 227, 130, 0.2); border: 1px solid var(--accent-green); color: var(--accent-green); }
         .btn-reset { background: rgba(255, 94, 94, 0.2); border: 1px solid var(--danger-red); color: var(--danger-red); }
 
         .middle-grid { display: grid; grid-template-columns: 1fr 360px; gap: 16px; margin-bottom: 16px; }
         
-        /* Sea Map Left Column Styling (Removed Node Line & Margins) */
         .sea-map-container {
             background: linear-gradient(180deg, #184163 0%, #0e2942 35%, #08192a 70%, #020a12 100%);
             border: 2px solid var(--panel-border); border-radius: 12px; padding: 20px;
@@ -124,8 +139,7 @@
         .depth-slot-card {
             background: rgba(0, 0, 0, 0.55); border: 1px solid var(--panel-border);
             border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;
-            position: relative; backdrop-filter: blur(4px);
-            transition: all 0.2s ease;
+            position: relative; backdrop-filter: blur(4px); transition: all 0.2s ease;
         }
 
         .depth-slot-card.deep-node-lvl3 {
@@ -153,8 +167,8 @@
         .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple)); width: 0%; transition: width 0.3s; }
 
         .milestone-row { display: flex; justify-content: space-between; font-size: 11px; }
-        .milestone-chip { background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); }
-        .milestone-chip.unlocked { border-color: var(--accent-gold); color: var(--accent-gold); font-weight: bold; }
+        .milestone-chip { background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); width: 100%; text-align: center; }
+        .milestone-chip.unlocked { border-color: var(--accent-gold); color: var(--accent-gold); font-weight: bold; background: rgba(255,210,77,0.1); }
 
         /* CRANE SALVAGE ANIMATION STYLES */
         .salvage-stage {
@@ -168,8 +182,7 @@
         .ship-body {
             position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
             width: 140px; height: 35px; background: #8B4513; border-radius: 0 0 40px 10px; border: 2px solid #5c2d0c; z-index: 5;
-            box-shadow: inset 0 -4px 0 rgba(0,0,0,0.3);
-            animation: shipSway 3s ease-in-out infinite alternate;
+            box-shadow: inset 0 -4px 0 rgba(0,0,0,0.3); animation: shipSway 3s ease-in-out infinite alternate;
         }
         .ship-mast { position: absolute; bottom: 33px; left: 40px; width: 6px; height: 38px; background: #5c2d0c; }
         .ship-sail { position: absolute; bottom: 45px; left: 46px; width: 25px; height: 22px; background: #ff79c6; border-radius: 2px 10px 10px 2px; }
@@ -177,36 +190,27 @@
 
         @keyframes shipSway { 0% { transform: translateX(-50%) rotate(-1.5deg); } 100% { transform: translateX(-50%) rotate(1.5deg); } }
 
-        .crane-line {
-            position: absolute; top: 32px; right: 98px; width: 2px; height: 0px; background: #aaa; z-index: 4;
-            transition: height 1s ease-in-out;
-        }
-        .hook-head {
-            position: absolute; bottom: -12px; left: -7px; width: 16px; height: 14px;
-            border: 2px solid var(--accent-gold); border-top: none; border-radius: 0 0 8px 8px;
-        }
-        .chest-box {
-            display: none; position: absolute; bottom: -32px; left: -16px; width: 34px; height: 22px;
-            background: #d4af37; border: 2px solid #6d5306; border-radius: 4px; text-align: center; font-size: 10px; color: #000; font-weight: bold; line-height: 18px;
-            box-shadow: 0 0 10px var(--accent-gold);
-        }
+        .crane-line { position: absolute; top: 32px; right: 98px; width: 2px; height: 0px; background: #aaa; z-index: 4; transition: height 1s ease-in-out; }
+        .hook-head { position: absolute; bottom: -12px; left: -7px; width: 16px; height: 14px; border: 2px solid var(--accent-gold); border-top: none; border-radius: 0 0 8px 8px; }
+        .chest-box { display: none; position: absolute; bottom: -32px; left: -16px; width: 34px; height: 22px; background: #d4af37; border: 2px solid #6d5306; border-radius: 4px; text-align: center; font-size: 10px; color: #000; font-weight: bold; line-height: 18px; box-shadow: 0 0 10px var(--accent-gold); }
 
-        .btn-salvage {
-            background: linear-gradient(180deg, #4db8ff, #0066cc); color: #fff; font-size: 13px; font-weight: bold;
-            padding: 10px 14px; width: 100%; border: 1px solid #80ccff; box-shadow: 0 4px 0 #004080; border-radius: 8px; cursor: pointer; margin-bottom: 6px;
-        }
+        .btn-salvage { background: linear-gradient(180deg, #4db8ff, #0066cc); color: #fff; font-size: 13px; font-weight: bold; padding: 10px 14px; width: 100%; border: 1px solid #80ccff; box-shadow: 0 4px 0 #004080; border-radius: 8px; cursor: pointer; margin-bottom: 6px; }
         .btn-salvage:disabled { background: #334e63; border-color: #223442; box-shadow: none; color: #607d94; cursor: not-allowed; }
 
         .btn-bulk-salvage { background: linear-gradient(180deg, #b0f566, #5eb800); color: #000; font-size: 13px; padding: 10px 14px; width: 100%; border: 1px solid #d0ff99; box-shadow: 0 4px 0 #3a7300; margin-bottom: 8px; font-weight: 800; cursor: pointer; border-radius: 8px; }
         .btn-bulk-salvage:disabled { background: #334e63; border-color: #223442; box-shadow: none; color: #607d94; cursor: not-allowed; }
 
-        .reward-info-box {
-            background: rgba(0, 0, 0, 0.4); border: 1px solid var(--panel-border);
-            border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; text-align: left;
-        }
+        .reward-info-box { background: rgba(0, 0, 0, 0.4); border: 1px solid var(--panel-border); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; text-align: left; }
         .reward-info-title { font-size: 12px; font-weight: bold; color: var(--accent-gold); margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
         .reward-info-tags { display: flex; flex-wrap: wrap; gap: 4px; }
         .reward-info-chip { font-size: 11px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.15); padding: 2px 6px; border-radius: 4px; color: var(--text-color); }
+
+        /* EDIT FORM INPUT STYLES */
+        .edit-input-group { display: flex; gap: 6px; margin-bottom: 6px; }
+        .edit-input-text { background: #06121e; border: 1px solid var(--panel-border); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 12px; flex-grow: 1; }
+        .edit-input-num { background: #06121e; border: 1px solid var(--panel-border); color: var(--accent-gold); padding: 4px 8px; border-radius: 4px; font-size: 12px; width: 60px; text-align: center; }
+        .btn-del-item { background: rgba(255, 94, 94, 0.3); border: 1px solid var(--danger-red); color: #fff; padding: 2px 6px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+        .btn-add-item { background: rgba(66, 227, 130, 0.2); border: 1px solid var(--accent-green); color: var(--accent-green); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; margin-top: 4px; }
     </style>
 </head>
 <body>
@@ -221,59 +225,70 @@
 
     <!-- Right Main Content -->
     <main class="main-content">
+        <!-- Top Mode & Export Bar -->
+        <div class="mode-control-bar">
+            <div>
+                <span style="font-size:12px; color:var(--text-muted); margin-right:8px;">현재 모드:</span>
+                <button class="mode-toggle-btn publish-mode" id="btn-mode-toggle" onclick="toggleEditPublishMode()">🚀 발행 모드 (유저 테스트)</button>
+            </div>
+            <div>
+                <button class="btn-download-html" onclick="downloadCurrentHTML()">📥 변경된 설정 적용 HTML 다운로드</button>
+            </div>
+        </div>
+
         <!-- TAB 1: SPECIFICATION DOCUMENT -->
         <div class="tab-content active" id="tab-spec">
             <div class="doc-section">
                 <h2>⚓ 1. 기획 의도 및 유저 루틴</h2>
                 <p style="font-size:13px; color:var(--text-muted);">
-                    본 이벤트는 모든 유저층이 본인의 라이프스타일에 맞추어 탐사 난이도를 직접 선택하고, 선형 노드 구조를 따라 보상을 단계적으로 해금하는 수심 탐사 컨셉의 웹 이벤트입니다.
+                    본 이벤트는 모든 유저층이 본인의 라이프스타일에 맞추어 탐사 난이도를 직접 선택하고, 주간 20P 목표를 달성하여 보상을 해금하는 수심 탐사 컨셉의 웹 이벤트입니다.
                 </p>
                 <h3>📌 핵심 유저 루틴</h3>
                 <ul>
                     <li><strong>수요일 06:00</strong>: 주간 플랜 설계 (30M, 100M, 심해 노드 난이도 드롭다운 선택 및 확정)</li>
                     <li><strong>매일 수행</strong>: 카카오 던전 및 가디언 토벌 수행으로 일일 포인트 획득</li>
                     <li><strong>주간 완수</strong>: 레이드 클리어로 고득점 심해 포인트 수급</li>
-                    <li><strong>실시간 보상</strong>: 일일 포인트 교환 + 주간 누적 포인트 구간별(10P/20P/30P) 보상 해금</li>
+                    <li><strong>실시간 보상</strong>: 일일 포인트 교환 + 주간 누적 포인트 20P 달성 시 주간 보급 상자 획득</li>
                 </ul>
             </div>
 
             <div class="doc-section">
-                <h2>📊 2. 유저 성향별 시뮬레이션</h2>
+                <h2>📊 2. 유저 성향별 달성 시뮬레이션 (목표: 20P)</h2>
                 <table class="doc-table">
                     <thead>
                         <tr>
                             <th>유저 그룹</th>
                             <th>선택 난이도 (30M / 100M / 심해)</th>
-                            <th>일일 수급 P (7일)</th>
-                            <th>주간 P</th>
-                            <th>총 획득 P</th>
-                            <th>주간 달성 보상</th>
+                            <th>일일 수급 P</th>
+                            <th>주간 심해 P</th>
+                            <th>목표 달성 소요 기간</th>
+                            <th>주간 달성 결과</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>라이트</strong></td>
+                            <td><strong>라이트 유저</strong></td>
                             <td>난이도 1 / 난이도 1 / 난이도 1</td>
-                            <td>14 P (일 2P)</td>
+                            <td>일 2 P</td>
                             <td>2 P</td>
-                            <td><strong>16 P</strong></td>
-                            <td><span style="color:var(--accent-lime);">1단계 달성 (10P)</span></td>
+                            <td><span style="color:var(--accent-lime); font-weight:bold;">5~6일 달성</span> (5일차 12P + 심해2P → 6일차 20P)</td>
+                            <td><span style="color:var(--accent-lime);">🏆 주간 보상 완수</span></td>
                         </tr>
                         <tr>
-                            <td><strong>성실</strong></td>
-                            <td>난이도 2 / 난이도 1 / 난이도 2</td>
-                            <td>21 P (일 3P)</td>
+                            <td><strong>미들 유저</strong></td>
+                            <td>난이도 2 / 난이도 2 / 난이도 2</td>
+                            <td>일 4 P</td>
                             <td>5 P</td>
-                            <td><strong>26 P</strong></td>
-                            <td><span style="color:var(--accent-blue);">2단계 달성 (20P)</span></td>
+                            <td><span style="color:var(--accent-blue); font-weight:bold;">3~4일 달성</span> (3일차 12P + 심해5P → 4일차 21P)</td>
+                            <td><span style="color:var(--accent-blue);">🏆 주간 보상 완수</span></td>
                         </tr>
                         <tr>
-                            <td><strong>하드코어</strong></td>
+                            <td><strong>헤비 유저</strong></td>
                             <td>난이도 3 / 난이도 3 / 난이도 3</td>
-                            <td>42 P (일 6P)</td>
+                            <td>일 6 P</td>
                             <td>8 P</td>
-                            <td><strong>50 P</strong></td>
-                            <td><span style="color:var(--accent-gold);">3단계 최상급 완수 (30P)</span></td>
+                            <td><span style="color:var(--accent-gold); font-weight:bold;">2일 달성</span> (2일차 12P + 심해8P = 20P)</td>
+                            <td><span style="color:var(--accent-gold);">🏆 주간 보상 완수</span></td>
                         </tr>
                     </tbody>
                 </table>
@@ -283,27 +298,24 @@
                 <h2>🖥️ 3. UI/UX 요구사항 & 🗄️ DB 테이블 명세</h2>
                 <h3>🎨 UI/UX 핵심 요소</h3>
                 <ul>
-                    <li><strong>선형 연결선</strong>: 30M → 100M → 심해 노드를 잇는 세로 가이드라인 배치</li>
+                    <li><strong>독립 노드 배치</strong>: 수심별 탐사 노드를 직관적인 카드 타입으로 정렬</li>
                     <li><strong>심해 난이도 3 전용 연출</strong>: 네온 골드/퍼플 글로우 테두리 및 High-Risk Badge 표시</li>
+                    <li><strong>20P 목표 달성 연출</strong>: 주간 누적 20P 충전 시 즉시 보급 상자 해금 팝업 출력</li>
                 </ul>
-                <h3>💾 DB 필수 테이블 (USER_EVENT_PLAN / PROGRESS)</h3>
-                <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">
-                    • <code>USER_EVENT_PLAN</code>: user_id, week_code, node_30m_lvl, node_100m_lvl, node_deep_lvl, is_locked<br>
-                    • <code>USER_EVENT_PROGRESS</code>: user_id, week_code, current_points, weekly_accumulated_points, claimed_mask
-                </p>
             </div>
         </div>
 
         <!-- TAB 2: INTERACTIVE EVENT GAME UI -->
         <div class="tab-content" id="tab-event">
             <div class="live-mode-bar">
-                <button class="btn btn-reset" onclick="resetEventData()">🔄 테스트용 주간 초기화</button>
+                <button class="btn btn-next-day" onclick="advanceNextDay()">⏭️ 다음 날 넘기기 (일일 리셋)</button>
+                <button class="btn btn-reset" onclick="resetEventData()">🔄 전체 진행 초기화</button>
             </div>
 
             <div class="middle-grid">
                 <!-- Sea Map Left Column -->
                 <div class="sea-map-container">
-                    <div style="font-size:14px; font-weight:bold; color:var(--accent-blue); margin-bottom: 2px;">
+                    <div style="font-size:14px; font-weight:bold; color:var(--accent-blue); margin-bottom: 2px;" id="node-board-title">
                         🧭 수심별 탐사 노드 플랜 설계
                     </div>
 
@@ -313,14 +325,11 @@
                             <span class="depth-tag">🌊 수심 30M 노드 (일일)</span>
                             <span style="font-size:11px; color:var(--accent-gold);" id="badge-30m">일일 미션</span>
                         </div>
-                        <div class="dropdown-mission-row">
-                            <select class="mission-select" id="select-30m" onchange="updatePlanSelection()">
-                                <option value="1">난이도 1: 카오스 던전 1회 클리어 (일 1P)</option>
-                                <option value="2">난이도 2: 카오스 던전 3회 클리어 (일 2P)</option>
-                                <option value="3">난이도 3: 카오스 던전 6회 클리어 (일 3P)</option>
-                            </select>
+                        <div id="container-30m-publish" class="dropdown-mission-row">
+                            <select class="mission-select" id="select-30m" onchange="updatePlanSelection()"></select>
                             <button class="btn" id="btn-clear-30m" onclick="clearMission('30m')">오늘 클리어</button>
                         </div>
+                        <div id="container-30m-edit" style="display:none;"></div>
                     </div>
 
                     <!-- 100M Node -->
@@ -329,14 +338,11 @@
                             <span class="depth-tag">⚓ 수심 100M 노드 (일일)</span>
                             <span style="font-size:11px; color:var(--accent-gold);" id="badge-100m">일일 미션</span>
                         </div>
-                        <div class="dropdown-mission-row">
-                            <select class="mission-select" id="select-100m" onchange="updatePlanSelection()">
-                                <option value="1">난이도 1: 가디언 토벌 1회 클리어 (일 1P)</option>
-                                <option value="2">난이도 2: 가디언 토벌 3회 클리어 (일 2P)</option>
-                                <option value="3">난이도 3: 가디언 토벌 6회 클리어 (일 3P)</option>
-                            </select>
+                        <div id="container-100m-publish" class="dropdown-mission-row">
+                            <select class="mission-select" id="select-100m" onchange="updatePlanSelection()"></select>
                             <button class="btn" id="btn-clear-100m" onclick="clearMission('100m')">오늘 클리어</button>
                         </div>
+                        <div id="container-100m-edit" style="display:none;"></div>
                     </div>
 
                     <!-- DEEP SEA Node -->
@@ -345,14 +351,11 @@
                             <span class="depth-tag" style="color:var(--accent-purple);">🔮 심해 노드 (주간 High-Risk)</span>
                             <span style="font-size:11px; color:var(--accent-purple);" id="badge-deep">주간 1회</span>
                         </div>
-                        <div class="dropdown-mission-row">
-                            <select class="mission-select" id="select-deep" onchange="updatePlanSelection()">
-                                <option value="1">난이도 1: 레이드 1회 클리어 (주간 2P)</option>
-                                <option value="2">난이도 2: 레이드 3회 클리어 (주간 5P)</option>
-                                <option value="3">난이도 3: 레이드 6회 클리어 (주간 8P - 전용 UI)</option>
-                            </select>
+                        <div id="container-deep-publish" class="dropdown-mission-row">
+                            <select class="mission-select" id="select-deep" onchange="updatePlanSelection()"></select>
                             <button class="btn" id="btn-clear-deep" style="background:var(--accent-purple); color:#fff;" onclick="clearMission('deep')">주간 클리어</button>
                         </div>
+                        <div id="container-deep-edit" style="display:none;"></div>
                     </div>
 
                     <button class="btn" id="btn-lock-plan" style="background:var(--accent-lime); color:#000; padding:10px; font-size:13px; margin-top: 4px;" onclick="lockWeeklyPlan()">🔒 이번 주 플랜 제출 / 확정하기</button>
@@ -365,15 +368,13 @@
                     <div class="progress-card">
                         <div style="display:flex; justify-content:space-between; font-size:12px;">
                             <span>주간 총 누적 포인트</span>
-                            <strong style="color:var(--accent-gold);" id="ui-accumulated-p">0 P</strong>
+                            <strong style="color:var(--accent-gold);" id="ui-accumulated-p">0 / 20 P</strong>
                         </div>
                         <div class="progress-bar-bg">
                             <div class="progress-bar-fill" id="ui-progress-fill"></div>
                         </div>
                         <div class="milestone-row">
-                            <span class="milestone-chip" id="m-10">10P (1단계)</span>
-                            <span class="milestone-chip" id="m-20">20P (2단계)</span>
-                            <span class="milestone-chip" id="m-30">30P (3단계)</span>
+                            <span class="milestone-chip" id="m-20">🎁 20P 주간 보급 상자 (목표)</span>
                         </div>
                     </div>
 
@@ -382,11 +383,8 @@
                             <span>📦 일일 교환 보물 상급 풀</span>
                             <span style="font-size:10px; color:var(--text-muted); font-weight:normal;">(2P 당 1회)</span>
                         </div>
-                        <div class="reward-info-tags">
-                            <span class="reward-info-chip">📦 재련 재료 상자</span>
-                            <span class="reward-info-chip">📦 카드 팩</span>
-                            <span class="reward-info-chip">📦 실링 상자</span>
-                        </div>
+                        <div class="reward-info-tags" id="container-pool-publish"></div>
+                        <div id="container-pool-edit" style="display:none; margin-top:6px;"></div>
                     </div>
 
                     <div style="font-size:14px; font-weight:bold; margin-bottom:8px;">
@@ -419,7 +417,28 @@
 </div>
 
 <script>
+    // Configurable Mission & Reward Data (Updated Balance: Target 20P)
+    let configData = {
+        options30m: [
+            { text: "난이도 1: 카오스 던전 1회 클리어 (일 1P)", points: 1 },
+            { text: "난이도 2: 카오스 던전 3회 클리어 (일 2P)", points: 2 },
+            { text: "난이도 3: 카오스 던전 6회 클리어 (일 3P)", points: 3 }
+        ],
+        options100m: [
+            { text: "난이도 1: 가디언 토벌 1회 클리어 (일 1P)", points: 1 },
+            { text: "난이도 2: 가디언 토벌 3회 클리어 (일 2P)", points: 2 },
+            { text: "난이도 3: 가디언 토벌 6회 클리어 (일 3P)", points: 3 }
+        ],
+        optionsDeep: [
+            { text: "난이도 1: 레이드 1회 클리어 (주간 2P)", points: 2 },
+            { text: "난이도 2: 레이드 3회 클리어 (주간 5P)", points: 5 },
+            { text: "난이도 3: 레이드 6회 클리어 (주간 8P - 전용 UI)", points: 8 }
+        ],
+        normalPool: ["재련 재료 상자", "카드 팩", "실링 상자", "돌파석 상자"]
+    };
+
     let gameState = {
+        isEditMode: false,
         isLocked: false,
         currentP: 0,
         accumulatedP: 0,
@@ -429,7 +448,13 @@
         cleared30m: false,
         cleared100m: false,
         clearedDeep: false,
-        normalPool: ["재련 재료 상자", "카드 팩", "실링 상자", "돌파석 상자"]
+        weeklyRewardClaimed: false
+    };
+
+    window.onload = () => {
+        renderMissionOptions();
+        renderEditForms();
+        renderUI();
     };
 
     function switchMainTab(tabName) {
@@ -448,15 +473,121 @@
         }
     }
 
+    function toggleEditPublishMode() {
+        gameState.isEditMode = !gameState.isEditMode;
+        const btn = document.getElementById('btn-mode-toggle');
+
+        if (gameState.isEditMode) {
+            btn.className = 'mode-toggle-btn edit-mode';
+            btn.innerText = '⚙️ 편집 모드 (설정 변경 중)';
+            document.getElementById('node-board-title').innerText = '⚙️ [편집 모드] 수심별 미션 구성';
+        } else {
+            btn.className = 'mode-toggle-btn publish-mode';
+            btn.innerText = '🚀 발행 모드 (유저 테스트)';
+            document.getElementById('node-board-title').innerText = '🧭 수심별 탐사 노드 플랜 설계';
+            renderMissionOptions();
+        }
+
+        const edit30m = document.getElementById('container-30m-edit');
+        const pub30m = document.getElementById('container-30m-publish');
+        const edit100m = document.getElementById('container-100m-edit');
+        const pub100m = document.getElementById('container-100m-publish');
+        const editDeep = document.getElementById('container-deep-edit');
+        const pubDeep = document.getElementById('container-deep-publish');
+        const editPool = document.getElementById('container-pool-edit');
+        const pubPool = document.getElementById('container-pool-publish');
+
+        edit30m.style.display = gameState.isEditMode ? 'block' : 'none';
+        pub30m.style.display = gameState.isEditMode ? 'none' : 'flex';
+        edit100m.style.display = gameState.isEditMode ? 'block' : 'none';
+        pub100m.style.display = gameState.isEditMode ? 'none' : 'flex';
+        editDeep.style.display = gameState.isEditMode ? 'block' : 'none';
+        pubDeep.style.display = gameState.isEditMode ? 'none' : 'flex';
+        editPool.style.display = gameState.isEditMode ? 'block' : 'none';
+        pubPool.style.display = gameState.isEditMode ? 'none' : 'flex';
+
+        if (!gameState.isEditMode) {
+            renderEditForms();
+            renderUI();
+        }
+    }
+
+    function renderMissionOptions() {
+        const select30m = document.getElementById('select-30m');
+        const select100m = document.getElementById('select-100m');
+        const selectDeep = document.getElementById('select-deep');
+
+        select30m.innerHTML = configData.options30m.map((opt) => `<option value="${opt.points}">${opt.text}</option>`).join('');
+        select100m.innerHTML = configData.options100m.map((opt) => `<option value="${opt.points}">${opt.text}</option>`).join('');
+        selectDeep.innerHTML = configData.optionsDeep.map((opt) => `<option value="${opt.points}">${opt.text}</option>`).join('');
+
+        const poolContainer = document.getElementById('container-pool-publish');
+        poolContainer.innerHTML = configData.normalPool.map(item => `<span class="reward-info-chip">📦 ${item}</span>`).join('');
+    }
+
+    function renderEditForms() {
+        const renderListEdit = (list, containerId) => {
+            const container = document.getElementById(containerId);
+            container.innerHTML = list.map((item, idx) => `
+                <div class="edit-input-group">
+                    <input type="text" class="edit-input-text" value="${item.text}" onchange="updateOptionText('${containerId}', ${idx}, this.value)">
+                    <input type="number" class="edit-input-num" value="${item.points}" onchange="updateOptionPoints('${containerId}', ${idx}, this.value)">
+                    <button class="btn-del-item" onclick="deleteOptionItem('${containerId}', ${idx})">❌</button>
+                </div>
+            `).join('') + `<button class="btn-add-item" onclick="addOptionItem('${containerId}')">➕ 미션 항목 추가</button>`;
+        };
+
+        renderListEdit(configData.options30m, 'container-30m-edit');
+        renderListEdit(configData.options100m, 'container-100m-edit');
+        renderListEdit(configData.optionsDeep, 'container-deep-edit');
+
+        // Pool Edit
+        const poolEditContainer = document.getElementById('container-pool-edit');
+        poolEditContainer.innerHTML = configData.normalPool.map((item, idx) => `
+            <div class="edit-input-group">
+                <input type="text" class="edit-input-text" value="${item}" onchange="configData.normalPool[${idx}] = this.value">
+                <button class="btn-del-item" onclick="configData.normalPool.splice(${idx}, 1); renderEditForms();">❌</button>
+            </div>
+        `).join('') + `<button class="btn-add-item" onclick="configData.normalPool.push('새 아이템'); renderEditForms();">➕ 아이템 추가</button>`;
+    }
+
+    function updateOptionText(containerId, idx, val) {
+        if (containerId.includes('30m')) configData.options30m[idx].text = val;
+        if (containerId.includes('100m')) configData.options100m[idx].text = val;
+        if (containerId.includes('deep')) configData.optionsDeep[idx].text = val;
+    }
+
+    function updateOptionPoints(containerId, idx, val) {
+        const p = parseInt(val) || 1;
+        if (containerId.includes('30m')) configData.options30m[idx].points = p;
+        if (containerId.includes('100m')) configData.options100m[idx].points = p;
+        if (containerId.includes('deep')) configData.optionsDeep[idx].points = p;
+    }
+
+    function deleteOptionItem(containerId, idx) {
+        if (containerId.includes('30m')) configData.options30m.splice(idx, 1);
+        if (containerId.includes('100m')) configData.options100m.splice(idx, 1);
+        if (containerId.includes('deep')) configData.optionsDeep.splice(idx, 1);
+        renderEditForms();
+    }
+
+    function addOptionItem(containerId) {
+        const newItem = { text: "새 미션 항목 (0P)", points: 1 };
+        if (containerId.includes('30m')) configData.options30m.push(newItem);
+        if (containerId.includes('100m')) configData.options100m.push(newItem);
+        if (containerId.includes('deep')) configData.optionsDeep.push(newItem);
+        renderEditForms();
+    }
+
     function updatePlanSelection() {
         if (gameState.isLocked) return;
 
-        gameState.node30mLvl = parseInt(document.getElementById('select-30m').value);
-        gameState.node100mLvl = parseInt(document.getElementById('select-100m').value);
-        gameState.nodeDeepLvl = parseInt(document.getElementById('select-deep').value);
+        gameState.node30mLvl = parseInt(document.getElementById('select-30m').value) || 1;
+        gameState.node100mLvl = parseInt(document.getElementById('select-100m').value) || 1;
+        gameState.nodeDeepLvl = parseInt(document.getElementById('select-deep').value) || 1;
 
         const deepCard = document.getElementById('card-deep');
-        if (gameState.nodeDeepLvl === 3) {
+        if (gameState.nodeDeepLvl >= 8) {
             deepCard.classList.add('deep-node-lvl3');
         } else {
             deepCard.classList.remove('deep-node-lvl3');
@@ -486,16 +617,28 @@
             earnedP = gameState.node100mLvl;
             gameState.cleared100m = true;
         } else if (nodeType === 'deep' && !gameState.clearedDeep) {
-            earnedP = gameState.nodeDeepLvl === 1 ? 2 : gameState.nodeDeepLvl === 2 ? 5 : 8;
+            earnedP = gameState.nodeDeepLvl;
             gameState.clearedDeep = true;
         } else {
             return alert("이미 완료한 미션입니다.");
         }
 
+        const prevAccumulatedP = gameState.accumulatedP;
         gameState.currentP += earnedP;
         gameState.accumulatedP += earnedP;
+        
         renderUI();
+
         alert(`🎉 미션 완료! ${earnedP}P를 획득했습니다.`);
+
+        // Target: 20P Completion Check
+        if (prevAccumulatedP < 20 && gameState.accumulatedP >= 20 && !gameState.weeklyRewardClaimed) {
+            gameState.weeklyRewardClaimed = true;
+            renderUI();
+            setTimeout(() => {
+                alert("🏆 [20P 주간 목표 달성 완료!]\n\n주간 보급 상자를 성공적으로 획득하셨습니다!");
+            }, 100);
+        }
     }
 
     function startSalvageAnimation() {
@@ -513,8 +656,8 @@
         bulkBtn.disabled = true;
         chestBox.style.display = 'none';
 
-        const randIdx = Math.floor(Math.random() * gameState.normalPool.length);
-        const wonItem = gameState.normalPool[randIdx];
+        const randIdx = Math.floor(Math.random() * configData.normalPool.length);
+        const wonItem = configData.normalPool[randIdx];
 
         craneLine.style.height = '125px';
 
@@ -526,7 +669,7 @@
                 setTimeout(() => {
                     chestBox.style.display = 'none';
                     renderUI();
-                    alert(`⚓ [일일 보물 인양 성공!]\n\n획득한 보물: [${wonItem}]\n\n게임 내 우편함으로 즉시 발송되었습니다.`);
+                    alert(`⚓ [일일 보물 인양 성공!]\n\n획득한 보물: [${wonItem}]`);
                 }, 1000);
             }, 300);
         }, 1000);
@@ -540,8 +683,8 @@
 
         const resultSummary = {};
         for (let i = 0; i < pullCount; i++) {
-            const randIdx = Math.floor(Math.random() * gameState.normalPool.length);
-            const wonItem = gameState.normalPool[randIdx];
+            const randIdx = Math.floor(Math.random() * configData.normalPool.length);
+            const wonItem = configData.normalPool[randIdx];
             resultSummary[wonItem] = (resultSummary[wonItem] || 0) + 1;
         }
 
@@ -555,32 +698,53 @@
         alert(alertMsg);
     }
 
+    function advanceNextDay() {
+        if (confirm("⏭️ 다음 날로 넘기시겠습니까?")) {
+            gameState.cleared30m = false;
+            gameState.cleared100m = false;
+            renderUI();
+            alert("🌅 다음 날이 되었습니다! 일일 미션을 다시 수행하세요.");
+        }
+    }
+
     function resetEventData() {
-        gameState = {
-            isLocked: false, currentP: 0, accumulatedP: 0,
-            node30mLvl: 1, node100mLvl: 1, nodeDeepLvl: 1,
-            cleared30m: false, cleared100m: false, clearedDeep: false,
-            normalPool: ["재련 재료 상자", "카드 팩", "실링 상자", "돌파석 상자"]
-        };
-        document.getElementById('select-30m').disabled = false;
-        document.getElementById('select-100m').disabled = false;
-        document.getElementById('select-deep').disabled = false;
-        document.getElementById('btn-lock-plan').innerText = "🔒 이번 주 플랜 제출 / 확정하기";
-        document.getElementById('btn-lock-plan').disabled = false;
-        updatePlanSelection();
-        renderUI();
+        if (confirm("🔄 모든 진행 데이터를 초기화하시겠습니까?")) {
+            gameState.isLocked = false;
+            gameState.currentP = 0;
+            gameState.accumulatedP = 0;
+            gameState.cleared30m = false;
+            gameState.cleared100m = false;
+            gameState.clearedDeep = false;
+            gameState.weeklyRewardClaimed = false;
+
+            document.getElementById('select-30m').disabled = false;
+            document.getElementById('select-100m').disabled = false;
+            document.getElementById('select-deep').disabled = false;
+            document.getElementById('btn-lock-plan').innerText = "🔒 이번 주 플랜 제출 / 확정하기";
+            document.getElementById('btn-lock-plan').disabled = false;
+
+            updatePlanSelection();
+            renderUI();
+            alert("🧹 전체 진행 데이터가 초기화되었습니다.");
+        }
     }
 
     function renderUI() {
         document.getElementById('ui-current-p').innerText = gameState.currentP;
-        document.getElementById('ui-accumulated-p').innerText = gameState.accumulatedP + " P";
+        document.getElementById('ui-accumulated-p').innerText = `${gameState.accumulatedP} / 20 P`;
 
-        const percentage = Math.min(100, (gameState.accumulatedP / 30) * 100);
+        // Progress Ratio Calculation for 20P
+        const percentage = Math.min(100, (gameState.accumulatedP / 20) * 100);
         document.getElementById('ui-progress-fill').style.width = percentage + "%";
 
-        document.getElementById('m-10').className = gameState.accumulatedP >= 10 ? 'milestone-chip unlocked' : 'milestone-chip';
-        document.getElementById('m-20').className = gameState.accumulatedP >= 20 ? 'milestone-chip unlocked' : 'milestone-chip';
-        document.getElementById('m-30').className = gameState.accumulatedP >= 30 ? 'milestone-chip unlocked' : 'milestone-chip';
+        const m20Chip = document.getElementById('m-20');
+        if (gameState.accumulatedP >= 20) {
+            m20Chip.className = 'milestone-chip unlocked';
+            m20Chip.innerText = gameState.weeklyRewardClaimed ? "🏆 20P 주간 보급 상자 (수령 완료)" : "🎁 20P 주간 보급 상자 (획득 가능)";
+        } else {
+            m20Chip.className = 'milestone-chip';
+            m20Chip.innerText = `🎁 20P 주간 보급 상자 (목표: ${20 - gameState.accumulatedP}P 남음)`;
+        }
 
         document.getElementById('btn-spin').disabled = gameState.currentP < 2;
         document.getElementById('btn-bulk-spin').disabled = gameState.currentP < 2;
@@ -588,6 +752,24 @@
         document.getElementById('btn-clear-30m').disabled = gameState.cleared30m;
         document.getElementById('btn-clear-100m').disabled = gameState.cleared100m;
         document.getElementById('btn-clear-deep').disabled = gameState.clearedDeep;
+    }
+
+    function downloadCurrentHTML() {
+        let fullHtml = document.documentElement.outerHTML;
+
+        const configJsonStr = JSON.stringify(configData, null, 8);
+        const replaceRegex = /let configData = \{[\s\S]*?\};/;
+        fullHtml = fullHtml.replace(replaceRegex, `let configData = ${configJsonStr};`);
+
+        const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'undersea_salvage_event.html';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
     }
 </script>
 
