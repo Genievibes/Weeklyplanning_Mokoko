@@ -195,6 +195,9 @@
         .btn-salvage { background: linear-gradient(180deg, #4db8ff, #0066cc); color: #fff; font-size: 13px; font-weight: bold; padding: 10px 14px; width: 100%; border: 1px solid #80ccff; box-shadow: 0 4px 0 #004080; border-radius: 8px; cursor: pointer; margin-bottom: 6px; }
         .btn-salvage:disabled { background: #334e63; border-color: #223442; box-shadow: none; color: #607d94; cursor: not-allowed; }
 
+        .btn-deep-salvage { background: linear-gradient(180deg, #c084fc, #7e22ce); color: #fff; font-size: 13px; font-weight: bold; padding: 10px 14px; width: 100%; border: 1px solid #e9d5ff; box-shadow: 0 4px 0 #581c87; border-radius: 8px; cursor: pointer; margin-bottom: 6px; }
+        .btn-deep-salvage:disabled { background: #334e63; border-color: #223442; box-shadow: none; color: #607d94; cursor: not-allowed; }
+
         .btn-bulk-salvage { background: linear-gradient(180deg, #b0f566, #5eb800); color: #000; font-size: 13px; padding: 10px 14px; width: 100%; border: 1px solid #d0ff99; box-shadow: 0 4px 0 #3a7300; margin-bottom: 8px; font-weight: 800; cursor: pointer; border-radius: 8px; }
         .btn-bulk-salvage:disabled { background: #334e63; border-color: #223442; box-shadow: none; color: #607d94; cursor: not-allowed; }
 
@@ -240,16 +243,15 @@
         <!-- TAB 1: SPECIFICATION DOCUMENT -->
         <div class="tab-content" id="tab-spec">
             <div class="doc-section">
-                <h2>⚓ 1. 기획 의도 및 유저 루틴</h2>
+                <h2>⚓ 1. 기획 의도 및 3단계 보상 루틴</h2>
                 <p style="font-size:13px; color:var(--text-muted);">
-                    본 이벤트는 모든 유저층이 본인의 라이프스타일에 맞추어 탐사 난이도를 직접 선택하고, 주간 20P 목표를 달성하여 보상을 해금하는 수심 탐사 컨셉의 웹 이벤트입니다.
+                    본 이벤트는 탐사 난이도를 직접 선택하고 3가지 명확한 보상 축을 따라 해금하는 수심 탐사 컨셉의 웹 이벤트입니다.
                 </p>
-                <h3>📌 핵심 유저 루틴</h3>
+                <h3>📌 3단계 보상 체계 요약</h3>
                 <ul>
-                    <li><strong>수요일 06:00</strong>: 주간 플랜 설계 (30M, 100M, 심해 노드 난이도 드롭다운 선택 및 확정)</li>
-                    <li><strong>매일 수행</strong>: 카카오 던전 및 가디언 토벌 수행으로 일일 포인트 획득</li>
-                    <li><strong>주간 완수</strong>: 레이드 클리어로 고득점 심해 포인트 수급</li>
-                    <li><strong>실시간 보상</strong>: 일일 포인트 교환 + 주간 누적 포인트 20P 달성 시 주간 보급 상자 획득</li>
+                    <li><strong>1. 일일 보상 (30M / 100M)</strong>: 매일 미션을 통해 포인트를 수급하고 2P 소모하여 일일 보물 인양 진행</li>
+                    <li><strong>2. 주간 클리어 보상 (심해 노드)</strong>: 심해 노드 주간 미션 달성 시 전용 [🔮 심해 보물 인양] 버튼을 통해 주간 보상 획득</li>
+                    <li><strong>3. 주간 플랜 완료 보상 (20P 목표)</strong>: 주간 누적 포인트 20P 달성 시 [🏆 20P 주간 완수 보급 상자] 자동 해금</li>
                 </ul>
             </div>
 
@@ -299,9 +301,8 @@
                 <h2>🖥️ 3. UI/UX 요구사항 &amp; 🗄️ DB 테이블 명세</h2>
                 <h3>🎨 UI/UX 핵심 요소</h3>
                 <ul>
-                    <li><strong>독립 노드 배치</strong>: 수심별 탐사 노드를 직관적인 카드 타입으로 정렬</li>
-                    <li><strong>심해 난이도 3 전용 연출</strong>: 네온 골드/퍼플 글로우 테두리 및 High-Risk Badge 표시</li>
-                    <li><strong>20P 목표 달성 연출</strong>: 주간 누적 20P 충전 시 즉시 보급 상자 해금 팝업 출력</li>
+                    <li><strong>일일 / 주간 인양 분리</strong>: 일일 일반 인양 버튼과 심해 전용 주간 보물 인양 버튼 독립 구성</li>
+                    <li><strong>20P 목표 달성 연출</strong>: 주간 누적 20P 충전 시 즉시 주간 완수 보급 상자 해금 팝업 출력</li>
                 </ul>
             </div>
         </div>
@@ -316,8 +317,7 @@
             <div class="middle-grid">
                 <!-- Sea Map Left Column -->
                 <div class="sea-map-container">
-                    <!-- Dynamic Board Header -->
-                    <div style="font-size:14px; font-weight:bold; color:var(--accent-blue); margin-bottom: 2px;" id="node-board-title">보물 인양 계획</div>
+                    <div style="font-size:14px; font-weight:bold; color:var(--accent-blue); margin-bottom: 2px;" id="node-board-title">🧭 수심별 탐사 노드 플랜 설계</div>
                     <div id="container-title-edit" style="display: none; margin-bottom: 8px;">
                         <span class="edit-label-header">📌 보드 타이틀 텍스트 수정</span>
                         <input type="text" class="edit-input-text" id="input-board-title" onchange="configData.labels.boardTitle = this.value">
@@ -361,7 +361,7 @@
                     <!-- 100M Node -->
                     <div class="depth-slot-card">
                         <div class="slot-header">
-                            <span class="depth-tag" id="tag-100m">⚓ 수심 100M 인양 (일일)</span>
+                            <span class="depth-tag" id="tag-100m">⚓ 수심 100M 인양(일일)</span>
                             <span style="font-size:11px; color:var(--accent-gold);" id="badge-100m">일일 미션</span>
                         </div>
                         <div id="container-100m-title-edit" class="node-title-edit-box" style="display: none;">
@@ -396,7 +396,7 @@
                     <!-- DEEP SEA Node -->
                     <div class="depth-slot-card" id="card-deep">
                         <div class="slot-header">
-                            <span class="depth-tag" style="color:var(--accent-purple);" id="tag-deep">🔮 심해 인양 (주간)</span>
+                            <span class="depth-tag" style="color:var(--accent-purple);" id="tag-deep">🔮 심해 보물 인양 (주간)</span>
                             <span style="font-size:11px; color:var(--accent-purple);" id="badge-deep">주간 1회</span>
                         </div>
                         <div id="container-deep-title-edit" class="node-title-edit-box" style="display: none;">
@@ -405,7 +405,7 @@
                         </div>
                         <div id="container-deep-publish" class="dropdown-mission-row" style="display: flex;">
                             <select class="mission-select" id="select-deep" onchange="updatePlanSelection()"><option value="2">난이도 1: 레이드 1회 클리어 (주간 2P)</option><option value="5">난이도 2: 레이드 3회 클리어 (주간 5P)</option><option value="8">난이도 3: 레이드 6회 클리어 (주간 8P - 전용 UI)</option></select>
-                            <button class="btn" id="btn-clear-deep" style="background:var(--accent-purple); color:#fff;" onclick="clearMission('deep')">주간 클리어</button>
+                            <button class="btn" id="btn-clear-deep" style="background:var(--accent-purple); color:#fff;" onclick="clearMission('deep')">주간 미션 클리어</button>
                         </div>
                         <div id="container-deep-edit" style="display: none;">
                 <div class="edit-input-group">
@@ -452,7 +452,7 @@
                             <div class="progress-bar-fill" id="ui-progress-fill" style="width: 0%;"></div>
                         </div>
                         <div class="milestone-row">
-                            <span class="milestone-chip" id="m-20">🎁 20P 주간 보급 상자 (목표: 20P 남음)</span>
+                            <span class="milestone-chip" id="m-20">🎁 20P 주간 완수 보급 상자 (목표: 20P 남음)</span>
                         </div>
                     </div>
 
@@ -506,11 +506,15 @@
                         </div>
                     </div>
 
+                    <!-- Salvage Buttons -->
                     <button class="btn-salvage" id="btn-spin" onclick="startSalvageAnimation()" disabled="">2P 소모하여 일일 보물 인양하기</button>
-                    <button class="btn-bulk-salvage" id="btn-bulk-spin" onclick="startBulkSalvage()" disabled="">⚡ 보유 포인트로 한번에 인양하기</button>
+                    <button class="btn-deep-salvage" id="btn-deep-spin" onclick="startDeepSalvageAnimation()" disabled="">🔮 [주간 전용] 심해 보물 인양하기</button>
+                    <button class="btn-bulk-salvage" id="btn-bulk-spin" onclick="startBulkSalvage()" disabled="">⚡ 보유 포인트로 일일 보물 한번에 인양하기</button>
+                    
                     <div id="container-spinbtn-edit" style="display: none; margin-top: 4px;">
                         <span class="edit-label-header">📌 인양 버튼 텍스트 수정</span>
                         <input type="text" class="edit-input-text" id="input-spinbtn-text" onchange="configData.labels.btnSpin = this.value" style="margin-bottom: 4px;">
+                        <input type="text" class="edit-input-text" id="input-deepspinbtn-text" onchange="configData.labels.btnDeepSpin = this.value" style="margin-bottom: 4px;">
                         <input type="text" class="edit-input-text" id="input-bulkspinbtn-text" onchange="configData.labels.btnBulkSpin = this.value">
                     </div>
                 </div>
@@ -523,16 +527,16 @@
     // Configurable Mission, Labels & Text Data
     let configData = {
         "labels": {
-                "boardTitle": "보물 인양 계획",
+                "boardTitle": "🧭 수심별 탐사 노드 플랜 설계",
                 "tag30m": "🌊 수심 30M 인양 (일일)",
                 "badge30m": "일일 미션",
                 "btnClear30m": "오늘 클리어",
-                "tag100m": "⚓ 수심 100M 인양 (일일)",
+                "tag100m": "⚓ 수심 100M 인양(일일)",
                 "badge100m": "일일 미션",
                 "btnClear100m": "오늘 클리어",
-                "tagDeep": "🔮 심해 인양 (주간)",
+                "tagDeep": "🔮 심해 보물 인양 (주간)",
                 "badgeDeep": "주간 1회",
-                "btnClearDeep": "주간 클리어",
+                "btnClearDeep": "주간 미션 클리어",
                 "btnLockPlan": "🔒 이번 주 플랜 제출 / 확정하기",
                 "panelRightTitle": "⚓ 보물 인양 & 주간 누적 현황",
                 "weeklyAccumLabel": "주간 총 누적 포인트",
@@ -541,7 +545,8 @@
                 "rewardPoolSub": "(2P 당 1회)",
                 "myPointsLabel": "💡 보유 인양 포인트",
                 "btnSpin": "2P 소모하여 일일 보물 인양하기",
-                "btnBulkSpin": "⚡ 보유 포인트로 한번에 인양하기"
+                "btnDeepSpin": "🔮 [주간 전용] 심해 보물 인양하기",
+                "btnBulkSpin": "⚡ 보유 포인트로 일일 보물 한번에 인양하기"
         },
         "options30m": [
                 {
@@ -590,6 +595,11 @@
                 "카드 팩",
                 "실링 상자",
                 "돌파석 상자"
+        ],
+        "deepPool": [
+                "🔮 심해 전용 전설 카드 팩",
+                "🔮 상급 재련 특별 상자",
+                "🔮 10,000 골드 상자"
         ]
 };
 
@@ -604,6 +614,7 @@
         cleared30m: false,
         cleared100m: false,
         clearedDeep: false,
+        deepRewardClaimed: false,
         weeklyRewardClaimed: false
     };
 
@@ -636,6 +647,7 @@
         document.getElementById('label-my-points').innerText = configData.labels.myPointsLabel;
 
         document.getElementById('btn-spin').innerText = configData.labels.btnSpin;
+        document.getElementById('btn-deep-spin').innerText = gameState.deepRewardClaimed ? "✓ 심해 보물 인양 완료" : configData.labels.btnDeepSpin;
         document.getElementById('btn-bulk-spin').innerText = configData.labels.btnBulkSpin;
     }
 
@@ -663,7 +675,6 @@
             btn.className = 'mode-toggle-btn edit-mode';
             btn.innerText = '⚙️ 편집 모드 (설정 변경 중)';
             
-            // Fill Label Edit Inputs
             document.getElementById('input-board-title').value = configData.labels.boardTitle;
             document.getElementById('input-tag-30m').value = configData.labels.tag30m;
             document.getElementById('input-tag-100m').value = configData.labels.tag100m;
@@ -671,6 +682,7 @@
             document.getElementById('input-lockbtn-text').value = configData.labels.btnLockPlan;
             document.getElementById('input-right-title').value = configData.labels.panelRightTitle;
             document.getElementById('input-spinbtn-text').value = configData.labels.btnSpin;
+            document.getElementById('input-deepspinbtn-text').value = configData.labels.btnDeepSpin;
             document.getElementById('input-bulkspinbtn-text').value = configData.labels.btnBulkSpin;
         } else {
             btn.className = 'mode-toggle-btn publish-mode';
@@ -818,13 +830,17 @@
         
         renderUI();
 
-        alert(`🎉 미션 완료! ${earnedP}P를 획득했습니다.`);
+        if (nodeType === 'deep') {
+            alert(`🎉 심해 노드 주간 미션 완료! ${earnedP}P를 획득했습니다.\n\n우측 패널의 [🔮 심해 보물 인양하기] 버튼이 해금되었습니다!`);
+        } else {
+            alert(`🎉 미션 완료! ${earnedP}P를 획득했습니다.`);
+        }
 
         if (prevAccumulatedP < 20 && gameState.accumulatedP >= 20 && !gameState.weeklyRewardClaimed) {
             gameState.weeklyRewardClaimed = true;
             renderUI();
             setTimeout(() => {
-                alert("🏆 [20P 주간 목표 달성 완료!]\n\n주간 보급 상자를 성공적으로 획득하셨습니다!");
+                alert("🏆 [20P 주간 플랜 완료!]\n\n주간 완수 보급 상자를 성공적으로 획득하셨습니다!");
             }, 100);
         }
     }
@@ -858,6 +874,39 @@
                     chestBox.style.display = 'none';
                     renderUI();
                     alert(`⚓ [일일 보물 인양 성공!]\n\n획득한 보물: [${wonItem}]`);
+                }, 1000);
+            }, 300);
+        }, 1000);
+    }
+
+    function startDeepSalvageAnimation() {
+        if (!gameState.clearedDeep) return alert("⚠️ 심해 노드 미션을 완료해야 주간 보물을 인양할 수 있습니다.");
+        if (gameState.deepRewardClaimed) return alert("이미 주간 심해 보물을 인양하셨습니다.");
+
+        gameState.deepRewardClaimed = true;
+        renderUI();
+
+        const craneLine = document.getElementById('crane-line');
+        const chestBox = document.getElementById('chest-box');
+        const deepSpinBtn = document.getElementById('btn-deep-spin');
+
+        deepSpinBtn.disabled = true;
+        chestBox.style.display = 'none';
+
+        const randIdx = Math.floor(Math.random() * configData.deepPool.length);
+        const wonItem = configData.deepPool[randIdx];
+
+        craneLine.style.height = '125px';
+
+        setTimeout(() => {
+            chestBox.style.display = 'block';
+            chestBox.innerText = '🔮';
+            setTimeout(() => {
+                craneLine.style.height = '0px';
+                setTimeout(() => {
+                    chestBox.style.display = 'none';
+                    renderUI();
+                    alert(`🔮 [주간 심해 특별 보물 인양 성공!]\n\n획득한 보물: [${wonItem}]\n\n게임 내 우편함으로 즉시 발송되었습니다.`);
                 }, 1000);
             }, 300);
         }, 1000);
@@ -903,6 +952,7 @@
             gameState.cleared30m = false;
             gameState.cleared100m = false;
             gameState.clearedDeep = false;
+            gameState.deepRewardClaimed = false;
             gameState.weeklyRewardClaimed = false;
 
             document.getElementById('select-30m').disabled = false;
@@ -927,14 +977,19 @@
         const m20Chip = document.getElementById('m-20');
         if (gameState.accumulatedP >= 20) {
             m20Chip.className = 'milestone-chip unlocked';
-            m20Chip.innerText = gameState.weeklyRewardClaimed ? "🏆 20P 주간 보급 상자 (수령 완료)" : "🎁 20P 주간 보급 상자 (획득 가능)";
+            m20Chip.innerText = gameState.weeklyRewardClaimed ? "🏆 20P 주간 완수 보급 상자 (수령 완료)" : "🎁 20P 주간 완수 보급 상자 (획득 가능)";
         } else {
             m20Chip.className = 'milestone-chip';
-            m20Chip.innerText = `🎁 20P 주간 보급 상자 (목표: ${20 - gameState.accumulatedP}P 남음)`;
+            m20Chip.innerText = `🎁 20P 주간 완수 보급 상자 (목표: ${20 - gameState.accumulatedP}P 남음)`;
         }
 
         document.getElementById('btn-spin').disabled = gameState.currentP < 2;
         document.getElementById('btn-bulk-spin').disabled = gameState.currentP < 2;
+
+        // 주간 심해 인양 버튼 활성화 상태 연동
+        const deepBtn = document.getElementById('btn-deep-spin');
+        deepBtn.disabled = !gameState.clearedDeep || gameState.deepRewardClaimed;
+        deepBtn.innerText = gameState.deepRewardClaimed ? "✓ 주간 심해 보물 인양 완료" : configData.labels.btnDeepSpin;
 
         document.getElementById('btn-clear-30m').disabled = gameState.cleared30m;
         document.getElementById('btn-clear-100m').disabled = gameState.cleared100m;
