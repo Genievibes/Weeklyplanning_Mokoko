@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
+<html lang="ko"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>해저 보물 인양 대작전 - 기획서 및 이벤트 Prototype</title>
@@ -211,6 +209,9 @@
         .edit-input-num { background: #06121e; border: 1px solid var(--panel-border); color: var(--accent-gold); padding: 4px 8px; border-radius: 4px; font-size: 12px; width: 60px; text-align: center; }
         .btn-del-item { background: rgba(255, 94, 94, 0.3); border: 1px solid var(--danger-red); color: #fff; padding: 2px 6px; border-radius: 4px; cursor: pointer; font-size: 11px; }
         .btn-add-item { background: rgba(66, 227, 130, 0.2); border: 1px solid var(--accent-green); color: var(--accent-green); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; margin-top: 4px; }
+        
+        .edit-label-header { font-size: 11px; color: var(--accent-gold); font-weight: bold; margin-bottom: 4px; display: block; }
+        .node-title-edit-box { background: rgba(255, 255, 255, 0.05); padding: 6px 8px; border-radius: 6px; border: 1px dashed var(--panel-border); margin-bottom: 8px; }
     </style>
 </head>
 <body>
@@ -219,8 +220,8 @@
     <!-- Left Side Nav Bar -->
     <nav class="sidebar-nav">
         <div class="sidebar-title">NAVIGATION</div>
-        <button class="main-tab-btn active" onclick="switchMainTab('spec')">📄 [기획서] 명세서</button>
-        <button class="main-tab-btn" onclick="switchMainTab('event')">⚓ [이벤트] 보물 인양</button>
+        <button class="main-tab-btn" onclick="switchMainTab('spec')">📄 [기획서] 명세서</button>
+        <button class="main-tab-btn active" onclick="switchMainTab('event')">⚓ [이벤트] 보물 인양</button>
     </nav>
 
     <!-- Right Main Content -->
@@ -237,7 +238,7 @@
         </div>
 
         <!-- TAB 1: SPECIFICATION DOCUMENT -->
-        <div class="tab-content active" id="tab-spec">
+        <div class="tab-content" id="tab-spec">
             <div class="doc-section">
                 <h2>⚓ 1. 기획 의도 및 유저 루틴</h2>
                 <p style="font-size:13px; color:var(--text-muted);">
@@ -295,7 +296,7 @@
             </div>
 
             <div class="doc-section">
-                <h2>🖥️ 3. UI/UX 요구사항 & 🗄️ DB 테이블 명세</h2>
+                <h2>🖥️ 3. UI/UX 요구사항 &amp; 🗄️ DB 테이블 명세</h2>
                 <h3>🎨 UI/UX 핵심 요소</h3>
                 <ul>
                     <li><strong>독립 노드 배치</strong>: 수심별 탐사 노드를 직관적인 카드 타입으로 정렬</li>
@@ -306,7 +307,7 @@
         </div>
 
         <!-- TAB 2: INTERACTIVE EVENT GAME UI -->
-        <div class="tab-content" id="tab-event">
+        <div class="tab-content active" id="tab-event">
             <div class="live-mode-bar">
                 <button class="btn btn-next-day" onclick="advanceNextDay()">⏭️ 다음 날 넘기기 (일일 리셋)</button>
                 <button class="btn btn-reset" onclick="resetEventData()">🔄 전체 진행 초기화</button>
@@ -315,80 +316,177 @@
             <div class="middle-grid">
                 <!-- Sea Map Left Column -->
                 <div class="sea-map-container">
-                    <div style="font-size:14px; font-weight:bold; color:var(--accent-blue); margin-bottom: 2px;" id="node-board-title">
-                        🧭 수심별 탐사 노드 플랜 설계
+                    <!-- Dynamic Board Header -->
+                    <div style="font-size:14px; font-weight:bold; color:var(--accent-blue); margin-bottom: 2px;" id="node-board-title">보물 인양 계획</div>
+                    <div id="container-title-edit" style="display: none; margin-bottom: 8px;">
+                        <span class="edit-label-header">📌 보드 타이틀 텍스트 수정</span>
+                        <input type="text" class="edit-input-text" id="input-board-title" onchange="configData.labels.boardTitle = this.value">
                     </div>
 
                     <!-- 30M Node -->
                     <div class="depth-slot-card">
                         <div class="slot-header">
-                            <span class="depth-tag">🌊 수심 30M 노드 (일일)</span>
+                            <span class="depth-tag" id="tag-30m">🌊 수심 30M 인양 (일일)</span>
                             <span style="font-size:11px; color:var(--accent-gold);" id="badge-30m">일일 미션</span>
                         </div>
-                        <div id="container-30m-publish" class="dropdown-mission-row">
-                            <select class="mission-select" id="select-30m" onchange="updatePlanSelection()"></select>
+                        <div id="container-30m-title-edit" class="node-title-edit-box" style="display: none;">
+                            <span class="edit-label-header">📌 노드 타이틀 텍스트 수정</span>
+                            <input type="text" class="edit-input-text" id="input-tag-30m" onchange="configData.labels.tag30m = this.value">
+                        </div>
+                        <div id="container-30m-publish" class="dropdown-mission-row" style="display: flex;">
+                            <select class="mission-select" id="select-30m" onchange="updatePlanSelection()"><option value="1">난이도 1: 카오스 던전 1회 클리어 (일 1P)</option><option value="2">난이도 2: 카오스 던전 3회 클리어 (일 2P)</option><option value="3">난이도 3: 카오스 던전 6회 클리어 (일 3P)</option></select>
                             <button class="btn" id="btn-clear-30m" onclick="clearMission('30m')">오늘 클리어</button>
                         </div>
-                        <div id="container-30m-edit" style="display:none;"></div>
+                        <div id="container-30m-edit" style="display: none;">
+                <div class="edit-input-group">
+                    <input type="text" class="edit-input-text" value="난이도 1: 카오스 던전 1회 클리어 (일 1P)" onchange="updateOptionText('container-30m-edit', 0, this.value)">
+                    <input type="number" class="edit-input-num" value="1" onchange="updateOptionPoints('container-30m-edit', 0, this.value)">
+                    <button class="btn-del-item" onclick="deleteOptionItem('container-30m-edit', 0)">❌</button>
+                </div>
+            
+                <div class="edit-input-group">
+                    <input type="text" class="edit-input-text" value="난이도 2: 카오스 던전 3회 클리어 (일 2P)" onchange="updateOptionText('container-30m-edit', 1, this.value)">
+                    <input type="number" class="edit-input-num" value="2" onchange="updateOptionPoints('container-30m-edit', 1, this.value)">
+                    <button class="btn-del-item" onclick="deleteOptionItem('container-30m-edit', 1)">❌</button>
+                </div>
+            
+                <div class="edit-input-group">
+                    <input type="text" class="edit-input-text" value="난이도 3: 카오스 던전 6회 클리어 (일 3P)" onchange="updateOptionText('container-30m-edit', 2, this.value)">
+                    <input type="number" class="edit-input-num" value="3" onchange="updateOptionPoints('container-30m-edit', 2, this.value)">
+                    <button class="btn-del-item" onclick="deleteOptionItem('container-30m-edit', 2)">❌</button>
+                </div>
+            <button class="btn-add-item" onclick="addOptionItem('container-30m-edit')">➕ 미션 항목 추가</button></div>
                     </div>
 
                     <!-- 100M Node -->
                     <div class="depth-slot-card">
                         <div class="slot-header">
-                            <span class="depth-tag">⚓ 수심 100M 노드 (일일)</span>
+                            <span class="depth-tag" id="tag-100m">⚓ 수심 100M 인양 (일일)</span>
                             <span style="font-size:11px; color:var(--accent-gold);" id="badge-100m">일일 미션</span>
                         </div>
-                        <div id="container-100m-publish" class="dropdown-mission-row">
-                            <select class="mission-select" id="select-100m" onchange="updatePlanSelection()"></select>
+                        <div id="container-100m-title-edit" class="node-title-edit-box" style="display: none;">
+                            <span class="edit-label-header">📌 노드 타이틀 텍스트 수정</span>
+                            <input type="text" class="edit-input-text" id="input-tag-100m" onchange="configData.labels.tag100m = this.value">
+                        </div>
+                        <div id="container-100m-publish" class="dropdown-mission-row" style="display: flex;">
+                            <select class="mission-select" id="select-100m" onchange="updatePlanSelection()"><option value="1">난이도 1: 가디언 토벌 1회 클리어 (일 1P)</option><option value="2">난이도 2: 가디언 토벌 3회 클리어 (일 2P)</option><option value="3">난이도 3: 가디언 토벌 6회 클리어 (일 3P)</option></select>
                             <button class="btn" id="btn-clear-100m" onclick="clearMission('100m')">오늘 클리어</button>
                         </div>
-                        <div id="container-100m-edit" style="display:none;"></div>
+                        <div id="container-100m-edit" style="display: none;">
+                <div class="edit-input-group">
+                    <input type="text" class="edit-input-text" value="난이도 1: 가디언 토벌 1회 클리어 (일 1P)" onchange="updateOptionText('container-100m-edit', 0, this.value)">
+                    <input type="number" class="edit-input-num" value="1" onchange="updateOptionPoints('container-100m-edit', 0, this.value)">
+                    <button class="btn-del-item" onclick="deleteOptionItem('container-100m-edit', 0)">❌</button>
+                </div>
+            
+                <div class="edit-input-group">
+                    <input type="text" class="edit-input-text" value="난이도 2: 가디언 토벌 3회 클리어 (일 2P)" onchange="updateOptionText('container-100m-edit', 1, this.value)">
+                    <input type="number" class="edit-input-num" value="2" onchange="updateOptionPoints('container-100m-edit', 1, this.value)">
+                    <button class="btn-del-item" onclick="deleteOptionItem('container-100m-edit', 1)">❌</button>
+                </div>
+            
+                <div class="edit-input-group">
+                    <input type="text" class="edit-input-text" value="난이도 3: 가디언 토벌 6회 클리어 (일 3P)" onchange="updateOptionText('container-100m-edit', 2, this.value)">
+                    <input type="number" class="edit-input-num" value="3" onchange="updateOptionPoints('container-100m-edit', 2, this.value)">
+                    <button class="btn-del-item" onclick="deleteOptionItem('container-100m-edit', 2)">❌</button>
+                </div>
+            <button class="btn-add-item" onclick="addOptionItem('container-100m-edit')">➕ 미션 항목 추가</button></div>
                     </div>
 
                     <!-- DEEP SEA Node -->
                     <div class="depth-slot-card" id="card-deep">
                         <div class="slot-header">
-                            <span class="depth-tag" style="color:var(--accent-purple);">🔮 심해 노드 (주간 High-Risk)</span>
+                            <span class="depth-tag" style="color:var(--accent-purple);" id="tag-deep">🔮 심해 인양 (주간)</span>
                             <span style="font-size:11px; color:var(--accent-purple);" id="badge-deep">주간 1회</span>
                         </div>
-                        <div id="container-deep-publish" class="dropdown-mission-row">
-                            <select class="mission-select" id="select-deep" onchange="updatePlanSelection()"></select>
+                        <div id="container-deep-title-edit" class="node-title-edit-box" style="display: none;">
+                            <span class="edit-label-header">📌 노드 타이틀 텍스트 수정</span>
+                            <input type="text" class="edit-input-text" id="input-tag-deep" onchange="configData.labels.tagDeep = this.value">
+                        </div>
+                        <div id="container-deep-publish" class="dropdown-mission-row" style="display: flex;">
+                            <select class="mission-select" id="select-deep" onchange="updatePlanSelection()"><option value="2">난이도 1: 레이드 1회 클리어 (주간 2P)</option><option value="5">난이도 2: 레이드 3회 클리어 (주간 5P)</option><option value="8">난이도 3: 레이드 6회 클리어 (주간 8P - 전용 UI)</option></select>
                             <button class="btn" id="btn-clear-deep" style="background:var(--accent-purple); color:#fff;" onclick="clearMission('deep')">주간 클리어</button>
                         </div>
-                        <div id="container-deep-edit" style="display:none;"></div>
+                        <div id="container-deep-edit" style="display: none;">
+                <div class="edit-input-group">
+                    <input type="text" class="edit-input-text" value="난이도 1: 레이드 1회 클리어 (주간 2P)" onchange="updateOptionText('container-deep-edit', 0, this.value)">
+                    <input type="number" class="edit-input-num" value="2" onchange="updateOptionPoints('container-deep-edit', 0, this.value)">
+                    <button class="btn-del-item" onclick="deleteOptionItem('container-deep-edit', 0)">❌</button>
+                </div>
+            
+                <div class="edit-input-group">
+                    <input type="text" class="edit-input-text" value="난이도 2: 레이드 3회 클리어 (주간 5P)" onchange="updateOptionText('container-deep-edit', 1, this.value)">
+                    <input type="number" class="edit-input-num" value="5" onchange="updateOptionPoints('container-deep-edit', 1, this.value)">
+                    <button class="btn-del-item" onclick="deleteOptionItem('container-deep-edit', 1)">❌</button>
+                </div>
+            
+                <div class="edit-input-group">
+                    <input type="text" class="edit-input-text" value="난이도 3: 레이드 6회 클리어 (주간 8P - 전용 UI)" onchange="updateOptionText('container-deep-edit', 2, this.value)">
+                    <input type="number" class="edit-input-num" value="8" onchange="updateOptionPoints('container-deep-edit', 2, this.value)">
+                    <button class="btn-del-item" onclick="deleteOptionItem('container-deep-edit', 2)">❌</button>
+                </div>
+            <button class="btn-add-item" onclick="addOptionItem('container-deep-edit')">➕ 미션 항목 추가</button></div>
                     </div>
 
                     <button class="btn" id="btn-lock-plan" style="background:var(--accent-lime); color:#000; padding:10px; font-size:13px; margin-top: 4px;" onclick="lockWeeklyPlan()">🔒 이번 주 플랜 제출 / 확정하기</button>
+                    <div id="container-lockbtn-edit" style="display: none; margin-top: 4px;">
+                        <span class="edit-label-header">📌 플랜 제출 버튼 텍스트 수정</span>
+                        <input type="text" class="edit-input-text" id="input-lockbtn-text" onchange="configData.labels.btnLockPlan = this.value">
+                    </div>
                 </div>
 
                 <!-- Salvage Right Column -->
                 <div class="salvage-panel">
-                    <h3>⚓ 보물 인양 & 주간 누적 현황</h3>
+                    <h3 id="panel-right-title">⚓ 보물 인양 &amp; 주간 누적 현황</h3>
+                    <div id="container-right-title-edit" style="display: none; margin-bottom: 8px;">
+                        <span class="edit-label-header">📌 패널 타이틀 텍스트 수정</span>
+                        <input type="text" class="edit-input-text" id="input-right-title" onchange="configData.labels.panelRightTitle = this.value">
+                    </div>
 
                     <div class="progress-card">
                         <div style="display:flex; justify-content:space-between; font-size:12px;">
-                            <span>주간 총 누적 포인트</span>
+                            <span id="label-weekly-accum">주간 총 누적 포인트</span>
                             <strong style="color:var(--accent-gold);" id="ui-accumulated-p">0 / 20 P</strong>
                         </div>
                         <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="ui-progress-fill"></div>
+                            <div class="progress-bar-fill" id="ui-progress-fill" style="width: 0%;"></div>
                         </div>
                         <div class="milestone-row">
-                            <span class="milestone-chip" id="m-20">🎁 20P 주간 보급 상자 (목표)</span>
+                            <span class="milestone-chip" id="m-20">🎁 20P 주간 보급 상자 (목표: 20P 남음)</span>
                         </div>
                     </div>
 
                     <div class="reward-info-box">
                         <div class="reward-info-title">
-                            <span>📦 일일 교환 보물 상급 풀</span>
-                            <span style="font-size:10px; color:var(--text-muted); font-weight:normal;">(2P 당 1회)</span>
+                            <span id="label-reward-pool-title">📦 일일 교환 보물 상급 풀</span>
+                            <span style="font-size:10px; color:var(--text-muted); font-weight:normal;" id="label-reward-pool-sub">(2P 당 1회)</span>
                         </div>
-                        <div class="reward-info-tags" id="container-pool-publish"></div>
-                        <div id="container-pool-edit" style="display:none; margin-top:6px;"></div>
+                        <div class="reward-info-tags" id="container-pool-publish" style="display: flex;"><span class="reward-info-chip">📦 재련 재료 상자</span><span class="reward-info-chip">📦 카드 팩</span><span class="reward-info-chip">📦 실링 상자</span><span class="reward-info-chip">📦 돌파석 상자</span></div>
+                        <div id="container-pool-edit" style="display: none; margin-top: 6px;">
+            <div class="edit-input-group">
+                <input type="text" class="edit-input-text" value="재련 재료 상자" onchange="configData.normalPool[0] = this.value">
+                <button class="btn-del-item" onclick="configData.normalPool.splice(0, 1); renderEditForms();">❌</button>
+            </div>
+        
+            <div class="edit-input-group">
+                <input type="text" class="edit-input-text" value="카드 팩" onchange="configData.normalPool[1] = this.value">
+                <button class="btn-del-item" onclick="configData.normalPool.splice(1, 1); renderEditForms();">❌</button>
+            </div>
+        
+            <div class="edit-input-group">
+                <input type="text" class="edit-input-text" value="실링 상자" onchange="configData.normalPool[2] = this.value">
+                <button class="btn-del-item" onclick="configData.normalPool.splice(2, 1); renderEditForms();">❌</button>
+            </div>
+        
+            <div class="edit-input-group">
+                <input type="text" class="edit-input-text" value="돌파석 상자" onchange="configData.normalPool[3] = this.value">
+                <button class="btn-del-item" onclick="configData.normalPool.splice(3, 1); renderEditForms();">❌</button>
+            </div>
+        <button class="btn-add-item" onclick="configData.normalPool.push('새 아이템'); renderEditForms();">➕ 아이템 추가</button></div>
                     </div>
 
                     <div style="font-size:14px; font-weight:bold; margin-bottom:8px;">
-                        💡 보유 인양 포인트: <span style="color:var(--accent-lime);" id="ui-current-p">0</span> P
+                        <span id="label-my-points">💡 보유 인양 포인트</span>: <span style="color:var(--accent-lime);" id="ui-current-p">0</span> P
                     </div>
 
                     <!-- Crane Animation Stage -->
@@ -408,8 +506,13 @@
                         </div>
                     </div>
 
-                    <button class="btn-salvage" id="btn-spin" onclick="startSalvageAnimation()" disabled>2P 소모하여 일일 보물 인양하기</button>
-                    <button class="btn-bulk-salvage" id="btn-bulk-spin" onclick="startBulkSalvage()" disabled>⚡ 보유 포인트로 한번에 인양하기</button>
+                    <button class="btn-salvage" id="btn-spin" onclick="startSalvageAnimation()" disabled="">2P 소모하여 일일 보물 인양하기</button>
+                    <button class="btn-bulk-salvage" id="btn-bulk-spin" onclick="startBulkSalvage()" disabled="">⚡ 보유 포인트로 한번에 인양하기</button>
+                    <div id="container-spinbtn-edit" style="display: none; margin-top: 4px;">
+                        <span class="edit-label-header">📌 인양 버튼 텍스트 수정</span>
+                        <input type="text" class="edit-input-text" id="input-spinbtn-text" onchange="configData.labels.btnSpin = this.value" style="margin-bottom: 4px;">
+                        <input type="text" class="edit-input-text" id="input-bulkspinbtn-text" onchange="configData.labels.btnBulkSpin = this.value">
+                    </div>
                 </div>
             </div>
         </div>
@@ -417,25 +520,78 @@
 </div>
 
 <script>
-    // Configurable Mission & Reward Data (Updated Balance: Target 20P)
+    // Configurable Mission, Labels & Text Data
     let configData = {
-        options30m: [
-            { text: "난이도 1: 카오스 던전 1회 클리어 (일 1P)", points: 1 },
-            { text: "난이도 2: 카오스 던전 3회 클리어 (일 2P)", points: 2 },
-            { text: "난이도 3: 카오스 던전 6회 클리어 (일 3P)", points: 3 }
+        "labels": {
+                "boardTitle": "보물 인양 계획",
+                "tag30m": "🌊 수심 30M 인양 (일일)",
+                "badge30m": "일일 미션",
+                "btnClear30m": "오늘 클리어",
+                "tag100m": "⚓ 수심 100M 인양 (일일)",
+                "badge100m": "일일 미션",
+                "btnClear100m": "오늘 클리어",
+                "tagDeep": "🔮 심해 인양 (주간)",
+                "badgeDeep": "주간 1회",
+                "btnClearDeep": "주간 클리어",
+                "btnLockPlan": "🔒 이번 주 플랜 제출 / 확정하기",
+                "panelRightTitle": "⚓ 보물 인양 & 주간 누적 현황",
+                "weeklyAccumLabel": "주간 총 누적 포인트",
+                "milestoneText": "🎁 20P 주간 보급 상자 (목표)",
+                "rewardPoolTitle": "📦 일일 교환 보물 상급 풀",
+                "rewardPoolSub": "(2P 당 1회)",
+                "myPointsLabel": "💡 보유 인양 포인트",
+                "btnSpin": "2P 소모하여 일일 보물 인양하기",
+                "btnBulkSpin": "⚡ 보유 포인트로 한번에 인양하기"
+        },
+        "options30m": [
+                {
+                        "text": "난이도 1: 카오스 던전 1회 클리어 (일 1P)",
+                        "points": 1
+                },
+                {
+                        "text": "난이도 2: 카오스 던전 3회 클리어 (일 2P)",
+                        "points": 2
+                },
+                {
+                        "text": "난이도 3: 카오스 던전 6회 클리어 (일 3P)",
+                        "points": 3
+                }
         ],
-        options100m: [
-            { text: "난이도 1: 가디언 토벌 1회 클리어 (일 1P)", points: 1 },
-            { text: "난이도 2: 가디언 토벌 3회 클리어 (일 2P)", points: 2 },
-            { text: "난이도 3: 가디언 토벌 6회 클리어 (일 3P)", points: 3 }
+        "options100m": [
+                {
+                        "text": "난이도 1: 가디언 토벌 1회 클리어 (일 1P)",
+                        "points": 1
+                },
+                {
+                        "text": "난이도 2: 가디언 토벌 3회 클리어 (일 2P)",
+                        "points": 2
+                },
+                {
+                        "text": "난이도 3: 가디언 토벌 6회 클리어 (일 3P)",
+                        "points": 3
+                }
         ],
-        optionsDeep: [
-            { text: "난이도 1: 레이드 1회 클리어 (주간 2P)", points: 2 },
-            { text: "난이도 2: 레이드 3회 클리어 (주간 5P)", points: 5 },
-            { text: "난이도 3: 레이드 6회 클리어 (주간 8P - 전용 UI)", points: 8 }
+        "optionsDeep": [
+                {
+                        "text": "난이도 1: 레이드 1회 클리어 (주간 2P)",
+                        "points": 2
+                },
+                {
+                        "text": "난이도 2: 레이드 3회 클리어 (주간 5P)",
+                        "points": 5
+                },
+                {
+                        "text": "난이도 3: 레이드 6회 클리어 (주간 8P - 전용 UI)",
+                        "points": 8
+                }
         ],
-        normalPool: ["재련 재료 상자", "카드 팩", "실링 상자", "돌파석 상자"]
-    };
+        "normalPool": [
+                "재련 재료 상자",
+                "카드 팩",
+                "실링 상자",
+                "돌파석 상자"
+        ]
+};
 
     let gameState = {
         isEditMode: false,
@@ -452,10 +608,36 @@
     };
 
     window.onload = () => {
+        applyStaticLabels();
         renderMissionOptions();
         renderEditForms();
         renderUI();
     };
+
+    function applyStaticLabels() {
+        document.getElementById('node-board-title').innerText = configData.labels.boardTitle;
+        document.getElementById('tag-30m').innerText = configData.labels.tag30m;
+        document.getElementById('badge-30m').innerText = configData.labels.badge30m;
+        document.getElementById('btn-clear-30m').innerText = configData.labels.btnClear30m;
+
+        document.getElementById('tag-100m').innerText = configData.labels.tag100m;
+        document.getElementById('badge-100m').innerText = configData.labels.badge100m;
+        document.getElementById('btn-clear-100m').innerText = configData.labels.btnClear100m;
+
+        document.getElementById('tag-deep').innerText = configData.labels.tagDeep;
+        document.getElementById('badge-deep').innerText = configData.labels.badgeDeep;
+        document.getElementById('btn-clear-deep').innerText = configData.labels.btnClearDeep;
+
+        document.getElementById('btn-lock-plan').innerText = gameState.isLocked ? "✓ 플랜 확정됨 (수요일 06:00 리셋)" : configData.labels.btnLockPlan;
+        document.getElementById('panel-right-title').innerText = configData.labels.panelRightTitle;
+        document.getElementById('label-weekly-accum').innerText = configData.labels.weeklyAccumLabel;
+        document.getElementById('label-reward-pool-title').innerText = configData.labels.rewardPoolTitle;
+        document.getElementById('label-reward-pool-sub').innerText = configData.labels.rewardPoolSub;
+        document.getElementById('label-my-points').innerText = configData.labels.myPointsLabel;
+
+        document.getElementById('btn-spin').innerText = configData.labels.btnSpin;
+        document.getElementById('btn-bulk-spin').innerText = configData.labels.btnBulkSpin;
+    }
 
     function switchMainTab(tabName) {
         const buttons = document.querySelectorAll('.main-tab-btn');
@@ -480,31 +662,38 @@
         if (gameState.isEditMode) {
             btn.className = 'mode-toggle-btn edit-mode';
             btn.innerText = '⚙️ 편집 모드 (설정 변경 중)';
-            document.getElementById('node-board-title').innerText = '⚙️ [편집 모드] 수심별 미션 구성';
+            
+            // Fill Label Edit Inputs
+            document.getElementById('input-board-title').value = configData.labels.boardTitle;
+            document.getElementById('input-tag-30m').value = configData.labels.tag30m;
+            document.getElementById('input-tag-100m').value = configData.labels.tag100m;
+            document.getElementById('input-tag-deep').value = configData.labels.tagDeep;
+            document.getElementById('input-lockbtn-text').value = configData.labels.btnLockPlan;
+            document.getElementById('input-right-title').value = configData.labels.panelRightTitle;
+            document.getElementById('input-spinbtn-text').value = configData.labels.btnSpin;
+            document.getElementById('input-bulkspinbtn-text').value = configData.labels.btnBulkSpin;
         } else {
             btn.className = 'mode-toggle-btn publish-mode';
             btn.innerText = '🚀 발행 모드 (유저 테스트)';
-            document.getElementById('node-board-title').innerText = '🧭 수심별 탐사 노드 플랜 설계';
+            applyStaticLabels();
             renderMissionOptions();
         }
 
-        const edit30m = document.getElementById('container-30m-edit');
-        const pub30m = document.getElementById('container-30m-publish');
-        const edit100m = document.getElementById('container-100m-edit');
-        const pub100m = document.getElementById('container-100m-publish');
-        const editDeep = document.getElementById('container-deep-edit');
-        const pubDeep = document.getElementById('container-deep-publish');
-        const editPool = document.getElementById('container-pool-edit');
-        const pubPool = document.getElementById('container-pool-publish');
+        const editModeDisplays = [
+            'container-title-edit', 
+            'container-30m-title-edit', 'container-30m-edit', 
+            'container-100m-title-edit', 'container-100m-edit', 
+            'container-deep-title-edit', 'container-deep-edit', 
+            'container-lockbtn-edit', 'container-right-title-edit', 'container-pool-edit', 'container-spinbtn-edit'
+        ];
+        const pubModeDisplays = ['container-30m-publish', 'container-100m-publish', 'container-deep-publish', 'container-pool-publish'];
 
-        edit30m.style.display = gameState.isEditMode ? 'block' : 'none';
-        pub30m.style.display = gameState.isEditMode ? 'none' : 'flex';
-        edit100m.style.display = gameState.isEditMode ? 'block' : 'none';
-        pub100m.style.display = gameState.isEditMode ? 'none' : 'flex';
-        editDeep.style.display = gameState.isEditMode ? 'block' : 'none';
-        pubDeep.style.display = gameState.isEditMode ? 'none' : 'flex';
-        editPool.style.display = gameState.isEditMode ? 'block' : 'none';
-        pubPool.style.display = gameState.isEditMode ? 'none' : 'flex';
+        editModeDisplays.forEach(id => {
+            document.getElementById(id).style.display = gameState.isEditMode ? 'block' : 'none';
+        });
+        pubModeDisplays.forEach(id => {
+            document.getElementById(id).style.display = gameState.isEditMode ? 'none' : 'flex';
+        });
 
         if (!gameState.isEditMode) {
             renderEditForms();
@@ -631,7 +820,6 @@
 
         alert(`🎉 미션 완료! ${earnedP}P를 획득했습니다.`);
 
-        // Target: 20P Completion Check
         if (prevAccumulatedP < 20 && gameState.accumulatedP >= 20 && !gameState.weeklyRewardClaimed) {
             gameState.weeklyRewardClaimed = true;
             renderUI();
@@ -720,7 +908,7 @@
             document.getElementById('select-30m').disabled = false;
             document.getElementById('select-100m').disabled = false;
             document.getElementById('select-deep').disabled = false;
-            document.getElementById('btn-lock-plan').innerText = "🔒 이번 주 플랜 제출 / 확정하기";
+            document.getElementById('btn-lock-plan').innerText = configData.labels.btnLockPlan;
             document.getElementById('btn-lock-plan').disabled = false;
 
             updatePlanSelection();
@@ -733,7 +921,6 @@
         document.getElementById('ui-current-p').innerText = gameState.currentP;
         document.getElementById('ui-accumulated-p').innerText = `${gameState.accumulatedP} / 20 P`;
 
-        // Progress Ratio Calculation for 20P
         const percentage = Math.min(100, (gameState.accumulatedP / 20) * 100);
         document.getElementById('ui-progress-fill').style.width = percentage + "%";
 
@@ -773,5 +960,5 @@
     }
 </script>
 
-</body>
-</html>
+
+</body></html>
