@@ -123,6 +123,8 @@
         /* EVENT GAME TAB STYLES */
         .live-mode-bar { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-bottom: 12px; }
         .btn { background: var(--accent-blue); color: #08131d; border: none; padding: 6px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+        .btn:disabled { background: #2a3e50 !important; color: #5a7b96 !important; border-color: #1e3040 !important; cursor: not-allowed !important; box-shadow: none !important; }
+        
         .btn-next-day { background: rgba(66, 227, 130, 0.2); border: 1px solid var(--accent-green); color: var(--accent-green); }
         .btn-reset { background: rgba(255, 94, 94, 0.2); border: 1px solid var(--danger-red); color: var(--danger-red); }
 
@@ -247,11 +249,12 @@
                 <p style="font-size:13px; color:var(--text-muted);">
                     본 이벤트는 탐사 난이도를 직접 선택하고 3가지 명확한 보상 축을 따라 해금하는 수심 탐사 컨셉의 웹 이벤트입니다.
                 </p>
-                <h3>📌 3단계 보상 체계 요약</h3>
+                <h3>📌 핵심 유저 루틴</h3>
                 <ul>
-                    <li><strong>1. 일일 보상 (30M / 100M)</strong>: 매일 미션을 통해 포인트를 수급하고 2P 소모하여 일일 보물 인양 진행</li>
-                    <li><strong>2. 주간 클리어 보상 (심해 노드)</strong>: 심해 노드 주간 미션 달성 시 전용 [🔮 심해 보물 인양] 버튼을 통해 주간 보상 획득</li>
-                    <li><strong>3. 주간 플랜 완료 보상 (20P 목표)</strong>: 주간 누적 포인트 20P 달성 시 [🏆 20P 주간 완수 보급 상자] 자동 해금</li>
+                    <li><strong>수요일 06:00</strong>: 주간 플랜 설계 (30M, 100M, 심해 노드 난이도 드롭다운 선택 및 확정)</li>
+                    <li><strong>매일 수행</strong>: 카카오 던전 및 가디언 토벌 수행으로 일일 포인트 획득</li>
+                    <li><strong>주간 완수</strong>: 레이드 클리어로 고득점 심해 포인트 수급</li>
+                    <li><strong>실시간 보상</strong>: 일일 포인트 교환 + 주간 누적 포인트 20P 달성 시 주간 보급 상자 획득</li>
                 </ul>
             </div>
 
@@ -302,6 +305,7 @@
                 <h3>🎨 UI/UX 핵심 요소</h3>
                 <ul>
                     <li><strong>일일 / 주간 인양 분리</strong>: 일일 일반 인양 버튼과 심해 전용 주간 보물 인양 버튼 독립 구성</li>
+                    <li><strong>플랜 제출 필수 로직</strong>: 주간 플랜 제출 전까지 모든 클리어 버튼 비활성화 처리</li>
                     <li><strong>20P 목표 달성 연출</strong>: 주간 누적 20P 충전 시 즉시 주간 완수 보급 상자 해금 팝업 출력</li>
                 </ul>
             </div>
@@ -335,7 +339,7 @@
                         </div>
                         <div id="container-30m-publish" class="dropdown-mission-row" style="display: flex;">
                             <select class="mission-select" id="select-30m" onchange="updatePlanSelection()"><option value="1">난이도 1: 카오스 던전 1회 클리어 (일 1P)</option><option value="2">난이도 2: 카오스 던전 3회 클리어 (일 2P)</option><option value="3">난이도 3: 카오스 던전 6회 클리어 (일 3P)</option></select>
-                            <button class="btn" id="btn-clear-30m" onclick="clearMission('30m')">오늘 클리어</button>
+                            <button class="btn" id="btn-clear-30m" onclick="clearMission('30m')" disabled="">오늘 클리어</button>
                         </div>
                         <div id="container-30m-edit" style="display: none;">
                 <div class="edit-input-group">
@@ -361,7 +365,7 @@
                     <!-- 100M Node -->
                     <div class="depth-slot-card">
                         <div class="slot-header">
-                            <span class="depth-tag" id="tag-100m">⚓ 수심 100M 인양(일일)</span>
+                            <span class="depth-tag" id="tag-100m">⚓ 수심 100M 인양 (일일)</span>
                             <span style="font-size:11px; color:var(--accent-gold);" id="badge-100m">일일 미션</span>
                         </div>
                         <div id="container-100m-title-edit" class="node-title-edit-box" style="display: none;">
@@ -370,7 +374,7 @@
                         </div>
                         <div id="container-100m-publish" class="dropdown-mission-row" style="display: flex;">
                             <select class="mission-select" id="select-100m" onchange="updatePlanSelection()"><option value="1">난이도 1: 가디언 토벌 1회 클리어 (일 1P)</option><option value="2">난이도 2: 가디언 토벌 3회 클리어 (일 2P)</option><option value="3">난이도 3: 가디언 토벌 6회 클리어 (일 3P)</option></select>
-                            <button class="btn" id="btn-clear-100m" onclick="clearMission('100m')">오늘 클리어</button>
+                            <button class="btn" id="btn-clear-100m" onclick="clearMission('100m')" disabled="">오늘 클리어</button>
                         </div>
                         <div id="container-100m-edit" style="display: none;">
                 <div class="edit-input-group">
@@ -396,7 +400,7 @@
                     <!-- DEEP SEA Node -->
                     <div class="depth-slot-card" id="card-deep">
                         <div class="slot-header">
-                            <span class="depth-tag" style="color:var(--accent-purple);" id="tag-deep">🔮 심해 보물 인양 (주간)</span>
+                            <span class="depth-tag" style="color:var(--accent-purple);" id="tag-deep">🔮 심해 인양 (주간)</span>
                             <span style="font-size:11px; color:var(--accent-purple);" id="badge-deep">주간 1회</span>
                         </div>
                         <div id="container-deep-title-edit" class="node-title-edit-box" style="display: none;">
@@ -405,7 +409,7 @@
                         </div>
                         <div id="container-deep-publish" class="dropdown-mission-row" style="display: flex;">
                             <select class="mission-select" id="select-deep" onchange="updatePlanSelection()"><option value="2">난이도 1: 레이드 1회 클리어 (주간 2P)</option><option value="5">난이도 2: 레이드 3회 클리어 (주간 5P)</option><option value="8">난이도 3: 레이드 6회 클리어 (주간 8P - 전용 UI)</option></select>
-                            <button class="btn" id="btn-clear-deep" style="background:var(--accent-purple); color:#fff;" onclick="clearMission('deep')">주간 미션 클리어</button>
+                            <button class="btn" id="btn-clear-deep" style="background:var(--accent-purple); color:#fff;" onclick="clearMission('deep')" disabled="">주간 미션 클리어</button>
                         </div>
                         <div id="container-deep-edit" style="display: none;">
                 <div class="edit-input-group">
@@ -531,10 +535,10 @@
                 "tag30m": "🌊 수심 30M 인양 (일일)",
                 "badge30m": "일일 미션",
                 "btnClear30m": "오늘 클리어",
-                "tag100m": "⚓ 수심 100M 인양(일일)",
+                "tag100m": "⚓ 수심 100M 인양 (일일)",
                 "badge100m": "일일 미션",
                 "btnClear100m": "오늘 클리어",
-                "tagDeep": "🔮 심해 보물 인양 (주간)",
+                "tagDeep": "🔮 심해 인양 (주간)",
                 "badgeDeep": "주간 1회",
                 "btnClearDeep": "주간 미션 클리어",
                 "btnLockPlan": "🔒 이번 주 플랜 제출 / 확정하기",
@@ -991,9 +995,10 @@
         deepBtn.disabled = !gameState.clearedDeep || gameState.deepRewardClaimed;
         deepBtn.innerText = gameState.deepRewardClaimed ? "✓ 주간 심해 보물 인양 완료" : configData.labels.btnDeepSpin;
 
-        document.getElementById('btn-clear-30m').disabled = gameState.cleared30m;
-        document.getElementById('btn-clear-100m').disabled = gameState.cleared100m;
-        document.getElementById('btn-clear-deep').disabled = gameState.clearedDeep;
+        // 플랜 제출 전 클리어 버튼 비활성화 로직
+        document.getElementById('btn-clear-30m').disabled = !gameState.isLocked || gameState.cleared30m;
+        document.getElementById('btn-clear-100m').disabled = !gameState.isLocked || gameState.cleared100m;
+        document.getElementById('btn-clear-deep').disabled = !gameState.isLocked || gameState.clearedDeep;
     }
 
     function downloadCurrentHTML() {
